@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      //   fontFamily: {
+      //   conerstone: ['conerstone', 'sans-serif'], // 커스텀 폰트 패밀리 추가
+      // },
     },
   },
   plugins: [],

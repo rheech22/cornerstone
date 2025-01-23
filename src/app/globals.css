@@ -3,19 +3,112 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #000000;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* @media (prefers-color-scheme: dark) { */
+/*   :root { */
+/*     --background: #000000; */
+/*     --foreground: #fafafa; */
+/*   } */
+/* } */
+
+/* DMSans 폰트 정의 (영어) */
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* DMSans 이탤릭 폰트 정의 (영어) */
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-SemiBoldItalic.ttf") format("truetype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/DMSans-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* NotoSerifKR 폰트 정의 (한글) */
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/NotoSerifKR-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  unicode-range: U+AC00-D7A3; /* 한글 음절 범위 */
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/NotoSerifKR-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/NotoSerifKR-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: "conerstone";
+  src: url("./fonts/NotoSerifKR-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  unicode-range: U+AC00-D7A3;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "conerstone", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
