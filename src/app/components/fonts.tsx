@@ -7,11 +7,11 @@ export const Fonts = () => {
         <span>This is a regular English text and </span>
         <span> 이것은 보통 한국어 문장입니다.</span>
       </p>
-      <p className="font-bold">
+      <p className="font-bold text-2xl">
         <span>This is a bold English text and </span>
         <span>굵은</span> 한국어 텍스트.
       </p>
-      <p className="font-semibold">
+      <p className="font-semibold text-xl">
         <span>This is a semi-bold English sentence.</span>
         <span> 이것은 세미볼드 한국어 문장입니다.</span>
       </p>
