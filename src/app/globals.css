@@ -133,3 +133,14 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+.markdown {
+  background-color: black;
+  color: white;
+  max-width: 700px;
+  margin: 0 auto;
+
+  pre code {
+    white-space: pre-wrap;
+  }
+}
