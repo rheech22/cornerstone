@@ -1,10 +1,6 @@
 import { MdxLayout } from "@/app/components/mdx-layout";
 import { codeToHtml } from "shiki";
 
-const H1 = ({ children }: { children: React.ReactNode }) => {
-  return <h1 style={{ color: "red", fontSize: "100px" }}>{children}</h1>;
-};
-
 type PreElementWithProps = React.ReactElement<{
   children?: string;
   className?: string;
@@ -30,7 +26,6 @@ const Pre = async ({ children }: { children: PreElementWithProps }) => {
 };
 
 const components = {
-  h1: H1,
   pre: Pre,
 };
 

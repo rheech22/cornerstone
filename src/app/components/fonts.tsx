@@ -1,6 +1,6 @@
 export const Fonts = () => {
   return (
-    <div className="p-12">
+    <div className="border border-black p-2">
       <h1 className="text-2xl font-bold">Font 폰트</h1>
       <p>Mixed: English와 한국어가 함께 사용됩니다.</p>
       <p>

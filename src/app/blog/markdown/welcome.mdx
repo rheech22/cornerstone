@@ -1,22 +1,32 @@
 import { Fonts } from '@/app/components/fonts.tsx';
 
-## Welcome to my MDX page!
+# FSD 아키텍처가 뭔가요?
 
 This is some **bold** and _italics_ text.
 
-## This is a list in markdown:
+## Ordered 리스트 디자인이 필요합니다.
+
+1. 하하하 1
+2. 하하하
+3. 하하하하
+
+### 기본 리스트(ul) 디자인도 필요해요.
 
 - One
 - Two
 - Three
 
-## Checkout My Fonts component:
+#### Heading 4는 사이즈가 같지만 font weight이 다릅니다.
+
+아래는 MDX 컴포넌트 입니다.
 
 <Fonts />
 
-# This is My Code
+##### Heading 5는 p와 같습니다.
 
-## Javascrpt
+Code snippets is here !
+
+Javascrpt
 
 ```js
 import process from 'node:process';
@@ -65,7 +75,7 @@ plugins.push(
 export default () => plugins.reduce((_, plugin) => plugin(_), nextConfig);
 ```
 
-## JSX
+JSX
 
 ```jsx
 function VideoList({ videos, emptyHeading }) {
@@ -86,7 +96,7 @@ function VideoList({ videos, emptyHeading }) {
 }
 ```
 
-## TSX
+TSX
 
 ```tsx
 import type { Metadata } from "next";
@@ -111,7 +121,7 @@ export default function RootLayout({
 }
 ```
 
-## Dart
+Dart
 
 ```dart
 void main() {
@@ -130,7 +140,7 @@ void main() {
 }
 ```
 
-## Python
+Python
 
 ```python
 prompt = PromptTemplate(
@@ -147,3 +157,11 @@ chain = (
     | llm
 )
 ```
+
+###### Heading 6도 마찬가지....
+
+It’s easy to get disheartened looking at numbers, but when I throttle my CPU/network and do side-by-side comparisons, I can’t really tell the difference. I’m a bit concerned about the SEO impact of a lower Lighthouse score, but I think if the Next team addresses the CSS bundling issue, it should wind up being roughly equivalent.
+
+While we’re on the topic of slow performance, the development server is much slower with the App Router. It’s gotten worse and worse as my blog has grown. Here are the current stats:
+
+
