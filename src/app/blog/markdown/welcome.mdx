@@ -1,4 +1,4 @@
-import { Fonts } from '@/app/components/fonts.tsx';
+import { Fonts } from "@/app/components/fonts.tsx";
 
 # FSD 아키텍처가 뭔가요?
 
@@ -29,30 +29,30 @@ Code snippets is here !
 Javascrpt
 
 ```js
-import process from 'node:process';
-Object.assign(process.env, { NEXT_TELEMETRY_DISABLED: '1' });
+import process from "node:process";
+Object.assign(process.env, { NEXT_TELEMETRY_DISABLED: "1" });
 
 /**
  * @typedef {import('next').NextConfig} NextConfig
  * @typedef {Array<((config: NextConfig) => NextConfig)>} NextConfigPlugins
  */
-import nextMDX from '@next/mdx';
-import rehypeSlug from 'rehype-slug';
-import rehypePrettyCode from 'rehype-pretty-code';
-import moonlightTheme from './assets/moonlight-ii.json' with { type: 'json' };
+import nextMDX from "@next/mdx";
+import rehypeSlug from "rehype-slug";
+import rehypePrettyCode from "rehype-pretty-code";
+import moonlightTheme from "./assets/moonlight-ii.json" with { type: "json" };
 
 /** @type {NextConfigPlugins} */
 const plugins = [];
 
 /** @type {NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: "export",
   cleanDistDir: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  pageExtensions: ['md', 'mdx', 'tsx', 'ts', 'jsx', 'js'],
+  pageExtensions: ["md", "mdx", "tsx", "ts", "jsx", "js"],
   env: {
-    NEXT_TELEMETRY_DISABLED: '1',
+    NEXT_TELEMETRY_DISABLED: "1",
   },
 };
 
@@ -82,15 +82,15 @@ function VideoList({ videos, emptyHeading }) {
   const count = videos.length;
   let heading = emptyHeading;
   if (count > 0) {
-    const noun = count > 1 ? 'Videos' : 'Video';
-    heading = count + ' ' + noun;
+    const noun = count > 1 ? "Videos" : "Video";
+    heading = count + " " + noun;
   }
   return (
     <section>
       <h2>{heading}</h2>
-      {videos.map(video =>
+      {videos.map((video) => (
         <Video key={video.id} video={video} />
-      )}
+      ))}
     </section>
   );
 }
@@ -163,5 +163,3 @@ chain = (
 It’s easy to get disheartened looking at numbers, but when I throttle my CPU/network and do side-by-side comparisons, I can’t really tell the difference. I’m a bit concerned about the SEO impact of a lower Lighthouse score, but I think if the Next team addresses the CSS bundling issue, it should wind up being roughly equivalent.
 
 While we’re on the topic of slow performance, the development server is much slower with the App Router. It’s gotten worse and worse as my blog has grown. Here are the current stats:
-
-

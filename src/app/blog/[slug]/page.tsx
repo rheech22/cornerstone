@@ -1,5 +1,5 @@
 import { MdxLayout } from "@/app/components/mdx-layout";
-import { codeToHtml } from "shiki";
+import { highlightCode } from "@/app/lib/highlight-code";
 
 type PreElementWithProps = React.ReactElement<{
   children?: string;
@@ -18,10 +18,7 @@ const parsePre = (pre: PreElementWithProps) => {
 
 const Pre = async ({ children }: { children: PreElementWithProps }) => {
   const pre = parsePre(children);
-  const html = await codeToHtml(pre.code, {
-    lang: pre.lang,
-    theme: "laserwave",
-  });
+  const html = await highlightCode(pre.code, pre.lang);
   return <code dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
