@@ -5,13 +5,17 @@ import rehypeStringify from "rehype-stringify";
 import rehypeAddMeta from "./rehype-add-meta.mjs";
 
 const nextConfig = {
-  output: "export",
   cleanDistDir: true,
   reactStrictMode: true,
   poweredByHeader: false,
   pageExtensions: ["md", "mdx", "tsx", "ts", "jsx", "js"],
   experimental: {
     typedRoutes: true,
+  },
+  images: {
+    loader: "imgix",
+    domains: ["images.unsplash.com"],
+    path: "/api/image",
   },
 };
 
