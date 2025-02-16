@@ -140,9 +140,31 @@ body {
   max-width: 700px;
   margin: 0 auto;
 
-  pre {
+  .code-block {
     margin-bottom: 64px;
-    border-radius: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+
+    & > div {
+      margin-bottom: 0px;
+      padding: 6px 10px;
+      font-weight: 300;
+      font-style: italic;
+      text-align: right;
+    }
+
+    .code-block__title {
+      color: #f5ecd5;
+      background-color: #3d3d3d;
+    }
+
+    .code-block__caption {
+      color: #fffaec;
+      background-color: #56021f;
+    }
+  }
+
+  pre {
     padding: 24px 10px;
   }
 
