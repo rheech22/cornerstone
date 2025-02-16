@@ -17,6 +17,7 @@ const parsePre = (pre: PreElementWithProps) => {
 };
 
 const Pre = async ({ children }: { children: PreElementWithProps }) => {
+  console.log(children);
   const pre = parsePre(children);
   const html = await highlightCode(pre.code, pre.lang);
   return <code dangerouslySetInnerHTML={{ __html: html }} />;

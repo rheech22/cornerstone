@@ -146,9 +146,64 @@ body {
     padding: 24px 10px;
   }
 
-  pre code {
-    white-space: pre-wrap;
-    font-size: 0.8rem;
+  .shiki {
+    code {
+      white-space: pre-wrap;
+      font-size: 0.8rem;
+    }
+
+    &.has-focused {
+      .line {
+        &:not(.focused) {
+          opacity: 0.7;
+          filter: blur(0.095rem);
+          transition:
+            filter 0.35s,
+            opacity 0.35s;
+        }
+      }
+
+      &:hover {
+        .line {
+          &:not(.focused) {
+            opacity: 1;
+            filter: blur(0);
+          }
+        }
+      }
+    }
+
+    .line {
+      &.highlighted {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      &.diff {
+        &.add {
+          background-color: rgba(0, 255, 0, 0.2);
+          span:first-child::before {
+            content: "+";
+            color: rgba(0, 255, 0, 0.8);
+            margin-right: 0.5rem;
+          }
+        }
+        &.remove {
+          background-color: rgba(255, 0, 0, 0.2);
+          span:first-child::before {
+            content: "-";
+            color: rgba(255, 0, 0, 0.8);
+            margin-right: 0.5rem;
+          }
+        }
+      }
+      span {
+        &.highlighted {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+        &.highlighted-word {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
   }
 
   h1,
