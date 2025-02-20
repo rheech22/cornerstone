@@ -3,6 +3,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import rehypeAddMeta from "./rehype-add-meta.mjs";
+import rehypeMDXImportMedia from "rehype-mdx-import-media";
 
 const nextConfig = {
   cleanDistDir: true,
@@ -13,16 +14,14 @@ const nextConfig = {
     typedRoutes: true,
   },
   images: {
-    loader: "imgix",
     domains: ["images.unsplash.com"],
-    path: "/api/image",
   },
 };
 
 const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkParse, remarkRehype],
-    rehypePlugins: [rehypeAddMeta, rehypeStringify],
+    rehypePlugins: [rehypeAddMeta, rehypeMDXImportMedia, rehypeStringify],
   },
 });
 

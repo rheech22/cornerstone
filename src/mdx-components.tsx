@@ -1,24 +1,16 @@
 import type { MDXComponents } from "mdx/types";
-import Image, { type ImageProps } from "next/image";
+import type { ImageProps } from "next/image";
 
-import { Code } from "./app/components/code";
 import { Blockquote } from "./app/components/blockquote";
+import { Image } from "./app/components/image";
+import { Code } from "./app/components/code";
 
 export const useMDXComponents = (components: MDXComponents): MDXComponents => {
   return {
     pre: Code,
     blockquote: Blockquote,
-    img: (props) => (
-      console.log(props),
-      (
-        <Image
-          {...(props as ImageProps)}
-          sizes="100vw"
-          style={{ width: "100%", height: "auto" }}
-          alt={props.alt}
-        />
-      )
-    ),
+    // eslint-disable-next-line jsx-a11y/alt-text
+    img: (props) => <Image {...(props as ImageProps)} />,
     ...components,
   };
 };
