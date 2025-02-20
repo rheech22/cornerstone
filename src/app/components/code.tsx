@@ -1,4 +1,5 @@
 import { highlightCode } from "@/app/lib/highlight-code";
+import { CopyButton } from "./copy-button";
 
 type PreElementWithProps = React.ReactElement<{
   children?: string;
@@ -26,6 +27,7 @@ export const Code = async ({ children }: { children: PreElementWithProps }) => {
   const html = await highlightCode(pre.code, pre.lang);
   return (
     <div className="code-block">
+      <CopyButton text={pre.code} />
       {pre.title && <div className="code-block__title">{pre.title}</div>}
       <code dangerouslySetInnerHTML={{ __html: html }} />
       {pre.caption && <div className="code-block__caption">{pre.caption}</div>}

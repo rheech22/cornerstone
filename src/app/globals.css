@@ -141,6 +141,7 @@ body {
   margin: 0 auto;
 
   .code-block {
+    position: relative;
     margin-bottom: 64px;
     border-radius: 8px;
     overflow: hidden;
