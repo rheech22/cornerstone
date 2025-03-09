@@ -290,6 +290,15 @@ body {
   }
 
   a {
+    &.wiki-link {
+      color: blue;
+      text-decoration: unset;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     color: #56021f;
     text-decoration: underline;
   }

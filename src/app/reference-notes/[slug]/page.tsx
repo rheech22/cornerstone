@@ -3,7 +3,9 @@ import { getPosts, getSlug } from "@/app/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
-  const { default: Post } = await import(`../../docs/blog/${slug}.mdx`);
+  const { default: Post } = await import(
+    `../../docs/reference-notes/${slug}.mdx`
+  );
 
   return (
     <MdxLayout>
@@ -15,7 +17,9 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 export default Page;
 
 export const generateStaticParams = () => {
-  return getPosts("blog").map((fileName) => ({ slug: getSlug(fileName) }));
+  return getPosts("reference-notes").map((fileName) => ({
+    slug: getSlug(fileName),
+  }));
 };
 
 export const dynamicParams = false;

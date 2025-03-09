@@ -3,7 +3,10 @@ import { getPosts, getSlug } from "@/app/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
-  const { default: Post } = await import(`../markdown/${slug}.mdx`);
+  const { default: Post } = await import(
+    `../../docs/fleeting-notes/${slug}.mdx`
+  );
+
   return (
     <MdxLayout>
       <Post />
@@ -14,7 +17,9 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 export default Page;
 
 export const generateStaticParams = () => {
-  return getPosts().map((fileName) => ({ slug: getSlug(fileName) }));
+  return getPosts("fleeting-notes").map((fileName) => ({
+    slug: getSlug(fileName),
+  }));
 };
 
 export const dynamicParams = false;

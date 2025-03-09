@@ -1,7 +1,9 @@
 import { readdirSync } from "fs";
 
-export const getPosts = () => {
-  return readdirSync("./src/app/blog/markdown").filter((fileName) =>
+export const getPosts = (
+  note: "blog" | "fleeting-notes" | "reference-notes",
+) => {
+  return readdirSync(`./src/app/docs/${note}`).filter((fileName) =>
     fileName.endsWith(".mdx"),
   );
 };
