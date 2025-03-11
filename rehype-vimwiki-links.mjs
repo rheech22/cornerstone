@@ -5,6 +5,8 @@ export default function rehypeVimwikiLinks() {
     visit(tree, "text", (node, index, parent) => {
       if (!parent) return;
 
+      if (parent.tagName === "a") return;
+
       const matches = node.value.match(/\[\[(.*?)\]\]/g);
       if (!matches) return;
 
@@ -28,7 +30,7 @@ export default function rehypeVimwikiLinks() {
           href = parts[0].trim();
           text = parts[1].trim();
         } else {
-          href = innerContent;
+          href = innerContent.trim();
           text = href
             .split("/")
             [href.split("/").length - 1].replaceAll("_", " ");

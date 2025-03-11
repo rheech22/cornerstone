@@ -3,7 +3,11 @@ import { getPosts, getSlug } from "@/app/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
-  const { default: Post } = await import(`../../docs/blog/${slug}.mdx`);
+  const { default: Post, frontmatter } = await import(
+    `../../docs/blog/${slug}.mdx`
+  );
+
+  console.log(frontmatter);
 
   return (
     <MdxLayout>

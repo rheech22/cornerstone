@@ -5,6 +5,10 @@ import rehypeStringify from "rehype-stringify";
 import rehypeAddMeta from "./rehype-add-meta.mjs";
 import rehypeMDXImportMedia from "rehype-mdx-import-media";
 import rehypeVimwikiLinks from "./rehype-vimwiki-links.mjs";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 const nextConfig = {
   cleanDistDir: true,
@@ -21,8 +25,15 @@ const nextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkParse, remarkRehype],
+    remarkPlugins: [
+      remarkParse,
+      remarkMath,
+      remarkFrontmatter,
+      remarkMdxFrontmatter,
+      remarkRehype,
+    ],
     rehypePlugins: [
+      rehypeKatex,
       rehypeAddMeta,
       rehypeVimwikiLinks,
       rehypeMDXImportMedia,

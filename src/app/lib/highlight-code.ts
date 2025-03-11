@@ -19,6 +19,7 @@ const highlighterPromise = createHighlighterCore({
     import("@shikijs/langs/tsx"),
     import("@shikijs/langs/dart"),
     import("@shikijs/langs/python"),
+    import("@shikijs/langs/lua"),
     // ..
   ],
   engine: createJavaScriptRegexEngine(),
