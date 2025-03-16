@@ -27,9 +27,11 @@ export const Code = async ({ children }: { children: PreElementWithProps }) => {
   const html = await highlightCode(pre.code, pre.lang);
   return (
     <div className="code-block">
-      <CopyButton text={pre.code} />
       {pre.title && <div className="code-block__title">{pre.title}</div>}
-      <code dangerouslySetInnerHTML={{ __html: html }} />
+      <div className="code-block__content">
+        <CopyButton text={pre.code} />
+        <code dangerouslySetInnerHTML={{ __html: html }} />
+      </div>
       {pre.caption && <div className="code-block__caption">{pre.caption}</div>}
     </div>
   );

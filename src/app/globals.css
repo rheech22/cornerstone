@@ -150,38 +150,47 @@ body {
   }
 
   .code-block {
-    position: relative;
     margin-bottom: 64px;
-    border-radius: 8px;
     overflow: hidden;
 
-    & > div {
+    .code-block__content {
+      position: relative;
+      margin-bottom: 0px;
+    }
+
+    .code-block__title,
+    .code-block__caption {
       margin-bottom: 0px;
       padding: 6px 10px;
-      font-weight: 300;
       font-style: italic;
-      text-align: right;
+      border: 2px solid black;
     }
 
     .code-block__title {
-      color: #f5ecd5;
-      background-color: #3d3d3d;
+      font-size: 1rem;
+      font-weight: 400;
+      text-align: right;
+      border-bottom: none;
     }
 
     .code-block__caption {
-      color: #fffaec;
-      background-color: #56021f;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: left;
+      border-top: none;
     }
   }
 
   pre {
     padding: 24px 10px;
+    background: transparent !important;
+    border: 2px solid black;
   }
 
   .shiki {
     code {
       white-space: pre-wrap;
-      font-size: 0.8rem;
+      font-size: 1rem;
     }
 
     &.has-focused {
@@ -209,21 +218,26 @@ body {
       &.highlighted {
         background-color: rgba(255, 255, 255, 0.2);
       }
+
       &.diff {
+        border: 1px solid black;
+        padding: 0.1rem 0.2rem;
+
         &.add {
-          background-color: rgba(0, 255, 0, 0.2);
           span:first-child::before {
             content: "+";
-            color: rgba(0, 255, 0, 0.8);
             margin-right: 0.5rem;
+            color: black;
+            font-weight: bold;
           }
         }
+
         &.remove {
-          background-color: rgba(255, 0, 0, 0.2);
           span:first-child::before {
             content: "-";
-            color: rgba(255, 0, 0, 0.8);
             margin-right: 0.5rem;
+            color: black;
+            font-weight: bold;
           }
         }
       }
