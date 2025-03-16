@@ -1,6 +1,6 @@
 ---
 created: 2025-03-16 06:12:18 +0900
-updated: 2025-03-16 11:23:16 +0900
+updated: 2025-03-17 04:58:24 +0900
 title: '플러터 성능에 관한 주의사항'
 tags: ['Flutter']
 ---
@@ -11,7 +11,8 @@ tags: ['Flutter']
 
 ### build 메서드에서 생성하는 노드 수를 최소화시킨다.
 
-StatefulWidget의 build는 가능한 한 간결하게 구성한다. 내부에서 추가로 복잡한 위젯 트리를 만들기보다는 그 트리를 별도의 StatelessWidget(또는 StatefulWidget)으로 분리하여 관리하는 것이 좋다.
+StatefulWidget의 build는 가능한 한 간결하게 구성한다. 내부에서 추가로 복잡한 위젯 트리를 만들기보다는 그 트리를 별도의 StatelessWidget(또는 StatefulWidget)으로 분리한다.
+
 ```dart
 class EfficientWidget extends StatefulWidget {
   const EfficientWidget({super.key});
@@ -44,7 +45,7 @@ class SomePainter extends CustomPainter {
 }
 ```
 
-### setState`의 호출을 빌드 트리의 잎(leaf)으로 격리시킨다.
+### `setState`의 호출을 빌드 트리의 잎(leaf)으로 격리시킨다.
 
 `State.setState`를 호출하면 모든 자식 위젯이 다시 빌드되기 때문에 가능한 한 구석으로 밀어넣는 것이 좋다.
 ```dart
@@ -83,8 +84,8 @@ class SomePainter extends CustomPainter {
 
 위젯을 반환하는 헬퍼 함수를 사용하면 `State.setState`가 호출될 때 함수가 반환하는 위젯이 모두 다시 빌드되는 반면, 위젯을 사용하면 플러터가 리렌더링을 최적화 할 수 있기 때문이다.
 
-헬퍼 함수의 안좋은 예시
-```dart
+```dart title="헬퍼 함수의 안좋은 예시"
+
 Widget buildRoundedButton(String text) {
   return ElevatedButton(
     onPressed: () {},
@@ -117,8 +118,7 @@ class _HelperMethodExampleState extends State<HelperMethodExample> {
 }
 ```
 
-위젯으로 만든 예시
-```dart
+```dart title="위젯으로 만든 예시"
 class RoundedButton extends StatelessWidget {
   final String text;
   const RoundedButton(this.text, {super.key});
@@ -159,8 +159,7 @@ class _WidgetClassExampleState extends State<WidgetClassExample> {
 
 ### 최대한 `const` 생성자로 위젯을 만들어서 빌드 비용을 아껴야 한다.
 
-`const` 생성자는 엔진이 재사용할 수 있도록 돕는다.
-```dart
+```dart caption="const 생성자는 엔진이 재사용할 수 있도록 돕는다."
 class ConstWidgetExample extends StatelessWidget {
   const ConstWidgetExample({super.key});
 
@@ -236,8 +235,7 @@ class _CachingExampleState extends State<CachingExample> {
 일반적으로 조건부로 서브트리를 빼거나 넣기보다는, 위젯의 속성만 변경해서 재렌더링하는 편이 훨씬 효율적이다.
 동일한 위젯 트리 구조 안에서 속성만 바뀌면 렌더링 엔진이 최소한의 작업만 처리할 수 있다.
 
-좋지 않은 예시
-```dart
+```dart title="좋지 않은 예시"
 class BadTreeExample extends StatefulWidget {
   const BadTreeExample({super.key});
 
@@ -263,8 +261,7 @@ class _BadTreeExampleState extends State<BadTreeExample> {
 }
 ```
 
-좋은 예시
-```dart
+```dart title="좋은 예시"
 class GoodTreeExample extends StatefulWidget {
   const GoodTreeExample({super.key});
 
