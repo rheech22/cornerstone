@@ -34,7 +34,7 @@ body {
 
 .markdown {
   font-size: 1.125rem;
-  max-width: 860px;
+  max-width: 840px;
 
   .katex-display {
     display: block;
