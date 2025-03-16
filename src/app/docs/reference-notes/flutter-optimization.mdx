@@ -1,0 +1,354 @@
+---
+created: 2025-03-16 06:12:18 +0900
+updated: 2025-03-16 11:23:16 +0900
+title: '플러터 성능에 관한 주의사항'
+tags: ['Flutter']
+---
+
+### 위젯의 build 메서드 안에서 반복적이고 무거운 작업은 피해야 한다.
+
+부모 위젯이 빌드 될때마다 호출되기 때문이다.
+
+### build 메서드에서 생성하는 노드 수를 최소화시킨다.
+
+StatefulWidget의 build는 가능한 한 간결하게 구성한다. 내부에서 추가로 복잡한 위젯 트리를 만들기보다는 그 트리를 별도의 StatelessWidget(또는 StatefulWidget)으로 분리하여 관리하는 것이 좋다.
+```dart
+class EfficientWidget extends StatefulWidget {
+  const EfficientWidget({super.key});
+
+  @override
+  State<EfficientWidget> createState() => _EfficientWidgetState();
+}
+
+class _EfficientWidgetState extends State<EfficientWidget> {
+  // build 메서드에서 단일 위젯만 생성 (이 예시에서는 CustomPaint)
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: SomePainter(), // RenderObjectWidget 계열(예: CustomPaint 등)을 바로 생성
+      size: const Size(200, 200),
+    );
+  }
+}
+
+class SomePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 그리기 로직
+    final paint = Paint()..strokeWidth = 2;
+    canvas.drawLine(Offset.zero, Offset(size.width, size.height), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+```
+
+### setState`의 호출을 빌드 트리의 잎(leaf)으로 격리시킨다.
+
+`State.setState`를 호출하면 모든 자식 위젯이 다시 빌드되기 때문에 가능한 한 구석으로 밀어넣는 것이 좋다.
+```dart
+class EfficientWidget extends StatefulWidget {
+  const EfficientWidget({super.key});
+
+  @override
+  State<EfficientWidget> createState() => _EfficientWidgetState();
+}
+
+class _EfficientWidgetState extends State<EfficientWidget> {
+  // build 메서드에서 단일 위젯만 생성 (이 예시에서는 CustomPaint)
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: SomePainter(), // RenderObjectWidget 계열(예: CustomPaint 등)을 바로 생성
+      size: const Size(200, 200),
+    );
+  }
+}
+
+class SomePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 그리기 로직
+    final paint = Paint()..strokeWidth = 2;
+    canvas.drawLine(Offset.zero, Offset(size.width, size.height), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+```
+
+### 재사용 가능한 위젯을 만들 때 함수보다는 `StatelessWidget`을 사용하는 것이 좋다.
+
+위젯을 반환하는 헬퍼 함수를 사용하면 `State.setState`가 호출될 때 함수가 반환하는 위젯이 모두 다시 빌드되는 반면, 위젯을 사용하면 플러터가 리렌더링을 최적화 할 수 있기 때문이다.
+
+헬퍼 함수의 안좋은 예시
+```dart
+Widget buildRoundedButton(String text) {
+  return ElevatedButton(
+    onPressed: () {},
+    style: ElevatedButton.styleFrom(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+    ),
+    child: Text(text),
+  );
+}
+
+class HelperMethodExample extends StatefulWidget {
+  const HelperMethodExample({super.key});
+
+  @override
+  State<HelperMethodExample> createState() => _HelperMethodExampleState();
+}
+
+class _HelperMethodExampleState extends State<HelperMethodExample> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        buildRoundedButton('Button 1'), // 매 빌드마다 함수 결과를 다시 생성
+        buildRoundedButton('Button 2'),
+      ],
+    );
+  }
+}
+```
+
+위젯으로 만든 예시
+```dart
+class RoundedButton extends StatelessWidget {
+  final String text;
+  const RoundedButton(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: Text(text),
+    );
+  }
+}
+
+class WidgetClassExample extends StatefulWidget {
+  const WidgetClassExample({super.key});
+
+  @override
+  State<WidgetClassExample> createState() => _WidgetClassExampleState();
+}
+
+class _WidgetClassExampleState extends State<WidgetClassExample> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        RoundedButton('Button 1'),
+        RoundedButton('Button 2'),
+      ],
+    );
+  }
+}
+```
+
+### 최대한 `const` 생성자로 위젯을 만들어서 빌드 비용을 아껴야 한다.
+
+`const` 생성자는 엔진이 재사용할 수 있도록 돕는다.
+```dart
+class ConstWidgetExample extends StatelessWidget {
+  const ConstWidgetExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Use const Widgets'),
+      ),
+      body: Column(
+        children: const [
+          Text('이 텍스트는 절대 변하지 않음', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          // 이런 식으로 const 생성자를 적극 활용
+          Icon(Icons.star, size: 50),
+        ],
+      ),
+    );
+  }
+}
+```
+
+### 변경되지 않는 서브트리는 캐시하기
+
+`initState`에서 한 번 만들어 둔 위젯을 매번 build할 때마다 새로 만들 필요가 없다. 이렇게 하면 변경되지 않는 부분에 대한 생성 비용을 아낄 수 있다.
+```dart
+class CachingExample extends StatefulWidget {
+  const CachingExample({super.key});
+
+  @override
+  State<CachingExample> createState() => _CachingExampleState();
+}
+
+class _CachingExampleState extends State<CachingExample> {
+  // 변하지 않는 서브트리를 캐싱
+  late final Widget _staticPart;
+
+  @override
+  void initState() {
+    super.initState();
+    _staticPart = _buildStaticPart();
+  }
+
+  Widget _buildStaticPart() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: const Text(
+        '이 부분은 변경되지 않는다.',
+        style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _staticPart, // 매번 똑같은 위젯을 새로 생성하는 대신, 이미 만들어둔 위젯 재사용
+        ElevatedButton(
+          onPressed: () {
+            setState(() {});
+          },
+          child: const Text('Rebuild State'),
+        ),
+      ],
+    );
+  }
+}
+```
+
+## 서브트리의 "깊이"나 "타입"이 자주 바뀌지 않도록 하기
+
+일반적으로 조건부로 서브트리를 빼거나 넣기보다는, 위젯의 속성만 변경해서 재렌더링하는 편이 훨씬 효율적이다.
+동일한 위젯 트리 구조 안에서 속성만 바뀌면 렌더링 엔진이 최소한의 작업만 처리할 수 있다.
+
+좋지 않은 예시
+```dart
+class BadTreeExample extends StatefulWidget {
+  const BadTreeExample({super.key});
+
+  @override
+  State<BadTreeExample> createState() => _BadTreeExampleState();
+}
+
+class _BadTreeExampleState extends State<BadTreeExample> {
+  bool _ignore = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_ignore) {
+      // 조건에 따라 트리의 깊이가 달라진다.
+      return Text('Ignore is true');
+    } else {
+      return IgnorePointer(
+        ignoring: false,
+        child: Text('Ignore is false'),
+      );
+    }
+  }
+}
+```
+
+좋은 예시
+```dart
+class GoodTreeExample extends StatefulWidget {
+  const GoodTreeExample({super.key});
+
+  @override
+  State<GoodTreeExample> createState() => _GoodTreeExampleState();
+}
+
+class _GoodTreeExampleState extends State<GoodTreeExample> {
+  bool _ignore = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // 항상 동일한 트리 구조를 유지
+    return IgnorePointer(
+      ignoring: _ignore, // 속성만 제어
+      child: const Text('여기 서브트리는 변하지 않음'),
+    );
+  }
+}
+```
+
+### 어쩔 수 없이 트리의 깊이를 바꿔야 한다면, GlobalKey 사용을 고려한다.
+
+```dart
+class GlobalKeyExample extends StatefulWidget {
+  const GlobalKeyExample({super.key});
+
+  @override
+  State<GlobalKeyExample> createState() => _GlobalKeyExampleState();
+}
+
+class _GlobalKeyExampleState extends State<GlobalKeyExample> {
+  bool _showAlternateLayout = false;
+
+  // 공통 위젯을 GlobalKey로 감싸서 재사용
+  final GlobalKey _commonPartKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget commonPart = KeyedSubtree(
+      key: _commonPartKey,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: const Text('이 부분은 트리 변경 중에도 유지한다.'),
+      ),
+    );
+
+    if (_showAlternateLayout) {
+      return Column(
+        children: [
+          commonPart,
+          // 나머지는 다른 배치
+          const Text('Alternate layout'),
+          ElevatedButton(
+            onPressed: () => setState(() => _showAlternateLayout = false),
+            child: const Text('Switch Back'),
+          )
+        ],
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            commonPart,
+            // 기본 배치
+            const Text('Default layout'),
+            ElevatedButton(
+              onPressed: () => setState(() => _showAlternateLayout = true),
+              child: const Text('Switch Layout'),
+            )
+          ],
+        ),
+      );
+    }
+  }
+}
+```
+
+## 더 읽어보기
+
+- [Best practices for optimizing Flutter web loading speed](https://medium.com/flutter/best-practices-for-optimizing-flutter-web-loading-speed-7cc0df14ce5c)
+
+## 참고
+
+- [Performance best practice](https://docs.flutter.dev/perf/best-practices)
+

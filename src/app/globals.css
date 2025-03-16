@@ -137,8 +137,7 @@ body {
 }
 
 .markdown {
-  max-width: 700px;
-  margin: 0 auto;
+  font-size: 1.125rem;
 
   .katex-display {
     display: block;
@@ -249,6 +248,10 @@ body {
     margin-bottom: 1em;
     scroll-margin-top: 7rem;
     font-weight: 700;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
   }
 
   h1 {
@@ -264,6 +267,7 @@ body {
   }
 
   p {
+    line-height: 1.5;
     margin-bottom: 1.25em;
 
     /* inline code */
@@ -287,6 +291,10 @@ body {
     li + li {
       margin-top: 16px;
     }
+
+    li > ul {
+      margin-top: 16px;
+    }
   }
 
   ol {
@@ -301,8 +309,9 @@ body {
 
   a {
     &.wiki-link {
-      color: blue;
       text-decoration: unset;
+      font-weight: bold;
+      color: #000000;
 
       &:hover {
         text-decoration: underline;

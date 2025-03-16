@@ -1,4 +1,5 @@
 import { MdxLayout } from "@/app/components/mdx-layout";
+import { NoteLayout } from "@/app/components/note-layout";
 import { getPosts, getSlug } from "@/app/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
@@ -9,9 +10,13 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
   console.log(frontmatter);
 
+  // TODO: blog layout 따로 만들기
+
   return (
     <MdxLayout>
-      <Post />
+      <NoteLayout frontmatter={frontmatter}>
+        <Post />
+      </NoteLayout>
     </MdxLayout>
   );
 };

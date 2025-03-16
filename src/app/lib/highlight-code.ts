@@ -9,7 +9,7 @@ import {
 
 const highlighterPromise = createHighlighterCore({
   themes: [
-    import("@shikijs/themes/laserwave"),
+    import("@shikijs/themes/github-light-high-contrast"),
     // ..
   ],
   langs: [
@@ -29,7 +29,7 @@ export async function highlightCode(code: string, lang: string) {
   const highlighter = await highlighterPromise;
   const html = highlighter.codeToHtml(code, {
     lang,
-    theme: "laserwave",
+    theme: "github-light-high-contrast",
     transformers: [
       transformerNotationHighlight({
         matchAlgorithm: "v3",

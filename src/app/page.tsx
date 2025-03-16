@@ -2,20 +2,28 @@ import Link from "next/link";
 
 const Home = () => {
   return (
-    <div className="py-12">
-      <main className="flex flex-col items-center gap-6 px-12 py-24 text-center text-lg font-bold">
-        <Link href="/blog/index" className="underline">
-          Blog
-        </Link>
-        <Link href="/fleeting-notes/index" className="underline">
-          Fleeting Notes
-        </Link>
-        <Link href="/reference-notes/index" className="underline">
-          Reference Notes
-        </Link>
+    <div className="h-screen flex flex-col">
+      <main className="h-full flex">
+        <nav className="m-auto border-4 border-black flex flex-col items-center justify-center gap-12 text-4xl font-bold p-14">
+          <Link href="/blog/index" className="underline w-full text-center">
+            Blog
+          </Link>
+          <Link
+            href="/fleeting-notes/index"
+            className="underline w-full text-center"
+          >
+            Fleeting Notes
+          </Link>
+          <Link
+            href="/reference-notes/index"
+            className="underline w-full text-center"
+          >
+            Reference Notes
+          </Link>
+        </nav>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        FOOTER AREA
+      <footer className="mx-auto mt-auto pb-12 underline underline-offset-4 font-semibold">
+        ©️ copyright 2025 by lch
       </footer>
     </div>
   );
