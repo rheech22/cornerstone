@@ -1,14 +1,17 @@
 ---
 created: 2025-03-11 05:39:21 +0900
-updated: 2025-03-16 11:25:11 +0900
-title: '테스트 페이지'
+updated: 2025-03-16 20:58:17 +0900
+title: "테스트 페이지"
 tags: []
 ---
 
 import { Fonts } from "@/app/components/fonts.tsx";
 import { Callout } from "@/app/components/callout.tsx";
+import { Blockquote } from "@/app/components/blockquote.tsx";
 
-# FSD 아키텍처가 뭔가요?
+# 이 문서는 Test를 위한...
+
+## Bold 그리고 이탤릭
 
 This is some **bold** and _italics_ text.
 
@@ -20,49 +23,73 @@ This is some **bold** and _italics_ text.
 
 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqu.
 
-## UL은 뭐의 약자?
+## \<UL/\>
 
 - 문서 디자인에 의미가 있는 글을 담으면 사람들은 양식을 보지 않고 글의 내용에 집중하는 경향이 있다. 예를 들어 "나무위키의 서버는 파라과이에 있다."라는 문장을 적으면 대부분의 사람들은 글씨체에 집중하지 않고 글의 내용에 집중하게 될 것이다. 그렇다고 의미 없이 아무런 글자를 무작위로 입력해도 안 된다. 그런 텍스트는 아름답지도 않고 폰트나 레이아웃은 글 내용의 무질서함에 가려져 보이지 않을 것이다. 예를 들어 "askfiofsikf"같이 아무렇게나 입력한 문자열로 폰트를 평가한다면 폰트, 레이아웃은 보이지 않고 애들 장난같이 보일 것이다.
 - 그렇기 때문에 로렘 입숨처럼 적당히 정갈하면서도 전세계 어떤 화자도 무슨 내용인지 이해할 수 없는(달리 말해 주의를 빼앗기지 않을) 문장을 사용한다.
-- 로렘 입숨 생성 기능이 없더라도 플러그인을 지원하는 소프트웨어에는 로렘 입숨을 생성해 주는 플러그인이 존재하기도 한다. [링크](https://arc.net/l/quote/egqpcpjl)
+- 로렘 입숨 생성 기능이 없더라도 플러그인을 지원하는 소프트웨어에는 로렘 입숨을 생성해 주는 플러그인이 존재하기도 한다.
 
-#### Heading 4는 사이즈가 같지만 font weight이 다릅니다.
+## 링크 그리고 ...
 
-아래는 MDX 컴포넌트 입니다.
+[링크](https://arc.net/l/quote/egqpcpjl)
 
-<Fonts />
+#### Heading 4는 사이즈가 같지만 font weight이 다릅니다. 그리고 마진이 있네요.
 
 ##### Heading 5는 p와 같습니다.
 
-This is inline code => `Hello World`
+###### Heading 6도 마찬가지....
+
+## 폰트 사이즈
+
+<Fonts />
 
 ## Image
 
 ### Local
 
 ![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+이 사진은 로컬에서..
 
 ### Remote
 
 ![remote](https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2629&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+이 사진은 외부에서 가져왔습니다.
 
 ## Quotes
 
-> “Two “front-end web developers” can be standing right next to each other and have little, if any, skill sets in common. That’s downright bizarre to me for a job title so specific and ubiquitous. I’m sure that’s already the case with a job title like designer, but front-end web developer is a niche within a niche already.”
+<Blockquote from="Jhon Doe">
+  “Two “front-end web developers” can be standing right next to each other and
+  have little, if any, skill sets in common. That’s downright bizarre to me for
+  a job title so specific and ubiquitous. I’m sure that’s already the case with
+  a job title like designer, but front-end web developer is a niche within a
+  niche already.”
+</Blockquote>
+
+<Blockquote from="다산 정약용">
+  "마음속에서 천명과 인욕이 싸워 옳은 판단을 내리듯 인욕을 이겨내면 사람은
+  저절로 그 허물을 알게 된다."
+</Blockquote>
 
 ## Callout
 
-<Callout>
+<Callout title="NOTE TITLE HERE">
+  그렇기 때문에 로렘 입숨처럼 적당히 정갈하면서도 전세계 어떤 화자도 무슨
+  내용인지 이해할 수 없는(달리 말해 주의를 빼앗기지 않을) 문장을 사용한다.
+</Callout>
 
-그렇기 때문에 로렘 입숨처럼 적당히 정갈하면서도 전세계 어떤 화자도 무슨 내용인지 이해할 수 없는(달리 말해 주의를 빼앗기지 않을) 문장을 사용한다.
-
+<Callout title="NOTE">
+  Two “front-end web developers” can be standing right next to each other and
+  have little, if any, skill sets in common. That’s downright bizarre to me for
+  a job title so specific and ubiquitous. I’m sure that’s already the case with
+  a job title like designer, but front-end web developer is a niche within a
+  niche already.
 </Callout>
 
 ## Code
 
-Code snippets is here !
+`() => This is inline code Hello World`
 
-Javascrpt with lines highlighted
+### Javascrpt with lines highlighted
 
 ```js title="hello"
 // [!code highlight:2]
@@ -112,7 +139,7 @@ plugins.push(
 export default () => plugins.reduce((_, plugin) => plugin(_), nextConfig);
 ```
 
-JSX with lines Added
+### JSX with lines Added
 
 ```jsx caption="이건 참고하지 마세요"
 function VideoList({ videos, emptyHeading }) {
@@ -133,7 +160,7 @@ function VideoList({ videos, emptyHeading }) {
 }
 ```
 
-TSX with lines removed
+### TSX with lines removed
 
 ```tsx
 import type { Metadata } from "next";
@@ -159,7 +186,7 @@ export default function RootLayout({
 }
 ```
 
-Dart with lines focused
+### Dart with lines focused
 
 ```dart
 void main() {
@@ -178,7 +205,7 @@ void main() {
 }
 ```
 
-Python with a word highlighted
+### Python with a word highlighted
 
 ```python
 # [!code word:prompt]
@@ -196,9 +223,3 @@ chain = (
     | llm
 )
 ```
-
-###### Heading 6도 마찬가지....
-
-It’s easy to get disheartened looking at numbers, but when I throttle my CPU/network and do side-by-side comparisons, I can’t really tell the difference. I’m a bit concerned about the SEO impact of a lower Lighthouse score, but I think if the Next team addresses the CSS bundling issue, it should wind up being roughly equivalent.
-
-While we’re on the topic of slow performance, the development server is much slower with the App Router. It’s gotten worse and worse as my blog has grown. Here are the current stats:

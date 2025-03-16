@@ -1,11 +1,14 @@
 export const Blockquote = async ({
   children,
+  from,
 }: {
   children: React.ReactNode;
+  from?: string;
 }) => {
   return (
-    <blockquote className="bg-gradient-to-t from-gray-100 to-gray-200 p-4 rounded-lg text-gray-800">
-      {children}
+    <blockquote>
+      <div className="text-4xl leading-none font-medium">{children}</div>
+      {from && <span className="text-2xl font-light">— {from}</span>}
     </blockquote>
   );
 };
