@@ -1,29 +1,46 @@
-import { createHighlighterCore } from "shiki/core";
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
   transformerNotationDiff,
   transformerNotationFocus,
 } from "@shikijs/transformers";
+import { createHighlighter } from "shiki";
 
-const highlighterPromise = createHighlighterCore({
+//const highlighterPromise = createHighlighterCore({
+//  themes: [
+//    import("@shikijs/themes/github-light-high-contrast"),
+//    // ..
+//  ],
+//  langs: [
+//    import("@shikijs/langs/typescript"),
+//    import("@shikijs/langs/javascript"),
+//    import("@shikijs/langs/jsx"),
+//    import("@shikijs/langs/tsx"),
+//    import("@shikijs/langs/dart"),
+//    import("@shikijs/langs/python"),
+//    import("@shikijs/langs/lua"),
+//    import("@shikijs/langs/shellscript"),
+//    // ..
+//  ],
+//  engine: createJavaScriptRegexEngine(),
+//});
+
+const highlighterPromise = createHighlighter({
   themes: [
-    import("@shikijs/themes/github-light-high-contrast"),
+    "github-light-high-contrast",
     // ..
   ],
   langs: [
-    import("@shikijs/langs/typescript"),
-    import("@shikijs/langs/javascript"),
-    import("@shikijs/langs/jsx"),
-    import("@shikijs/langs/tsx"),
-    import("@shikijs/langs/dart"),
-    import("@shikijs/langs/python"),
-    import("@shikijs/langs/lua"),
-    import("@shikijs/langs/shellscript"),
+    "typescript",
+    "javascript",
+    "jsx",
+    "tsx",
+    "dart",
+    "python",
+    "lua",
+    "shellscript",
     // ..
   ],
-  engine: createJavaScriptRegexEngine(),
 });
 
 export async function highlightCode(code: string, lang: string) {
