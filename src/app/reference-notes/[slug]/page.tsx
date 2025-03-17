@@ -8,7 +8,7 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     `../../docs/reference-notes/${slug}.mdx`
   );
 
-  console.log(frontmatter);
+  console.log(slug);
 
   return (
     <MdxLayout>

@@ -8,8 +8,6 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     `../../docs/fleeting-notes/${slug}.mdx`
   );
 
-  console.log(frontmatter);
-
   return (
     <MdxLayout>
       <NoteLayout frontmatter={frontmatter}>

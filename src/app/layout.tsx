@@ -4,20 +4,25 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cornerstone",
-  description: "My public zt",
+  title: "cornerstone",
+  description: "my public notes",
 };
 
 const sans = DM_Sans({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
+  breadcrumbs,
 }: Readonly<{
   children: React.ReactNode;
+  breadcrumbs: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={`${sans.className} antialiased`}>{children}</body>
+      <body className={`${sans.className} antialiased`}>
+        {breadcrumbs}
+        {children}
+      </body>
     </html>
   );
 }

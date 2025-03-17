@@ -8,8 +8,6 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     `../../docs/blog/${slug}.mdx`
   );
 
-  console.log(frontmatter);
-
   // TODO: blog layout 따로 만들기
 
   return (
