@@ -7,6 +7,12 @@
   --foreground: #000000;
 }
 
+@property --border-angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: "<angle>";
+}
+
 * {
   &::-webkit-scrollbar-track {
     border: 1px solid black;
@@ -192,6 +198,7 @@ body {
   p {
     line-height: 1.5;
     margin-bottom: 1.25em;
+    overflow-wrap: break-word;
 
     /* inline code */
     & > code {
@@ -248,5 +255,53 @@ body {
       background: black;
       color: white;
     }
+  }
+}
+
+/*animations*/
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0turn;
+}
+
+.flowing-border {
+  position: relative;
+  border: solid 8px transparent;
+  --border-angle: 0.5turn;
+  --main-bg: conic-gradient(
+    from var(--border-angle),
+    var(--background),
+    var(--background),
+    var(--background),
+    var(--background)
+  );
+  --gradient-border: conic-gradient(
+    from var(--border-angle),
+    transparent 25%,
+    black,
+    black 99%,
+    transparent
+  );
+  background:
+    var(--main-bg) padding-box,
+    var(--gradient-border) border-box,
+    var(--main-bg) border-box;
+
+  background-position: center center;
+  animation: bg-spin 4s linear infinite;
+  animation-play-state: paused;
+
+  &:hover {
+    animation-play-state: running;
+  }
+}
+
+@keyframes bg-spin {
+  0% {
+    --border-angle: 0.5turn;
+  }
+  100% {
+    --border-angle: 1.5turn;
   }
 }

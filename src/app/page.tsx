@@ -4,8 +4,10 @@ const Home = () => {
   return (
     <div className="h-screen flex flex-col">
       <main className="h-full flex flex-col">
-        <nav className="m-auto border-4 border-black flex flex-col items-center gap-12 text-4xl font-bold p-14">
-          <div className="text-4xl font-bold border-2 border-black">beta</div>
+        <nav className="relative m-auto flex flex-col items-center gap-12 text-4xl font-bold p-14 flowing-border">
+          <p className="text-center text-2xl font-bold">
+            Hello! This place is still in development.
+          </p>
           <Link
             href="/blog/index"
             className="underline w-full text-start hover:underline-offset-4"
@@ -24,6 +26,9 @@ const Home = () => {
           >
             Reference Notes
           </Link>
+          <p className="text-center text-2xl font-bold">
+            The official version wiil be released soon :)
+          </p>
         </nav>
       </main>
       <footer className="mx-auto mt-auto pb-12 underline underline-offset-4 font-semibold">
