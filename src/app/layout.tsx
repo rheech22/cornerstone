@@ -6,6 +6,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "cornerstone",
   description: "my public notes",
+  icons: "/favicon.png",
 };
 
 const sans = DM_Sans({ subsets: ["latin"] });
