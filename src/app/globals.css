@@ -138,6 +138,10 @@ body {
         }
 
         &.remove {
+          span {
+            text-decoration: line-through;
+          }
+
           span:first-child::before {
             content: "-";
             margin-right: 0.5rem;
