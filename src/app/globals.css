@@ -199,20 +199,20 @@ body {
     line-height: 1.5;
     margin-bottom: 1.25em;
     overflow-wrap: break-word;
+  }
 
-    /* inline code */
-    & > code {
-      display: inline;
-      font-size: 0.9375em;
-      font-style: normal;
-      letter-spacing: -0.5px;
-      padding: 2px 6px;
-      margin: 1px;
-      background: black;
-      color: white;
-      box-decoration-break: clone;
-      font-family: "Fira Code", "Courier New", monospace;
-    }
+  /* inline code */
+  code:not(:has(> *)) {
+    display: inline;
+    font-size: 0.9375em;
+    font-style: normal;
+    letter-spacing: -0.5px;
+    padding: 2px 6px;
+    margin: 1px;
+    background: black;
+    color: white;
+    box-decoration-break: clone;
+    font-family: "Fira Code", "Courier New", monospace;
   }
 
   ol,

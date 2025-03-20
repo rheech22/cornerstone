@@ -1,0 +1,34 @@
+---
+created: 2025-03-20 16:34:34 +0900
+updated: 2025-03-20 16:53:49 +0900
+title: '[Flutter] Freezed 모델에서 문자열로 필드 조회하기'
+tags: ['Flutter', 'Dart', 'Freezed']
+---
+
+Dart는 정적 타입 언어이기 때문에 JavaScript처럼 `object[propertyName]`으로 동적 접근이 어렵다.
+Freezed 모델은 자동으로 `toJson()` 메서드를 생성하므로, 이를 활용할 수 있다.
+먼저 모델에 [[./custom-method-on-freezed|커스텀 메서드]]를 추가한다.
+
+```dart
+@freezed
+class MyModel with _$MyModel {
+  const factory MyModel({
+    @Default(0) num a,
+    @Default(0) num b,
+    // ... 
+  }) = _MyModel;
+
+  const MyModel._(); // 사용자 정의 메서드를 위한 프라이빗 생성자
+
+  // 추가
+  num getValueByName(String name) {
+    final json = toJson();
+    return json.containsKey(metricName) ? (json[metricName] as num? ?? 0) : 0;
+  }
+  
+  factory MyModel.fromJson(Map<String, dynamic> json) => _$MyModelFromJson(json);
+}
+```
+
+필드가 많다면 `switch` 문을 사용하는 것보다 모든 필드를 나열하지 않아도 되는 이 방식이 더 나은 것 같다.
+
