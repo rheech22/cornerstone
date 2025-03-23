@@ -17,7 +17,7 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
       <div className="lg:hidden">
         {frontmatter && (
           <div className="border-4 border-black p-4 mb-6">
-            <h1 className="font-mono text-4xl font-bold mb-4">
+            <h1 className="font-mono text-3xl font-bold mb-4 break-words">
               {frontmatter.title}
             </h1>
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -55,7 +55,7 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
         {frontmatter && (
           <div className="w-80 flex-shrink-0">
             <div className="sticky top-6 border-4 border-black p-4">
-              <h1 className="font-mono text-4xl font-bold mb-6">
+              <h1 className="font-mono text-3xl font-bold mb-6 break-words">
                 {frontmatter.title}
               </h1>
               <div className="space-y-4">
