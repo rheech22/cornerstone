@@ -1,0 +1,128 @@
+---
+created: 2025-03-23 23:13:01 +0900
+updated: 2025-03-24 00:56:52 +0900
+title: '[Flutter] StatefulShellRoute로 상태가 유지되는 레이아웃 만들기'
+tags: ['Flutter', 'GoRouter']
+---
+
+StatefulShellRoute는 [[./gorouter-shellroute|ShellRoute]]의 확장된 버전으로 상태 보존을 지원한다. 만약 TabBar를 레이아웃으로 구현했다면 각 탭에 대한 별도의 Navigator를 생성하여 상태가 유지되는 중첩된 네비게이션을 구현할 수 있다.
+
+```dart
+final GoRouter _router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: '/root',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return Layout(
+          onTabChanged: (int index) {
+            if (index == navigationShell.currentIndex) return;
+            navigationShell.goBranch(index);
+          },
+        );
+      },
+      branches: [
+	GoRoute(
+	  path: '/a',
+	  builder: (context, state) {
+	    return () => AAA();
+	  },
+	),
+	GoRoute(
+	  path: '/b',
+	  builder: (context, state) {
+	    return () => BBB();
+	  },
+	),
+      ],
+    ),
+  ],
+);
+```
+
+다만 브랜치의 기본 경로로 매개변수를 포함한 루트가 포함되면 
+```dart
+final GoRouter _router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: '/root',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return Layout(
+          onTabChanged: (int index) {
+            if (index == navigationShell.currentIndex) return;
+            navigationShell.goBranch(index);
+          },
+        );
+      },
+      branches: [
+	GoRoute(
+	  path: '/:userId',
+	  builder: (context, state) {
+	    return () => AAA();
+	  },
+	),
+	GoRoute(
+	  path: '/b',
+	  builder: (context, state) {
+	    return () => BBB();
+	  },
+	),
+      ],
+    ),
+  ],
+);
+```
+
+다음 에러를 마주하게 된다.
+```bash
+The default location of a StatefulShellBranch cannot be a parameterized route
+```
+
+부자연스럽지만 dummy route를 추가하거나 redirect를 추가해주는 방식으로 해결할 수 있다고 한다.  
+
+[How to use a parameterized route](https://stackoverflow.com/questions/76527689/how-to-use-a-parameterized-route-as-the-root-of-a-statefulshellroute-with-gorout/77157698#77157698)
+
+다만 나의 경우에 `/path/:id/subpath`와 같은 경로에서 위 방법이 잘 통하지 않았다. 아직 이해가 부족해서 좀 더 공부가 필요할 것 같다. 그렇다고 StatefulShellRoute의 장점을 포기하고 싶진 않아서 직접 경로를 확인해서 파라미터를 매칭하도록 구현했다.
+
+```dart title="중복 코드 제거를 위한 헬퍼 함수" caption="이게 맞나 싶지만 우선 동작을 시켜보자..."
+StatefulShellBranch branch({
+  required String tab,
+  required Widget Function(String symbol) builder,
+}) {
+  return StatefulShellBranch(
+    routes: [
+      GoRoute(
+        path: '/dummy-$tab',
+        redirect: (_, __) {
+          return '/path/${getCurrentParam()}/$tab';
+        },
+      ),
+      GoRoute(
+        path: '/path/:id/$tab',
+        builder: (context, state) {
+          return builder();
+        },
+      ),
+    ],
+  );
+}
+
+String? getCurrentParam() {
+  final RouteMatch lastMatch = router.routerDelegate.currentConfiguration.last;
+  final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+      ? lastMatch.matches
+      : router.routerDelegate.currentConfiguration;
+  final String location = matchList.uri.toString();
+  return RegExp(r'/path/([^/]+)/').firstMatch(location)?.group(1);
+}
+```
+
+현재 로케이션을 구하는 방식은 아래 링크를 참고했다.
+[링크](https://github.com/flutter/flutter/issues/129833)
+
+## 참고
+
+[StatefulShellRoute](https://pub.dev/documentation/go_router/latest/go_router/StatefulShellRoute-class.html)
+[How to use a parameterized route](https://stackoverflow.com/questions/76527689/how-to-use-a-parameterized-route-as-the-root-of-a-statefulshellroute-with-gorout/77157698#77157698)
+[Come up with a better way to get the current location without context](https://github.com/flutter/flutter/issues/129833)

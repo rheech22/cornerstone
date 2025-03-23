@@ -1,0 +1,34 @@
+---
+created: 2025-03-23 22:54:21 +0900
+updated: 2025-03-23 23:52:17 +0900
+title: '[Flutter] ShellRoute로 레이아웃 구성하기'
+tags: ['Flutter', 'GoRouter']
+---
+
+GoRouter에서 제공하는 ShellRoute를 통해 화면마다 동일하게 보여줘야 하는 레이아웃을 만들 수 있다.
+
+```dart
+ShellRoute(
+  builder: (context, state, child) {
+    return Layout(child: child);
+  },
+  routes: [
+    GoRoute(
+      path: '/a',
+      builder: (context, state) => AAA()'),
+    ),
+    GoRoute(
+      path: '/b',
+      builder: (context, state) => BBB()'),
+    ),
+    // ... other routes
+  ],
+),
+```
+
+ShellRoute는 경로에 매칭된 Child 위젯을 보여준다. Navigation Bar, Tab 같이 레이아웃을 유지하면서 내부 컨텐츠만 변경해야 할 때 이용할 수 있다. 다만 ShellRoute 내부에서 Child가 바뀔 때 상태를 유지시키지는 않는다. 그런 경우라면 [[flutter-statefulshellroute|StatefulShellRoute]]를 사용하는 것이 좋다.
+
+## 참고
+
+[ShellRoute](https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html)
+

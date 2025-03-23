@@ -1,0 +1,64 @@
+---
+created: 2025-03-24 00:12:58 +0900
+updated: 2025-03-24 00:24:36 +0900
+title: '[Flutter] 오버레이란?'
+tags: ['Flutter']
+---
+
+## Overlay란?
+
+Overlay는 Flutter 앱에서 기존 화면 위에 떠 있는 UI 요소들을 관리하는 시스템임
+마치 투명한 층을 여러 개 겹쳐놓는 것처럼 작동함
+
+## OverlayEntry란?
+
+OverlayEntry는 이 Overlay 위에 배치되는 하나의 위젯이나 UI 요소임
+팝업, 모달, 토스트 메시지와 같은 요소들을 만들 때 사용함
+
+## 기본 사용법
+
+```dart
+// Overlay 접근하기
+final overlay = Overlay.of(context);
+
+// OverlayEntry 생성하기
+final entry = OverlayEntry(
+  builder: (context) => Positioned(
+    top: 100,
+    left: 50,
+    child: Material(
+      color: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        color: Colors.blue,
+        child: Text('이것은 오버레이입니다!'),
+      ),
+    ),
+  ),
+);
+
+// Overlay에 추가하기
+overlay.insert(entry);
+
+// 나중에 제거하기
+entry.remove();
+```
+
+## 사용 사례
+
+- 툴팁 표시
+- 로딩 인디케이터
+- 커스텀 다이얼로그
+- 드롭다운 메뉴
+- 스낵바 메시지
+
+대표적인 사용 사례는 위와 같지만, 실제로 직접 호출해서 사용하는 경우는 드문 것으로 보인다.
+MaterialApp의 Navigator가 OverlayEntry를 사용하여 화면을 전환을 처리한다고 한다.
+(GoRouter도 Navigator를 사용하기 때문에 잘못된 라우터 설정을 하면 Overlay 관련 에러를 뿜기도 한다.)
+
+## 참고
+
+- [Overlay](https://api.flutter.dev/flutter/widgets/Overlay-class.html)
+- [OverlayEntry](https://api.flutter.dev/flutter/widgets/OverlayEntry-class.html)
+
+
