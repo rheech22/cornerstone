@@ -15,16 +15,10 @@ const Home = () => {
             Blog
           </Link>
           <Link
-            href="/fleeting-notes/index"
-            className="underline w-full text-end hover:underline-offset-4"
+            href="/note/index"
+            className="underline w-full hover:underline-offset-4 text-end"
           >
-            Fleeting Notes
-          </Link>
-          <Link
-            href="/reference-notes/index"
-            className="underline w-full text-start hover:underline-offset-4"
-          >
-            Reference Notes
+            Note
           </Link>
           <p className="text-center text-2xl font-bold">
             The official version wiil be released soon :)

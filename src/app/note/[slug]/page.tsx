@@ -5,7 +5,7 @@ import { getPosts, getSlug } from "@/app/lib/get-posts";
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
   const { default: Post, frontmatter } = await import(
-    `../../docs/fleeting-notes/${slug}.mdx`
+    `../../docs/note/${slug}.mdx`
   );
 
   return (
@@ -20,7 +20,7 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 export default Page;
 
 export const generateStaticParams = () => {
-  return getPosts("fleeting-notes").map((fileName) => ({
+  return getPosts("note").map((fileName) => ({
     slug: getSlug(fileName),
   }));
 };
