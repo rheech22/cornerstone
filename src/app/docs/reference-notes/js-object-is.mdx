@@ -1,0 +1,97 @@
+---
+created: 2025-03-24 16:09:21 +0900
+updated: 2025-03-24 16:55:08 +0900
+title: "[Javascript] Object.is()"
+tags: ["Javascript"]
+---
+
+import { Callout } from "@/app/components/callout.tsx";
+
+`Object.is()`는 두 값이 같은 값인지 알려준다.
+
+```js title="출처는 MDN"
+// Case 1: 평가 결과는 ===을 사용한 것과 동일합니다
+Object.is(25, 25); // true
+Object.is("foo", "foo"); // true
+Object.is("foo", "bar"); // false
+Object.is(null, null); // true
+Object.is(undefined, undefined); // true
+Object.is(window, window); // true
+Object.is([], []); // false
+
+const foo = { a: 1 };
+const bar = { a: 1 };
+const sameFoo = foo;
+Object.is(foo, foo); // true
+Object.is(foo, bar); // false
+Object.is(foo, sameFoo); // true
+
+// Case 2: 부호 있는 0
+Object.is(0, -0); // false
+Object.is(+0, -0); // false
+Object.is(-0, -0); // true
+
+// Case 3: NaN
+Object.is(NaN, 0 / 0); // true
+Object.is(NaN, Number.NaN); // true
+```
+
+다음 중 하나를 만족하면 두 값은 같다.
+
+- 둘 다 `undefined`
+- 둘 다 `null`
+- 둘 다 `true` 또는 둘 다 `false`
+- 둘 다 같은 문자열
+- 둘 다 같은 객체(메모리 참조가 같음을 의미)
+- 둘 다 같은 숫자(`+0`과 `-0`을 다르다고 봄)
+- 둘 다 `NaN`
+
+<Callout title="📌 동등 연산자와 같지 않다.">
+`==` 연산자는 서로 형(type)이 같지 않다면 강제로 형 변환을 하는 것과 달리 `Object.is()`는 어떤 변환도 하지 않는다.
+</Callout>
+
+<Callout title="📌 일치 연산자와도 같지 않다.">
+`===` 연산자는 `+0`과 `-0`을 같다고 본다. 한편 `NaN`을 서로 비교할 때 다르게 처리한다.
+</Callout>
+
+실무 코드에서도 `Object.is()`를 종종 목격할 수 있다.
+
+```js title="바닐라로 작성된 zustand store 생성 함수"
+// [!code word:Object.is(nextState, state)]
+const createStoreImpl = (createState) => {
+  let state;
+  const listeners = /* @__PURE__ */ new Set();
+  const setState = (partial, replace) => {
+    const nextState = typeof partial === "function" ? partial(state) : partial;
+    if (!Object.is(nextState, state)) {
+      const previousState = state;
+      state = (
+        replace != null
+          ? replace
+          : typeof nextState !== "object" || nextState === null
+      )
+        ? nextState
+        : Object.assign({}, state, nextState);
+      listeners.forEach((listener) => listener(state, previousState));
+    }
+  };
+  const getState = () => state;
+  const getInitialState = () => initialState;
+  const subscribe = (listener) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  };
+  const api = { setState, getState, getInitialState, subscribe };
+  const initialState = (state = createState(setState, getState, api));
+  return api;
+};
+const createStore = (createState) =>
+  createState ? createStoreImpl(createState) : createStoreImpl;
+
+export { createStore };
+```
+
+## 참고
+
+- [MDN:Object.is()](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+- [zustand/esm/vanilla.mjs](https://app.unpkg.com/zustand@5.0.3/files/esm/vanilla.mjs)

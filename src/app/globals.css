@@ -121,7 +121,9 @@ body {
 
     .line {
       &.highlighted {
-        background-color: rgba(255, 255, 255, 0.2);
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
       }
 
       &.diff {
@@ -152,10 +154,14 @@ body {
       }
       span {
         &.highlighted {
-          background-color: rgba(255, 255, 255, 0.2);
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 4px;
         }
         &.highlighted-word {
-          background-color: rgba(255, 255, 255, 0.2);
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 4px;
         }
       }
     }

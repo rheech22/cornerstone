@@ -7,8 +7,8 @@ export const Callout = ({
 }) => {
   return (
     <div className="border-4 border-black p-4 mb-8">
-      <div className="font-bold">{title ?? "NOTE:"}</div>
-      <div className="font-semibold">{children}</div>
+      <div className="font-bold mb-4">{title ?? "NOTE"}</div>
+      <div>{children}</div>
     </div>
   );
 };
