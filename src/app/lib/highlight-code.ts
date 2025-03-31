@@ -26,6 +26,7 @@ const highlighterPromise = createHighlighter({
     "python",
     "lua",
     "shellscript",
+    "html",
     // ..
   ],
 });

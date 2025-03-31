@@ -236,6 +236,10 @@ body {
     li > ul {
       margin-top: 16px;
     }
+
+    li > ol {
+      margin-top: 16px;
+    }
   }
 
   ol {

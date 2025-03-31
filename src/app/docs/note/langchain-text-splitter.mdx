@@ -1,0 +1,70 @@
+---
+created: 2025-03-25 01:25:02 +0900
+updated: 2025-03-31 20:56:28 +0900
+title: '[LangChain] Text splitters'
+tags: ['LLM', 'AI', 'LangChain']
+---
+
+## 텍스트 스플리터란?
+
+- 텍스트 스플리터는 큰 문서나 텍스트를 작은 조각(청크)으로 나누는 도구
+- 쉽게 말해, 긴 책을 읽기 쉬운 여러 장으로 나누는 것과 같음
+
+## 왜 텍스트 스플리팅이 필요한가?
+
+1. **AI 모델의 한계 극복**: 대부분의 언어 모델(GPT 등)은 한 번에 처리할 수 있는 텍스트 길이에 제한이 있다고 함, 텍스트를 나누면 이 제한을 우회할 수 있음
+
+2. **정보 검색 정확도 향상**: 긴 문서에서 정보를 찾을 때, 작은 청크로 나누면 더 정확하게 관련 부분만 찾아낼 수 있음
+
+3. **처리 품질 개선**: AI가 너무 긴 텍스트를 한 번에 처리하면 의미 파악이 어려워지기 때문에 작은 조각으로 나누면 각 부분에 대한 이해도가 높아집니다.
+
+4. **컴퓨터 자원 최적화**: 작은 텍스트 조각은 메모리 사용이 효율적이고 병렬 처리가 가능함
+
+## 텍스트 나누기 방법
+
+### 1. 길이 기반 분할
+
+가장 간단한 방법으로, 특정 길이(문자 수나 토큰 수)에 따라 텍스트를 분할함
+
+```javascript
+import { CharacterTextSplitter } from "@langchain/textsplitters";
+const textSplitter = new CharacterTextSplitter({
+  chunkSize: 100,  // 각 청크의 최대 크기
+  chunkOverlap: 0, // 청크 간 겹치는 부분
+});
+const texts = await textSplitter.splitText(document);
+```
+
+### 2. 텍스트 구조 기반 분할
+
+문단, 문장, 단어와 같은 자연스러운 텍스트 구조를 활용함
+[[langchain-recursive-splitter|RecursiveCharacterTextSplitter]]는 재귀적으로 작동하는 텍스트 스플리터임
+
+```javascript
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+
+const textSplitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 100,
+  chunkOverlap: 0,
+});
+
+const texts = await textSplitter.splitText(document);
+```
+
+### 3. 문서 구조 기반 분할
+
+HTML, 마크다운, JSON과 같은 문서 형식의 구조를 활용. 예를 들어, 마크다운에서는 제목(#, ##)을 기준으로 나눌 수 있음
+
+### 4. 의미 기반 분할
+
+텍스트의 실제 의미 변화를 감지하여 분할하는 고급 기법. 의미적으로 연관된 내용은 같은 청크에 유지됨
+
+## 실제 활용 사례
+
+- 긴 법률 문서에서 특정 조항 검색하기
+- 대용량 텍스트 데이터를 AI로 분석하기
+- 챗봇이 큰 지식 베이스에서 관련 정보 찾기
+
+## 참고
+
+- [Text splitters](https://js.langchain.com/docs/concepts/text_splitters/)

