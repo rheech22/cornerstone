@@ -28,6 +28,8 @@ const highlighterPromise = createHighlighter({
     "shellscript",
     "html",
     "md",
+    "json",
+    "yaml",
     // ..
   ],
 });

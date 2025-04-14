@@ -1,0 +1,95 @@
+---
+created: 2025-04-15 03:01:35 +0900
+updated: 2025-04-15 03:20:29 +0900
+title: "Electron 앱 AWS S3 배포 자동화"
+tags: ["Electron", "GitHub Action"]
+---
+
+## GitHub Action's workflow
+
+macOS로 설정했지만 필요에 따라 GitHub Action의 matrix를 활용하여 다양한 운영체제를 위한 CI/CD 구성 가능
+
+```yml title="./github/workflows/release.yml"
+name: Build and Upload DMG to AWS S3
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-upload:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+
+      - name: Build Electron app with pnpm
+        run: pnpm run electron:build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_S3_REGION }}
+
+      - name: Upload DMG to AWS S3 as latest.dmg
+        env:
+          S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+        run: |
+          dmg_file=$(find release -name '*.dmg' -print -quit)
+          if [ -z "$dmg_file" ]; then
+            echo "Error: DMG file not found in release directory."
+            exit 1
+          fi
+          echo "Found DMG file: $dmg_file"
+          s3_key="your-file-name.dmg"
+          if [ -z "$S3_BUCKET_NAME" ]; then
+            echo "Error: S3_BUCKET_NAME secret is not set."
+            exit 1
+          fi
+          echo "Uploading to S3 bucket: $S3_BUCKET_NAME as $s3_key"
+          aws s3 cp "$dmg_file" "s3://${S3_BUCKET_NAME}/${s3_key}"
+```
+## electron-builder를 사용한다면 주의해야할 점
+
+`build` 스크립트에 `--publish never` 플래그 추가
+
+```json title="package.json"
+
+// ...
+"electron:build": "npm run build && npm run build:electron && electron-builder --publish never"
+```
+- `electron-builder`는 기본적으로 GitHub 릴리즈에 배포하려고 함
+- CI/CD에서 `GH_TOKEN`을 찾으려고 하고 결국 빌드 실패함
+- [아주 오래된 문제](https://github.com/electron-userland/electron-builder/issues/5463)인데 여전히 바뀌지 않음
+

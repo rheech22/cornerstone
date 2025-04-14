@@ -1,0 +1,59 @@
+---
+created: 2025-04-15 03:28:07 +0900
+updated: 2025-04-15 03:30:50 +0900
+title: 
+tags: []
+---
+
+만약 chat과 inline 모델을 다르게 설정하고 싶다면 커스텀 어댑터를 설정하면 된다.
+
+```lua
+local prefix = '<leader>a'
+
+return {
+  {
+    'olimorris/codecompanion.nvim',
+    -- 생략
+    opts = {
+      adapters = {
+        chat = function()
+          return require('codecompanion.adapters').extend('gemini', {
+            env = {
+              api_key = os.getenv 'GEMINI_API_KEY',
+            },
+            schema = {
+              model = {
+                default = 'gemini-2.5-pro-exp-03-25',
+              },
+            },
+          })
+        end,
+        inline = function()
+          return require('codecompanion.adapters').extend('gemini', {
+            env = {
+              api_key = os.getenv 'GEMINI_API_KEY',
+            },
+            schema = {
+              model = {
+                default = 'gemini-2.0-flash',
+              },
+            },
+          })
+        end,
+      },
+      strategies = {
+        chat = {
+          adapter = 'chat',
+        },
+        inline = {
+          adapter = 'inline',
+        },
+      },
+    },
+  },
+}
+```
+
+## 출처
+
+- [Adding a Custom Adapter](https://codecompanion.olimorris.dev/configuration/adapters.html#adding-a-custom-adapter)

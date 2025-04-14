@@ -1,0 +1,141 @@
+---
+created: 2025-04-15 03:19:17 +0900
+updated: 2025-04-15 03:25:38 +0900
+title: "Next.js에서 AWS S3로 다운로드 기능 제공하기"
+tags: ["Next.js", "AWS S3"]
+---
+
+## Next.js 코드
+
+App 라우터 기준으로 API Route를 사용
+
+```ts title="app/api/download/latest/route.ts"
+import { NextResponse } from "next/server";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const s3Client = new S3Client({
+  region: process.env.S3_BUCKET_REGION,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_KEY!,
+  },
+});
+
+const BUCKET_NAME = process.env.S3_BUCKET_NAME;
+const FILE_KEY = "your-file-name.dmg";
+const EXPIRATION_TIME_SECONDS = 300;
+
+export async function GET() {
+  if (!BUCKET_NAME) {
+    console.error("S3 bucket name environment variable not set.");
+    return NextResponse.json(
+      { error: "Server configuration error." },
+      { status: 500 },
+    );
+  }
+  if (
+    !process.env.S3_BUCKET_REGION ||
+    !process.env.S3_ACCESS_KEY ||
+    !process.env.S3_SECRET_KEY
+  ) {
+    console.error("AWS credentials or region environment variables not set.");
+    return NextResponse.json(
+      { error: "Server configuration error." },
+      { status: 500 },
+    );
+  }
+
+  const command = new GetObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: FILE_KEY,
+  });
+
+  try {
+    const signedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: EXPIRATION_TIME_SECONDS,
+    });
+
+    return NextResponse.json({ downloadUrl: signedUrl });
+  } catch (error) {
+    console.error("Error generating signed URL:", error);
+    return NextResponse.json(
+      { error: "Failed to generate download link." },
+      { status: 500 },
+    );
+  }
+}
+```
+
+## 사용 예시
+
+```ts title="wrapper"
+export const download = {
+  latest: async (listener?: (progress: { error: boolean }) => void) => {
+    try {
+      const response = await fetch("/api/download/latest");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.downloadUrl) {
+        window.location.href = data.downloadUrl;
+      } else {
+        throw new Error("Download URL not received from API.");
+      }
+    } catch (err: any) {
+      console.error("Download error:", err);
+      listener?.({ error: true });
+    } finally {
+      listener?.({ error: false });
+    }
+  },
+};
+```
+
+```tsx title="ui"
+"use client";
+
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Download, Loader2 } from "lucide-react";
+import { download } from "@/app/domain/download";
+import { useToast } from "@/hooks/use-toast";
+
+export function Download() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleDownload = async () => {
+    setIsLoading(true);
+    await download.latest(({ error }) => {
+      if (error) {
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+    });
+  };
+
+  return (
+    <Button
+      asChild
+      className="cyberpunk-button bg-primary hover:bg-primary/90 w-full"
+      onClick={handleDownload}
+      disabled={isLoading}
+    >
+      <div>
+        {isLoading ? (
+          <Loader2 className="animate-spin mr-2 h-4 w-4" />
+        ) : (
+          <Download className="mr-2 h-4 w-4" />
+        )}
+        Direct Download (.dmg)
+      </div>
+    </Button>
+  );
+}
+```
