@@ -21,7 +21,7 @@ export const SquareLink = <RouteInferred,>({
   }, []);
 
   return (
-    <li className="border-2 border-black w-full aspect-square">
+    <li className="square border-2 border-black w-full aspect-square bg-transparent">
       <Link
         href={href}
         className="group w-full h-full flex flex-col items-center justify-center"
