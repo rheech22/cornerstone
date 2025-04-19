@@ -5,6 +5,8 @@ import {
   transformerNotationFocus,
 } from "@shikijs/transformers";
 
+import MarkdownItAsync from "markdown-it-async";
+
 import {
   type HighlighterGeneric,
   type BundledLanguage,
@@ -58,3 +60,15 @@ const highlightBy =
   };
 
 export const highlightCode = highlightBy(await highlighterPromise);
+
+const md = MarkdownItAsync({
+  async highlight(code, lang) {
+    const { codeToHtml } = await import("shiki");
+    return await codeToHtml(code, {
+      lang: lang,
+      theme: "github-light-high-contrast",
+    });
+  },
+});
+
+export const highlightMarkdown = async (code: string) => md.renderAsync(code);

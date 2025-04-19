@@ -23,6 +23,9 @@ export default function RootLayout({
       <body className={`${sans.className} antialiased`}>
         {breadcrumbs}
         {children}
+        <footer className="w-full h-9  text-center underline underline-offset-4 font-semibold">
+          ©️ copyright 2025 by lch
+        </footer>
       </body>
     </html>
   );

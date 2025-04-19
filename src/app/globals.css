@@ -38,6 +38,50 @@ body {
   background: var(--background);
 }
 
+/* excerpt */
+.square-link-excerpt {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-weight: 400;
+
+  .shiki {
+    text-align: left;
+    line-height: 1;
+    margin: 1em 0;
+    padding: 1em 4px;
+    background: transparent !important;
+    border: 1px solid black;
+
+    code {
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      gap: 4px;
+
+      span {
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 1em 0;
+    font-weight: bold;
+  }
+
+  p {
+    margin-bottom: 0.75em;
+    overflow-wrap: break-word;
+  }
+}
+
 .markdown {
   font-size: 1.125rem;
   max-width: 840px;
@@ -82,91 +126,90 @@ body {
       text-align: left;
       border-top: none;
     }
-  }
 
-  pre {
-    padding: 24px 10px;
-    background: transparent !important;
-    border: 2px solid black;
-  }
-
-  .shiki {
-    overflow-x: auto;
-
-    code {
-      font-size: 1rem;
-      font-family: "Fira Code", "Courier New", monospace !important;
+    pre {
+      padding: 24px 10px;
+      background: transparent !important;
+      border: 2px solid black;
     }
 
-    &.has-focused {
-      .line {
-        &:not(.focused) {
-          opacity: 0.7;
-          filter: blur(0.095rem);
-          transition:
-            filter 0.35s,
-            opacity 0.35s;
-        }
+    .shiki {
+      overflow-x: auto;
+
+      code {
+        font-size: 1rem;
+        font-family: "Fira Code", "Courier New", monospace !important;
       }
 
-      &:hover {
+      &.has-focused {
         .line {
           &:not(.focused) {
-            opacity: 1;
-            filter: blur(0);
-          }
-        }
-      }
-    }
-
-    .line {
-      &.highlighted {
-        text-decoration: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 4px;
-      }
-
-      &.diff {
-        border: 1px solid black;
-        padding: 0.1rem 0.2rem;
-
-        &.add {
-          span:first-child::before {
-            content: "+";
-            margin-right: 0.5rem;
-            color: black;
-            font-weight: bold;
+            opacity: 0.7;
+            filter: blur(0.095rem);
+            transition:
+              filter 0.35s,
+              opacity 0.35s;
           }
         }
 
-        &.remove {
-          span {
-            text-decoration: line-through;
-          }
-
-          span:first-child::before {
-            content: "-";
-            margin-right: 0.5rem;
-            color: black;
-            font-weight: bold;
+        &:hover {
+          .line {
+            &:not(.focused) {
+              opacity: 1;
+              filter: blur(0);
+            }
           }
         }
       }
-      span {
+
+      .line {
         &.highlighted {
           text-decoration: underline;
           text-decoration-thickness: 2px;
           text-underline-offset: 4px;
         }
-        &.highlighted-word {
-          text-decoration: underline;
-          text-decoration-thickness: 2px;
-          text-underline-offset: 4px;
+
+        &.diff {
+          border: 1px solid black;
+          padding: 0.1rem 0.2rem;
+
+          &.add {
+            span:first-child::before {
+              content: "+";
+              margin-right: 0.5rem;
+              color: black;
+              font-weight: bold;
+            }
+          }
+
+          &.remove {
+            span {
+              text-decoration: line-through;
+            }
+
+            span:first-child::before {
+              content: "-";
+              margin-right: 0.5rem;
+              color: black;
+              font-weight: bold;
+            }
+          }
+        }
+        span {
+          &.highlighted {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+          }
+          &.highlighted-word {
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+          }
         }
       }
     }
   }
-
   blockquote {
     margin-bottom: 2rem;
     p {

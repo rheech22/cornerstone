@@ -20,7 +20,7 @@ export const getCrumbs = (segments: string[]) => {
   return [
     home,
     {
-      href: "/note/index",
+      href: "/note",
       text: "Note",
     },
   ];

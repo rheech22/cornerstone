@@ -15,7 +15,7 @@ const Home = () => {
             Blog
           </Link>
           <Link
-            href="/note/index"
+            href="/note"
             className="underline w-full hover:underline-offset-4 text-end"
           >
             Note
@@ -25,9 +25,6 @@ const Home = () => {
           </p>
         </nav>
       </main>
-      <footer className="mx-auto mt-auto pb-12 underline underline-offset-4 font-semibold">
-        ©️ copyright 2025 by lch
-      </footer>
     </div>
   );
 };
