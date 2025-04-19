@@ -14,7 +14,7 @@ import {
   createHighlighter,
 } from "shiki";
 
-const highlighterPromise = createHighlighter({
+const highlighter = await createHighlighter({
   themes: [
     "github-light-high-contrast",
     // ..
@@ -59,7 +59,7 @@ const highlightBy =
     });
   };
 
-export const highlightCode = highlightBy(await highlighterPromise);
+export const highlightCode = highlightBy(highlighter);
 
 const md = MarkdownItAsync({
   highlight: highlightCode,

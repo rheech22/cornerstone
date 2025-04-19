@@ -38,12 +38,13 @@ export const StaggerGridList = ({ children, count }: Props) => {
 
     scope.current = createScope({ root: root.current }).add(() => {
       animate(squares, {
-        scale: [{ to: [0, 1.1] }, { to: 1 }],
+        scale: [0.8, 1],
+        opacity: [0, 1],
         boxShadow: [
           { to: "0 0 1rem 0 rgba(0, 0, 0, 0.3)" },
           { to: "0 0 0rem 0 rgba(0, 0, 0, 0.3)" },
         ],
-        delay: stagger(200, {
+        delay: stagger(100, {
           grid: [columns, Math.ceil(count / columns)],
         }),
       });
