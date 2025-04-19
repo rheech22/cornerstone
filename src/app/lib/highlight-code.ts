@@ -62,13 +62,7 @@ const highlightBy =
 export const highlightCode = highlightBy(await highlighterPromise);
 
 const md = MarkdownItAsync({
-  async highlight(code, lang) {
-    const { codeToHtml } = await import("shiki");
-    return await codeToHtml(code, {
-      lang: lang,
-      theme: "github-light-high-contrast",
-    });
-  },
+  highlight: highlightCode,
 });
 
 export const highlightMarkdown = async (code: string) => md.renderAsync(code);

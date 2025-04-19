@@ -27,6 +27,8 @@
   &::-webkit-scrollbar-thumb {
     background-color: black;
   }
+
+  scroll-behavior: smooth;
 }
 
 html {

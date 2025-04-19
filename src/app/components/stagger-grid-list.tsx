@@ -1,8 +1,7 @@
 "use client";
 
 import { animate, createScope, Scope, stagger } from "animejs";
-import { useEffect, useRef, useState } from "react";
-import { debounce } from "../lib/debounce";
+import { useEffect, useRef } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -27,17 +26,6 @@ export const StaggerGridList = ({ children, count }: Props) => {
   const root = useRef(null);
   const scope = useRef<Scope | null>(null);
 
-  const [viewportSize, setViewportSize] = useState(getViewportSize());
-
-  useEffect(() => {
-    const debouncedResize = debounce(() => {
-      setViewportSize(getViewportSize());
-    }, 300);
-
-    window.addEventListener("resize", debouncedResize);
-    return () => window.removeEventListener("resize", debouncedResize);
-  }, []);
-
   useEffect(() => {
     if (!root.current) return;
 
@@ -45,7 +33,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
 
     if (squares.length === 0) return;
 
-    const { width } = viewportSize;
+    const { width } = getViewportSize();
     const columns = getColumns(width);
 
     scope.current = createScope({ root: root.current }).add(() => {
@@ -62,7 +50,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
     });
 
     return () => scope.current?.revert();
-  }, [count, viewportSize]);
+  }, [count]);
 
   return (
     <ul
