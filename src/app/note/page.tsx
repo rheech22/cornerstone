@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getExcerpt, getPostData } from "../lib/get-posts";
 import { SquareLink } from "../components/square-link";
 import { highlightMarkdown } from "../lib/highlight-code";

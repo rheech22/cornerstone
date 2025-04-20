@@ -1,0 +1,154 @@
+---
+created: 2025-04-19 13:28:58 +0900
+updated: 2025-04-20 20:27:35 +0900
+title: "스포티파이의 독자 프로토콜"
+tags: ["TCP", "네트워크"]
+---
+
+import { Callout } from '@/app/components/callout.tsx';
+
+<Callout>
+	
+이 문서는 작성 중
+	
+</Callout>
+
+## 1. 통신 계층을 넘어서 성능을 극복한 사례
+
+- 스포티파이는 초창기 데스크탑 앱에서 **자체 TCP 기반 프로토콜**과 **P2P 기술**을 활용하여 HTTP의 제약을 벗어남  
+- 자체 CDN과 클라이언트 간 분산 전달로 **대규모 요청 분산 처리** 및 **레이지 로딩 없는 음원 스트리밍**을 구현함  
+- WebSocket이나 REST API 같은 범용 프로토콜보다 **더 낮은 레벨에서 동작하는 통신 설계**로 극한의 최적화를 달성함
+
+## 2. 브라우저 환경에서의 제약
+
+- 웹에서는 **브라우저 샌드박스 정책**으로 인해 독자적인 네트워크 프로토콜 사용이 불가능함  
+- 브라우저가 허용하는 통신 수단은 **HTTP(S)**, **WebSocket**, **WebRTC**, **Fetch**, **XHR**, **MSE** 등에 한정됨  
+- 따라서 스포티파이 웹 버전은 **브라우저가 허용하는 범위 안에서의 최적화**에 집중함
+
+## 3. 스포티파이 웹앱의 최적화 전략
+
+- WebSocket을 활용한 실시간 제어 및 서버 이벤트 처리  
+- 오디오 스트리밍은 **MPEG-DASH 또는 HLS 기반**으로 처리하며, **CDN 캐시 및 prefetching 전략**을 통해 대기 시간을 최소화함  
+- 오디오 데이터를 조각화하여 초기 구간만 빠르게 로드함으로써 **즉시 재생처럼 보이게 하는 UX 연출**을 구현함
+
+## 4. 스포티파이의 독자 프로토콜: Mercury Protocol
+
+- 스포티파이의 내부 통신 프로토콜은 일반적으로 **Mercury Protocol**로 불리며, 공식 명칭은 없으나 개발자 커뮤니티에서 통용되는 명칭임  
+- TCP 기반의 암호화된 바이너리 메시지 기반 프로토콜이며, **protobuf를 메시지 포맷으로 사용**함  
+- 주 용도는 **사용자 인증, 메타데이터 요청, 스트리밍 세션 생성, 제어 명령 처리** 등이며, 웹 환경에서는 사용할 수 없음  
+- librespot, despotify 등의 리버스엔지니어링 프로젝트에서 Mercury 프로토콜의 구조와 동작 방식이 구현되어 있음
+
+## 5. Electron에서 독자 프로토콜 흉내내기
+
+- Electron은 Node.js 환경이 포함된 데스크탑 애플리케이션이므로, **HTTP 외의 TCP 소켓, UDP, WebRTC 등의 저수준 네트워크 프로토콜 접근이 가능**함  
+- Electron main process에서 Node의 `net.Socket`을 활용하여 **커스텀 서버와의 바이너리 통신 구조를 구성**할 수 있음  
+- preload.js를 통해 렌더러 프로세스(웹 뷰)와 main 프로세스 간 **브릿지를 구성**, UI에서 “독자 프로토콜처럼 보이는 통신” 구현이 가능함  
+- 이 방식은 **Electron 앱 내에서 Mercury 유사 프로토콜의 구조를 흉내낼 수 있음**을 의미함
+
+### 구조 개요
+
+```bash
+📁 your-electron-app/
+├── main.js           // Electron main process
+├── preload.js        // 브라우저 ↔ Node 브리지
+├── renderer.js       // 웹 페이지 (브라우저 환경)
+├── tcp-client.js     // TCP 소켓 클라이언트 (Node net 모듈)
+```
+
+### Node.js에서 tcp 통신
+
+```js
+// tcp-client.js
+const net = require('net');
+
+function connectToCustomServer({ host, port }) {
+  const client = new net.Socket();
+  client.connect(port, host, () => {
+    console.log('Connected to custom server');
+    client.write('Hello from Electron!');
+  });
+
+  client.on('data', (data) => {
+    console.log('Received:', data.toString());
+  });
+
+  client.on('close', () => {
+    console.log('Connection closed');
+  });
+
+  return client;
+}
+
+module.exports = { connectToCustomServer };
+```
+
+### main.js 
+
+```js
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const { connectToCustomServer } = require('./tcp-client');
+
+let mainWindow;
+
+app.whenReady().then(() => {
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  mainWindow.loadFile('index.html');
+});
+
+ipcMain.handle('custom-protocol:connect', (_, args) => {
+  connectToCustomServer(args);  // args: { host, port }
+});
+```
+
+### preload.js
+
+```js
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('customProtocol', {
+  connect: (host, port) =>
+    ipcRenderer.invoke('custom-protocol:connect', { host, port }),
+});
+```
+
+### renderer.js
+
+```js
+// 예: 사용자 버튼 클릭 시 TCP 연결 요청
+document.getElementById('connect-btn').addEventListener('click', () => {
+  window.customProtocol.connect('127.0.0.1', 9000);
+});
+```
+
+### index.html
+
+```js
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Custom Protocol</title>
+</head>
+<body>
+  <h1>Custom Protocol Test</h1>
+  <button id="connect-btn">Connect to Custom Server</button>
+  <script src="renderer.js"></script>
+</body>
+</html>
+```
+---
+
+## 6. 결론
+
+- 브라우저 환경에서는 네트워크 계층의 제한으로 인해 Mercury 프로토콜 수준의 최적화는 구현이 불가능함  
+- 데스크탑 애플리케이션(Electron 등)을 활용하면 Node.js 환경에서 TCP 통신 및 바이너리 프로토콜 구현이 가능하여 **독자 프로토콜 수준의 통신 구조를 구현 가능**함  
+- 스포티파이의 네트워크 전략은 **브라우저와 데스크탑 앱 간의 기술적 한계와 장점을 모두 활용한 복합적인 접근 방식**임
+
+## 참고
+
+- ChatGPT 4
