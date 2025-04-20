@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "fs";
+import { join } from "path";
 
 type Metadata = {
   created: string;
@@ -7,8 +8,12 @@ type Metadata = {
   tags: string[];
 };
 
+const getPostDir = (noteType: "blog" | "note") => {
+  return join(process.cwd(), "src/app/docs", noteType);
+};
+
 export const getPosts = (noteType: "blog" | "note") => {
-  return readdirSync(`./src/app/docs/${noteType}`).filter((fileName) =>
+  return readdirSync(getPostDir(noteType)).filter((fileName) =>
     fileName.endsWith(".mdx"),
   );
 };
@@ -24,7 +29,7 @@ export const getPostData = (noteType: "blog" | "note") => {
     .filter((fileName) => fileName !== "index.mdx")
     .map((fileName) => {
       const fileContent = readFileSync(
-        `./src/app/docs/${noteType}/${fileName}`,
+        getPostDir(noteType) + "/" + fileName,
         "utf8",
       );
       const { metadata, content } = parseFrontmatter(fileContent);
