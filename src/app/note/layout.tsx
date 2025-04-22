@@ -3,5 +3,5 @@ export default function NoteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className="pt-10 px-6 pb-8">{children}</main>;
+  return <main className="pt-6 px-2 pb-8">{children}</main>;
 }
