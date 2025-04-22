@@ -62,10 +62,6 @@ export const StaggerGridList = ({ children, count }: Props) => {
       animate(squares, {
         scale: [0.8, 1],
         opacity: [0, 1],
-        boxShadow: [
-          { to: "0 0 1rem 0 rgba(0, 0, 0, 0.3)" },
-          { to: "0 0 0rem 0 rgba(0, 0, 0, 0.3)" },
-        ],
         delay: stagger(100, { grid }),
       });
     });
@@ -92,7 +88,11 @@ export const StaggerGridList = ({ children, count }: Props) => {
 
       utils.set(squares, { x, y });
       thisScope.add("shuffle", () => {
-        animate(utils.shuffle([...squares]), { x, y });
+        animate(utils.shuffle([...squares]), {
+          x,
+          y,
+          ease: "inOutCirc",
+        });
       });
     });
 
@@ -104,8 +104,31 @@ export const StaggerGridList = ({ children, count }: Props) => {
   };
 
   return (
-    <div>
-      <button onClick={handleClick}>click</button>
+    <div className="flex flex-col">
+      <button
+        onClick={handleClick}
+        className="flex items-center justify-start border-2 border-black p-1 text-sm ml-2 w-7 h-7 overflow-hidden hover:w-20 transition-all ease-[cubic-bezier(0, 0.55, 0.45, 1)]"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="mr-1 shrink-0"
+        >
+          <path d="m18 14 4 4-4 4" />
+          <path d="m18 2 4 4-4 4" />
+          <path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22" />
+          <path d="M2 6h1.972a4 4 0 0 1 3.6 2.2" />
+          <path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45" />
+        </svg>
+        shuffle!
+      </button>
       <ul ref={root} className="relative flex flex-wrap">
         {children}
       </ul>
