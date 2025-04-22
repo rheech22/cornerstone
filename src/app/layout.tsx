@@ -21,11 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${sans.className} antialiased flex flex-col h-screen`}>
-        <div className="flex-grow overflow-y-auto">
+        <div className="grow overflow-y-auto">
           {breadcrumbs}
           {children}
         </div>
-        <footer className="w-full text-center underline underline-offset-4 font-semibold flex-shrink-0">
+        <footer className="w-full text-center underline underline-offset-4 font-semibold shrink-0">
           ©️ copyright 2025 by lch
         </footer>
       </body>

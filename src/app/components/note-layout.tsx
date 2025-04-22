@@ -12,7 +12,7 @@ type Props = {
 
 export const NoteLayout = ({ children, frontmatter }: Props) => {
   return (
-    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="max-w-(--breakpoint-xl) mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Mobile */}
       <div className="lg:hidden">
         {frontmatter && (
@@ -53,7 +53,7 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
       {/* Desktop */}
       <div className="hidden lg:flex lg:gap-8">
         {frontmatter && (
-          <div className="w-80 flex-shrink-0">
+          <div className="w-80 shrink-0">
             <div className="sticky top-6 border-4 border-black p-4">
               <h1 className="font-mono text-3xl font-bold mb-6 break-words">
                 {frontmatter.title}
@@ -90,7 +90,7 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
             </div>
           </div>
         )}
-        <article className="flex-grow border-4 border-black p-8 markdown">
+        <article className="grow border-4 border-black p-8 markdown">
           {children}
         </article>
       </div>
