@@ -107,7 +107,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
     <div className="flex flex-col">
       <button
         onClick={handleClick}
-        className="flex items-center justify-start border-2 border-black p-1 text-sm ml-2 w-7 h-7 overflow-hidden hover:w-20 transition-all ease-[cubic-bezier(0, 0.55, 0.45, 1)]"
+        className="flex items-center justify-start border-2 border-black p-1 text-sm ml-2 w-7 h-7 overflow-hidden hover:w-20 transition-all ease-[cubic-bezier(0.95,0.05,0.795,0.035)]"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
