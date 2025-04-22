@@ -21,11 +21,11 @@ export const SquareLink = <RouteInferred,>({
       <Link href={href} className="group w-full h-full relative transform-3d">
         {isMounted ? (
           <>
-            <div className="text-pretty text-lg md:text-xl lg:text-2xl flex items-center justify-center break-all p-4 size-full backface-hidden group-hover:rotate-y-180 transition-transform duration-200 border-2 border-black ease-[cubic-bezier(0, 0.55, 0.45, 1)] will-change-transform">
+            <div className="text-pretty text-lg md:text-xl lg:text-2xl flex items-center justify-center break-all p-4 size-full backface-hidden group-hover:rotate-y-180 transition-transform duration-400 border-2 border-black ease-[cubic-bezier(0, 0.55, 0.45, 1)] will-change-transform">
               {title}
             </div>
             <div
-              className="square-link-excerpt size-full text-[10px] md:text-xs lg:text-sm p-4 backface-hidden rotate-y-180 group-hover:rotate-y-0 absolute -top-0 -left-0 transition-transform duration-200 border-2 border-black ease-[cubic-bezier(0, 0.55, 0.45, 1)] will-change-transform"
+              className="square-link-excerpt size-full text-[10px] md:text-xs lg:text-sm p-4 backface-hidden rotate-y-180 group-hover:rotate-y-0 absolute -top-0 -left-0 transition-transform duration-400 border-2 border-black ease-[cubic-bezier(0, 0.55, 0.45, 1)] will-change-transform"
               dangerouslySetInnerHTML={{ __html: excerpt }}
             />
           </>
