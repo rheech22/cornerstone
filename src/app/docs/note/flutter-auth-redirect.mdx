@@ -1,0 +1,69 @@
+---
+created: 2025-04-26 17:26:50 +0900
+updated: 2025-04-26 17:43:07 +0900
+title: 'Flutter - 권한에 따라 redirect'
+tags: ['Flutter', 'GoRouter']
+---
+
+## 개요
+
+- 로그인 여부 등 권한에 따라 redirect 필요
+- [GoRouter](https://pub.dev/packages/go_router)를 이용하여 top level redirect를 구현하는 방법 기록
+- 라우터 객체에 `refreshListenable`에 [Listenable](https://api.flutter.dev/flutter/foundation/Listenable-class.html) 등록 가능
+- **Listenable**이 바뀔 때 `redirect`를 재평가하는 방식
+
+## 구현 예시
+
+[[./flutter-token-storage|tokenProvider]]를 주입한다고 가정
+
+```dart title="AuthStateNotifier"
+class AuthStateNotifier extends ChangeNotifier {
+  final TokenProvider _tokenProvider;
+
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  AuthStateNotifier({
+    required TokenProvider tokenProvider,
+  }) : _tokenProvider = tokenProvider {
+    _checkToken();
+  }
+
+  Future<void> _checkToken() async {
+    final token = await _tokenProvider.getToken();
+    _isLoggedIn = token != null;
+    notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    await _checkToken();
+  }
+}
+```
+
+```dart title="router" caption="getIt을 사용하고 있지만 단순 인스턴스를 넣어도 됨"
+
+final authStateNotifier = getIt<AuthStateNotifier>();
+final protectedRoutes = [ ... ];
+
+final router = GoRouter(
+  initialLocation: Routes.home,
+  navigatorKey: rootNavigatorKey,
+  refreshListenable: authStateNotifier,
+  redirect: (context, state) {
+    final loggedIn = authStateNotifier.isLoggedIn;
+    final isProtectedRoute = protectedRoutes.contains(state.fullPath);
+    if (!loggedIn && isProtectedRoute) {
+      return Routes.signin;
+    }
+    return null;
+  },
+  routes: [
+    // ...
+  ],
+);
+```
+
+## 출처
+
+- [go_router](https://docs.page/csells/go_router/redirection)

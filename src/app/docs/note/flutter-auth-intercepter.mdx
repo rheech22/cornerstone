@@ -1,0 +1,64 @@
+---
+created: 2025-04-26 16:55:41 +0900
+updated: 2025-04-26 17:09:24 +0900
+title: 'Flutter - 요청 헤더에 토큰 넣기'
+tags: ['Flutter', 'Dio']
+---
+
+## Dio
+
+- [Dio](https://pub.dev/packages/dio)를 사용하면 인터셉터를 쉽게 구현할 수 있음
+- 인터셉터에서 요청을 가로채고 헤더에 토큰을 넣어주는 방식
+
+## 구현 예시
+
+[[./flutter-token-storage|token을 제공하는 구성]]이 있다고 가정한다.
+
+```dart title="AuthInterceptor 구현"
+class AuthInterceptor extends Interceptor {
+  final TokenProvider tokenProvider;
+
+  AuthInterceptor({
+    required this.tokenProvider,
+  });
+
+  @override
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final token = await tokenProvider.getToken();
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
+    } else {
+      debugPrint('no token');
+    }
+    return handler.next(options);
+  }
+  
+  // ..onError로 리프레시 토큰 처리도 가능
+}
+```
+
+```dart title="인터셉터 주입 후 추가"
+class DioApiClient implements ApiClient {
+  final Dio _dio;
+
+  DioApiClient({
+    required Interceptor authInterceptor,
+  })  : _dio = Dio()
+          ..interceptors.add(authInterceptor)
+          ..interceptors.add(otherInterceptor);
+	
+  // ..
+}
+```
+
+## 참고
+
+- ChatGPT 4
+
+
+
+
+
