@@ -32,6 +32,7 @@ const highlighter = await createHighlighter({
     "md",
     "json",
     "yaml",
+    "xml",
     // ..
   ],
 });
