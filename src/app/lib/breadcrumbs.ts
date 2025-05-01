@@ -12,7 +12,7 @@ export const getCrumbs = (segments: string[]) => {
     return [
       home,
       {
-        href: "/blog/index",
+        href: "/blog",
         text: "Blog",
       },
     ];

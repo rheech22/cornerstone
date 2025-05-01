@@ -9,7 +9,7 @@ const Home = () => {
             Hello! This place is still in development.
           </p>
           <Link
-            href="/blog/index"
+            href="/blog"
             className="underline w-full text-start hover:underline-offset-4"
           >
             Blog
