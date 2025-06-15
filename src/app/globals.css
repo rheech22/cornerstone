@@ -50,7 +50,7 @@ body {
 
   &::selection {
     color: var(--background);
-    background: var(--foreground);
+    background: var(--highlight-blue);
   }
 }
 
@@ -196,6 +196,39 @@ body {
     }
   }
 
+  /* callout */
+  .callout {
+    --r: 22px;
+    --s: 30px;
+    border-radius: var(--r);
+    max-width: calc(100% - 1em);
+
+    clip-path: shape(
+      from 0 0,
+      hline to calc(100% - var(--s) - 2 * var(--r)),
+      arc by var(--r) var(--r) of var(--r) cw,
+      arc by var(--s) var(--s) of var(--s),
+      arc by var(--r) var(--r) of var(--r) cw,
+      vline to 100%,
+      hline to 0
+    );
+    background-color: var(--highlight-blue);
+    color: var(--background);
+
+    ol > li::marker {
+      color: var(--background);
+    }
+
+    ul > li::marker {
+      color: var(--background);
+    }
+
+    code:not(:has(> *)) {
+      background-color: var(--background);
+      color: var(--highlight-blue);
+    }
+  }
+
   /* math */
   .katex-display {
     display: block;
@@ -222,7 +255,12 @@ body {
     box-decoration-break: clone;
 
     background-color: var(--highlight-blue);
-    color: white;
+    color: var(--background);
+
+    &::selection {
+      background-color: var(--background);
+      color: var(--highlight-blue);
+    }
   }
 
   /* code block */
@@ -350,12 +388,10 @@ body {
 /* media query */
 @media (max-width: 1380px) {
   .markdown {
-    h1,
+    & > h1,
     h2,
     h3,
     h4,
-    h5,
-    h6,
     .code-block,
     figure,
     blockquote {

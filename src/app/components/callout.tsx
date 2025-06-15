@@ -1,13 +1,15 @@
 export const Callout = ({
   children,
-  title,
+  title = "NOTE",
 }: {
   children: React.ReactNode;
   title?: string;
 }) => {
   return (
-    <div className="border-4 border-black p-4 callout mt-11 mb-12">
-      <div className="font-bold mb-4">{title ?? "NOTE"}</div>
+    <div className="flex flex-col pt-4 pb-2 px-4 mt-11 mb-12 callout">
+      <span className="font-bold text-xl mb-4 px-2 py-1 w-fit border-[#efefef] border-2 rounded-md">
+        {title}
+      </span>
       <div>{children}</div>
     </div>
   );
