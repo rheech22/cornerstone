@@ -1,7 +1,7 @@
-export default function NoteLayout({
+export default function BlogLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className="w-full h-full flex">{children}</main>;
+  return <main className="w-full">{children}</main>;
 }

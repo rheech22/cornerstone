@@ -1,5 +1,5 @@
 import { MdxLayout } from "@/app/components/mdx-layout";
-import { NoteLayout } from "@/app/components/note-layout";
+import { PostLayout } from "@/app/components/post-layout";
 import { getPosts, getSlug } from "@/app/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
@@ -12,9 +12,9 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
   return (
     <MdxLayout>
-      <NoteLayout frontmatter={frontmatter}>
+      <PostLayout frontmatter={frontmatter}>
         <Post />
-      </NoteLayout>
+      </PostLayout>
     </MdxLayout>
   );
 };

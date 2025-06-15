@@ -21,14 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sans.className} antialiased flex flex-col h-screen`}>
-        <div className="grow overflow-y-auto">
-          {breadcrumbs}
-          {children}
-        </div>
-        <footer className="w-full text-center underline underline-offset-4 font-semibold shrink-0">
-          ©️ copyright 2025 by lch
+      <body className={`${sans.className} antialiased relative flex flex-col`}>
+        {breadcrumbs}
+        {children}
+        {/*
+        <footer className="absolute bottom-0 w-full flex justify-center py-4">
+          <span className="text-center underline underline-offset-4 font-semibold shrink-0">
+            ©️ copyright 2025 by lch
+          </span>
         </footer>
+	*/}
         <Analytics />
       </body>
     </html>

@@ -21,6 +21,8 @@
 :root {
   --background: #efefef;
   --foreground: #000000;
+  --content-width: 560px;
+  --expanded-width: 980px;
 }
 
 @property --border-angle {
@@ -61,66 +63,170 @@ body {
   }
 }
 
-/* excerpt */
-.square-link-excerpt {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-weight: 400;
+/* post */
+.markdown {
+  font-size: 1.25em;
+  position: relative;
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
 
-  .shiki {
-    text-align: left;
-    line-height: 1;
-    margin: 1em 0;
-    padding: 1em 4px;
-    background: transparent !important;
-    border: 1px solid black;
-
-    code {
-      display: flex;
-      flex-direction: column;
-      font-size: 10px;
-      gap: 4px;
-
-      span {
-        white-space: pre-wrap;
-        word-break: break-all;
-      }
-    }
+  /* image */
+  figure {
+    position: relative;
+    left: calc(50% - var(--expanded-width) / 2);
+    width: var(--expanded-width);
+    margin-top: 2.75em;
+    margin-bottom: 3.25em;
   }
 
+  /* heading */
   h1,
   h2,
   h3,
-  h4,
-  h5,
-  h6 {
-    margin: 1em 0;
-    font-weight: bold;
+  h4 {
+    position: relative;
+    left: calc(50% - var(--expanded-width) / 2);
+    text-align: start;
+    width: var(--expanded-width);
+
+    --optical-align: 2px;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    scroll-margin-top: 7rem;
+    font-weight: 700;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  h1 {
+    font-size: calc(40 / 16 * 1rem);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  }
+
+  h2 {
+    font-size: calc(32 / 16 * 1rem);
+    color: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  }
+
+  h3 {
+    font-size: calc(24 / 16 * 1rem);
+    color: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  h4 {
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
 
   p {
-    margin-bottom: 0.75em;
-    overflow-wrap: break-word;
+    line-height: 1.5;
+    margin-bottom: 1.25em;
+    word-break: keep-all;
   }
-}
 
-.markdown {
-  font-size: 1.125rem;
-  max-width: 840px;
+  ol,
+  ul {
+    margin-bottom: 1.25em;
 
+    li + li {
+      margin-top: 16px;
+    }
+
+    li > ul {
+      margin-top: 16px;
+    }
+
+    li > ol {
+      margin-top: 16px;
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+    padding-left: 1.25em;
+  }
+
+  ul {
+    list-style-type: disc;
+    padding-left: 1.25em;
+  }
+
+  a {
+    font-weight: bold;
+    word-break: break-word;
+
+    &.wiki-link {
+      text-decoration: unset;
+      color: #000000;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      background: black;
+      color: white;
+    }
+  }
+
+  /* blockquote */
+  blockquote {
+    position: relative;
+    left: calc(50% - var(--expanded-width) / 2);
+    width: var(--expanded-width);
+    margin-top: 2.75em;
+    margin-bottom: 3.25em;
+
+    p {
+      margin-bottom: 0;
+    }
+    span {
+      font-style: italic;
+    }
+  }
+
+  /* math */
   .katex-display {
     display: block;
-    margin-top: 1em;
-    margin-bottom: 1.5em;
+    margin-top: 2.75em;
+    margin-bottom: 3.25em;
 
     .katex-html {
       display: none;
     }
   }
 
+  /* inline code */
+  code:not(:has(> *)) {
+    display: inline;
+    font-size: 0.9375em;
+    font-style: normal;
+    letter-spacing: -0.5px;
+    padding: 2px 6px;
+    margin: 1px;
+    background: black;
+    color: white;
+    box-decoration-break: clone;
+    font-family: "Fira Code", "Courier New", monospace;
+  }
+
+  /* code block */
   .code-block {
-    margin-bottom: 64px;
+    position: relative;
+    left: calc(50% - var(--expanded-width) / 2);
+    width: var(--expanded-width);
+
+    margin-top: 2.75em;
+    margin-bottom: 3.25em;
     overflow: hidden;
 
     .code-block__content {
@@ -233,107 +339,21 @@ body {
       }
     }
   }
-  blockquote {
-    margin-bottom: 2rem;
-    p {
-      margin-bottom: 0;
-    }
-    span {
-      font-style: italic;
-    }
-  }
+}
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    --optical-align: 2px;
-    position: relative;
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-    scroll-margin-top: 7rem;
-    font-weight: 700;
-
-    &:first-of-type {
-      margin-top: 0;
-    }
-  }
-
-  h1 {
-    font-size: calc(40 / 16 * 1rem);
-  }
-
-  h2 {
-    font-size: calc(32 / 16 * 1rem);
-  }
-
-  h3 {
-    font-size: calc(24 / 16 * 1rem);
-  }
-
-  p {
-    line-height: 1.5;
-    margin-bottom: 1.25em;
-    overflow-wrap: break-word;
-  }
-
-  /* inline code */
-  code:not(:has(> *)) {
-    display: inline;
-    font-size: 0.9375em;
-    font-style: normal;
-    letter-spacing: -0.5px;
-    padding: 2px 6px;
-    margin: 1px;
-    background: black;
-    color: white;
-    box-decoration-break: clone;
-    font-family: "Fira Code", "Courier New", monospace;
-  }
-
-  ol,
-  ul {
-    margin-bottom: 2rem;
-
-    li + li {
-      margin-top: 16px;
-    }
-
-    li > ul {
-      margin-top: 16px;
-    }
-
-    li > ol {
-      margin-top: 16px;
-    }
-  }
-
-  ol {
-    list-style-type: decimal;
-    padding-left: 1.5rem;
-  }
-
-  ul {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-  }
-
-  a {
-    font-weight: bold;
-
-    &.wiki-link {
-      text-decoration: unset;
-      color: #000000;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    &:hover {
-      background: black;
-      color: white;
+@media (max-width: 1380px) {
+  .markdown {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .code-block,
+    figure,
+    blockquote {
+      width: calc(90vw + 20px);
+      left: calc(50% - 45vw - 10px);
     }
   }
 }
@@ -383,5 +403,49 @@ body {
   }
   100% {
     --border-angle: 1.5turn;
+  }
+}
+
+/* excerpt */
+.square-link-excerpt {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-weight: 400;
+
+  .shiki {
+    text-align: left;
+    line-height: 1;
+    margin: 1em 0;
+    padding: 1em 4px;
+    background: transparent !important;
+    border: 1px solid black;
+
+    code {
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      gap: 4px;
+
+      span {
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 1em 0;
+    font-weight: bold;
+  }
+
+  p {
+    margin-bottom: 0.75em;
+    overflow-wrap: break-word;
   }
 }

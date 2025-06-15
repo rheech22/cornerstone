@@ -38,10 +38,10 @@ const withMDX = createMDX({
       remarkRehype,
     ],
     rehypePlugins: [
-      rehypeKatex,
       rehypeAddMeta,
       rehypeVimwikiLinks,
       rehypeMDXImportMedia,
+      rehypeKatex,
       rehypeStringify,
     ],
   },
