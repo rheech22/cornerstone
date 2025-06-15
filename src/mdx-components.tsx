@@ -12,7 +12,6 @@ export const useMDXComponents = (components: MDXComponents): MDXComponents => {
     // eslint-disable-next-line jsx-a11y/alt-text
     img: (props) => <Image {...(props as ImageProps)} />,
     p: ({ children, ...props }) => {
-      console.log(children);
       if (
         Array.isArray(children) &&
         children.length > 0 &&
