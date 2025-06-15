@@ -18,7 +18,7 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
       <div className="flex flex-col gap-8 items-center">
         {frontmatter && (
           <div className="w-full mt-10 flex flex-col items-center border-b border-black/50 pb-4 relative">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl  break-words break-all mb-10">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl break-words break-all mb-10">
               {frontmatter.title}
             </h1>
             <div className="flex flex-wrap gap-1">
