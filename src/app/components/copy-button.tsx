@@ -65,11 +65,13 @@ export const CopyButton = ({ text }: { text: string }) => {
 
   return (
     <button
-      className={`absolute right-5 top-5 z-10 p-2 transition-all duration-300 border ${
-        copied
-          ? "text-black border-black"
-          : "border-transparent hover:border-black"
-      }`}
+      className={`absolute right-5 top-5 z-10 p-2 transition-all duration-300 border 
+hover:border-black hover:bg-[#efefef] hover:text-black cursor-copy
+${
+  copied
+    ? "text-black border-black bg-[#efefef]"
+    : "border-transparent hover:border-black"
+}`}
       onClick={copyToClipboard}
       title={title}
       aria-label={title}
