@@ -17,16 +17,10 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
     <div className=" mx-auto px-4 py-6">
       <div className="flex flex-col gap-8 items-center">
         {frontmatter && (
-          <div className="w-full mt-10 flex flex-col items-center">
-            <h1 className="text-5xl break-words break-all">
+          <div className="w-full mt-10 flex flex-col items-center border-b border-black/50 pb-4 relative">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl  break-words break-all mb-10">
               {frontmatter.title}
             </h1>
-            <div className="text-black/60 mb-10 text-sm">
-              <span>
-                published {from(new Date(frontmatter.created))} {" · "} last
-                updated {from(new Date(frontmatter.updated))}
-              </span>
-            </div>
             <div className="flex flex-wrap gap-1">
               {frontmatter.tags.map((tag) => (
                 <span key={tag} className="inline-block px-1 mb-1">
@@ -37,6 +31,14 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
           </div>
         )}
         <article className="grow markdown">{children}</article>
+        {frontmatter && (
+          <div className="text-black/60 text-sm mx-auto mb-2">
+            <span>
+              published {from(new Date(frontmatter.created))} {" · "} last
+              updated {from(new Date(frontmatter.updated))}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

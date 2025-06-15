@@ -21,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sans.className} antialiased relative flex flex-col`}>
+      <body
+        className={`${sans.className} antialiased relative flex flex-col text-base md:text-lg lg:text-xl`}
+      >
         {breadcrumbs}
         {children}
         {/*
