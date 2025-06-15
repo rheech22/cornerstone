@@ -14,7 +14,7 @@ type Props = {
 
 export const PostLayout = ({ children, frontmatter }: Props) => {
   return (
-    <div className=" mx-auto px-4 py-6">
+    <div className="mx-auto px-[.2em] py-[.3em]">
       <div className="flex flex-col gap-8 items-center">
         {frontmatter && (
           <div className="w-full mt-10 flex flex-col items-center border-b border-black/50 pb-4 relative">

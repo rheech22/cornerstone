@@ -75,7 +75,7 @@ body {
     --optical-align: 2px;
     margin-top: 1.5em;
     margin-bottom: 1em;
-    scroll-margin-top: 7rem;
+    scroll-margin-top: 7em;
     font-weight: 700;
 
     &:first-of-type {
@@ -119,15 +119,15 @@ body {
     margin-bottom: 1.25em;
 
     li + li {
-      margin-top: 16px;
+      margin-top: 1em;
     }
 
     li > ul {
-      margin-top: 16px;
+      margin-top: 1em;
     }
 
     li > ol {
-      margin-top: 16px;
+      margin-top: 1em;
     }
   }
 
@@ -199,8 +199,8 @@ body {
 
   /* callout */
   .callout {
-    --r: 22px;
-    --s: 30px;
+    --r: 1.125em;
+    --s: 1.5em;
     border-radius: var(--r);
     max-width: calc(100% - 1em);
 
@@ -260,7 +260,7 @@ body {
     font-family: "Fira Code", "Courier New", monospace;
     letter-spacing: -0.5px;
 
-    padding: 2px 6px;
+    padding: 0.1em 0.3em;
     margin: 1px;
     border-radius: 0.5em;
     box-decoration-break: clone;
@@ -292,7 +292,7 @@ body {
     .code-block__title,
     .code-block__caption {
       margin-bottom: 0px;
-      padding: 6px 10px;
+      padding: 0.3em 0.5em;
       font-style: italic;
       border: 2px solid black;
     }
@@ -312,7 +312,7 @@ body {
     }
 
     pre {
-      padding: 24px 10px;
+      padding: 1.25em 0.5em;
       background: transparent !important;
       border: 2px solid black;
     }
@@ -477,14 +477,14 @@ body {
     text-align: left;
     line-height: 1;
     margin: 1em 0;
-    padding: 1em 4px;
+    padding: 1em 0.25em;
     background: transparent !important;
     border: 1px solid black;
 
     code {
       display: flex;
       flex-direction: column;
-      font-size: 10px;
+      font-size: 0.5em;
       gap: 4px;
 
       span {
