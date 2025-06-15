@@ -11,7 +11,7 @@ const BlogPage = async () => {
           <li key={slug}>
             <Link
               href={`/blog/${slug}`}
-              className="underline w-full text-start underline-offset-4"
+              className="underline w-full text-start underline-offset-8 hover:text-blue-500 hover:no-underline hover:font-semibold"
             >
               {title}
             </Link>

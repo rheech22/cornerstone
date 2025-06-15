@@ -12,8 +12,15 @@ const Page = async ({ params }: Props) => {
   return (
     <header className="flex justify-start text-black font-bold p-6">
       {breadcrumbs.map((crumb, index) => (
-        <div key={index} className="not-last:after:content-['/'] after:mx-2">
-          <Link href={{ pathname: crumb.href }}>
+        <div key={index} className="not-last:after:content-['/'] after:mx-2 ">
+          <Link
+            href={{ pathname: crumb.href }}
+            className={
+              index !== breadcrumbs.length - 1
+                ? "hover:text-blue-500 hover:underline hover:underline-offset-8"
+                : ""
+            }
+          >
             {crumb.text.toUpperCase()}
           </Link>
         </div>
