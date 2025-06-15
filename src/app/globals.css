@@ -227,6 +227,11 @@ body {
       background-color: var(--background);
       color: var(--highlight-blue);
     }
+
+    &::selection {
+      background-color: var(--background);
+      color: var(--highlight-blue);
+    }
   }
 
   /* math */
