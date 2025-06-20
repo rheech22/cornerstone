@@ -216,6 +216,12 @@ body {
       color: var(--background);
     }
 
+    a {
+      &:hover {
+        color: white;
+      }
+    }
+
     &::selection {
       background-color: var(--background);
       color: var(--highlight-blue);

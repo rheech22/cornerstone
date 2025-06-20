@@ -17,16 +17,19 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
     <div className="mx-auto px-[.2em] py-[.3em]">
       <div className="flex flex-col gap-8 items-center">
         {frontmatter && (
-          <div className="w-full mt-10 flex flex-col items-center border-b border-black/50 pb-4 relative">
+          <div className="w-full mt-10 flex flex-col items-center pb-4 relative">
             <h1 className="text-4xl md:text-5xl lg:text-6xl break-words break-all mb-10">
               {frontmatter.title}
             </h1>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 mb-4">
               {frontmatter.tags.map((tag) => (
                 <span key={tag} className="inline-block px-1 mb-1">
                   #{tag}
                 </span>
               ))}
+            </div>
+            <div className="flex justify-center items-center">
+              <span className="text-black/30 text-lg lg:text-xl">• • •</span>
             </div>
           </div>
         )}
