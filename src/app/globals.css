@@ -410,8 +410,34 @@ body {
     .code-block,
     figure,
     blockquote {
-      width: calc(90vw + 20px);
-      left: calc(50% - 45vw - 10px);
+      width: 90vw;
+      max-width: var(--expanded-width);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+}
+
+@media (max-width: 560px) {
+  .markdown {
+    & > h1,
+    h2,
+    h3,
+    h4,
+    .code-block,
+    figure,
+    blockquote {
+      width: 100%;
+      left: 0;
+      transform: none;
+    }
+
+    .code-block {
+      .shiki {
+        code {
+          font-size: 0.8rem;
+        }
+      }
     }
   }
 }
