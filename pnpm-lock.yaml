@@ -73,7 +73,7 @@ importers:
         version: 5.0.0
     devDependencies:
       '@eslint/eslintrc':
-        specifier: ^3
+        specifier: ^3.3.1
         version: 3.3.1
       '@shikijs/transformers':
         specifier: ^2.3.2
@@ -81,9 +81,6 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.4
         version: 4.1.10
-      '@types/eslint__eslintrc':
-        specifier: ^3.3.0
-        version: 3.3.0
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
@@ -562,10 +559,6 @@ packages:
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
-
-  '@types/eslint__eslintrc@3.3.0':
-    resolution: {integrity: sha512-u9C5PHo8zhLBTEpWAV1YsP3ijj3GjM+4r2aGLbkT+vqtBubwgSI8KiRHXtC2QcxDGR0qM3Qapg7OtTB58JmoYQ==}
-    deprecated: This is a stub types definition. @eslint/eslintrc provides its own type definitions, so you do not need this installed.
 
   '@types/estree-jsx@1.0.5':
     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
@@ -2912,12 +2905,6 @@ snapshots:
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
-
-  '@types/eslint__eslintrc@3.3.0':
-    dependencies:
-      '@eslint/eslintrc': 3.3.1
-    transitivePeerDependencies:
-      - supports-color
 
   '@types/estree-jsx@1.0.5':
     dependencies:
