@@ -7,8 +7,8 @@ export const Blockquote = async ({
 }) => {
   return (
     <blockquote>
-      <div className="text-4xl leading-none font-medium">{children}</div>
-      {from && <span className="text-2xl font-light">— {from}</span>}
+      <div className="text-[1.5em] leading-none font-medium">{children}</div>
+      {from && <span className="text-[1.25em] font-light">— {from}</span>}
     </blockquote>
   );
 };

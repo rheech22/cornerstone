@@ -194,7 +194,7 @@ body {
     --r: 1.125em;
     --s: 1.5em;
     border-radius: var(--r);
-    max-width: calc(100% - 1em);
+    width: 100%;
 
     clip-path: shape(
       from 0 0,
