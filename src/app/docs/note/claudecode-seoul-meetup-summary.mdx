@@ -1,0 +1,38 @@
+---
+created: 2025-09-21 17:43:15 +0900
+updated: 2025-09-21 21:55:59 +0900
+title: Claude Code 서울 밋업 요약
+tags: ['AI']
+---
+
+## 1. Claude Code 팀 개발자와의 Q&A
+
+Claude Code 팀 개발자 [Dickson Tsai](https://x.com/dickson_tsai)님의 원격 Q&A 시간
+- Human to LLM → Agent to LLM: **에이전트**가 대신 맥락을 파악하고 LLM과 상호작용하는 흐름으로 발전
+- [Hook](https://docs.claude.com/en/docs/claude-code/hooks), [Slash Command](https://docs.claude.com/en/docs/claude-code/slash-commands) 활용
+- [Tmux](https://github.com/tmux/tmux) + [Git Worktree](https://git-scm.com/docs/git-worktree) 조합 병렬 작업 처리
+	- 이 둘을 조합해 병렬 작업을 효율적으로 수행
+	- 병렬 작업을 효과적으로 수행하려면 파일 단위로 역할을 분리하고 작업을 세분화하는 것이 중요
+	- [관련 추가 트윗](https://x.com/dickson_tsai/status/1969302778716582297)
+
+## 2. 한국 사용자 점유율 2위인 Claude Code Templates 빌더와의 대화
+
+[Daniel Ávila Arias](https://x.com/dani_avila7)님의 발표
+- 자신이 만든 [Claude Code Templates](https://www.aitmpl.com/agents) 소개
+- 100개가 넘는 에이전트, 커맨드, 설정, 훅 제공
+- 검증된 구성 재사용 가능
+
+## 3. Claude Code 사용량 전세계 1위를 기록한 Ultrathink Engineer의 사용 노하우
+
+ [박진형(Sigrid Jin)](https://www.linkedin.com/in/sigridjineth/) 님의 발표
+- 명확한 지시가 중요
+	- 그러기 위해선 내가 원하는게 무엇인지 명확하게 알고 있어야 함
+	- **TECHSPEC.md**, **PLAN.md**를 최대한 상세하게 작성
+	- 체크 박스를 두고 체크를 하면서 진행하도록 함
+- **Compile in the loop**
+	- 예시: 코드 수정 -> Hook -> 컴파일 -> 에러 수정
+	- 파이썬은 [Pyright](https://github.com/microsoft/pyright), [Ruff](https://docs.astral.sh/ruff/) 사용
+- **Agent in the loop**
+	- 예시: 코드 수정 -> Hook -> Zen MCP -> Gemini Pro로 코드 리뷰
+	- [Zen MCP Server](https://github.com/BeehiveInnovations/zen-mcp-server), [Serena MCP](https://github.com/oraios/serena) 참고
+
