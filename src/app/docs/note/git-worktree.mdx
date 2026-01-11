@@ -1,0 +1,128 @@
+---
+created: 2026-01-10 13:47:52 +0900
+updated: 2026-01-11 23:29:09 +0900
+title: Git Worktree
+tags: ['git']
+---
+
+## 소개
+
+git worktree는 하나의 Git 레포지토리에 여러 개의 working tree를 연결해 관리하는 기능이다.
+
+여기서 working tree는 Git이 특정 커밋(또는 브랜치)의 스냅샷을 파일 시스템에 펼쳐 놓은 작업 디렉토리를 의미한다. `git worktree add` 명령을 실행하면, 새로운 작업 디렉토리가 생성되고 동시에 `.git/worktrees/<id>/` 경로에 해당 작업 디렉토리를 식별하고 관리하기 위한 메타데이터가 만들어진다.
+
+이처럼 작업 디렉토리(working directory) 와 그에 대응하는 Git 메타데이터를 합친 개념을 Git에서는 워크트리(worktree) 라고 부른다.
+
+워크트리는:
+- `-b` 옵션으로 새 브랜치를 생성하면서 만들 수도 있고
+- 기존 특정 브랜치를 기준으로 생성할 수도 있으며
+- `-d` 옵션으로 브랜치 없이 `detached HEAD` 상태로도 만들 수 있다.
+
+## 효용
+
+- 로컬 레포지토리에서 작업 중이던 변경 사항이 있는 상태에서, 급하게 다른 작업(버그 수정, 핫픽스 등) 을 해야 하는 상황을 가정해보자. 보통은 작업 내용을 commit 하거나 stash 해야 하지만, 워크트리를 사용하면 현재 작업을 그대로 유지한 채 별도의 디렉토리에서 새로운 작업을 바로 시작할 수 있다.
+- 워크트리는 서로 독립적인 작업 디렉토리이기 때문에, 여러 작업을 병렬로 진행하기에 적합하다. 예를 들어 멀티플렉싱이 가능한 환경에서 각 워크트리를 서로 다른 작업 컨텍스트로 사용하면, AI나 자동화 도구에게 동시에 독립적인 작업을 수행시키는 것도 가능하다.
+
+## 사용법
+
+```bash title="현재 레포지토리에 연결된 워크트리 목록 보기"
+git worktree list
+```
+
+```bash title="기존 브랜치를 기준으로 새 워크트리 생성"
+git worktree add ../some-feature feat/some-feature
+```
+
+```bash title="새 브랜치를 만들면서 워크트리 생성"
+git worktree add -b hotfix ../hotfix
+```
+
+```bash title="브랜치 없이 detached HEAD 상태로 워크트리 생성"
+git worktree add --detach ../repo-test HEAD~1
+```
+
+```bash title="워크트리 제거 (정상 상태여야 함)"
+git worktree remove ../repo-feature
+```
+
+```bash title="이미 삭제된 워크트리의 메타데이터 정리"
+git worktree prune
+```
+
+## 사례
+
+### 1. 브랜치마다 워크트리를 하나씩 만드는 방식
+
+```bash
+my-project/
+├── main
+│   └── .git/
+├── feat-1
+└── feat-2
+```
+
+- 브랜치마다 워크트리를 하나씩 생성, `-b` 옵션으로 새 브랜치와 함께 워크트리 생성
+- 가령, 워크트리 경로는 브랜치 이름으로 생성
+
+### 2. 제한적인 워크트리를 두는 방식 
+
+목적에 따라 워크트리의 수를 제한적으로 두고, 이를 재활용하는 방식. 예를 들어, [Matklad](https://matklad.github.io/2024/07/25/git-worktrees.html)는 `git worktree`를 **여러 기능을 병렬로 개발하기 위한 도구**라기보다는,  **서로 성격이 다른 작업들을 물리적으로 분리하기 위한 도구**로 사용한다. 동시에 여러 일을 하지 못한다고 전제하고 작업 워크트리를 하나로 유지하는 방식으로 소개하기 때문에, AI로 병렬 작업을 시키기 위한 용도로는 적합하지 않을 수도 있겠다.
+
+- main worktree: 원격 main 브랜치의 최신 스냅샷을 읽기 전용으로 유지, 기준 코드 상태를 참고할 때 사용
+- work worktree: 실제 개발 작업의 주력 공간, 필요에 따라 브랜치를 전환하면서 작업
+- review worktree: 코드 리뷰를 위한 공간, 리뷰 대상 브랜치를 체크아웃하여 리뷰 
+- fuzz worktree: 메인 개발 흐름과 분리된 채 장시간 실행되는 테스트 등을 진행, detached HEAD로 설정해 테스트 코드만 안정적으로 유지
+- scratch worktree: 기타 작업용 공간, 리뷰 중 발견된 작은 버그, 매우 작은 핫픽스 등
+
+### 3. bare repository 활용하기
+
+작업 디렉토리가 없는 레포지토리인 bare 레포를 활용한 방식이다.
+
+```bash title="bare 레포 만드는 법"
+git init --bare  my-project.git
+```
+
+```bash title="이미 존재하는 레포에서는"
+git clone --bare my_project my-project.git
+```
+
+```bash title="원격에서 받는다면"
+git clone --bare https://github.com/my-repo/my-project.git
+```
+
+이렇게 만들면, 아래와 같은 모양이 된다.
+
+```bash
+my-project/
+└── my-project.git
+    ├── config
+    ├── description
+    ├── HEAD
+    ├── hooks
+    ├── info
+    ├── objects
+    └── refs
+```
+
+```bash
+cd  my-project.git
+git worktree add master
+```
+
+master 작업 디렉토리가 만들어진 것을 볼 수 있다.
+
+```bash caption="다른 브랜치도 같은 방식으로 추가하면 된다."
+my-project/
+├── my-project.git
+└── master
+```
+
+이 방식은 단일 bare repo를 두고, 브랜치마다 독립적인 작업 디렉토리를 갖는다.
+
+## 참고
+
+- https://git-scm.com/docs/git-worktree 
+- https://github.com/jesseduffield/lazygit/discussions/2803
+- https://matklad.github.io/2024/07/25/git-worktrees.html
+- https://www.jamescrosswell.dev/posts/switching-to-git-worktrees/ 
+
