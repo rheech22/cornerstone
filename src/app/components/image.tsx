@@ -94,5 +94,5 @@ export const Img: React.FC<ImgProps> = (props) => {
     );
   }
 
-  return <Image {...props} alt="" />;
+  return <Image {...props} alt="" rounded={false} shadow={false} />;
 };
