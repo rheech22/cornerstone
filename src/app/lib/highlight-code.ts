@@ -1,17 +1,15 @@
 import {
-  transformerNotationHighlight,
-  transformerNotationWordHighlight,
   transformerNotationDiff,
   transformerNotationFocus,
+  transformerNotationHighlight,
+  transformerNotationWordHighlight,
 } from "@shikijs/transformers";
-
 import MarkdownItAsync from "markdown-it-async";
-
 import {
-  type HighlighterGeneric,
   type BundledLanguage,
   type BundledTheme,
   createHighlighter,
+  type HighlighterGeneric,
 } from "shiki";
 
 const highlighter = await createHighlighter({
@@ -39,26 +37,26 @@ const highlighter = await createHighlighter({
 
 const highlightBy =
   (highlighter: HighlighterGeneric<BundledLanguage, BundledTheme>) =>
-  async (code: string, lang: string) => {
-    return highlighter.codeToHtml(code, {
-      lang,
-      theme: "github-light-high-contrast",
-      transformers: [
-        transformerNotationHighlight({
-          matchAlgorithm: "v3",
-        }),
-        transformerNotationWordHighlight({
-          matchAlgorithm: "v3",
-        }),
-        transformerNotationDiff({
-          matchAlgorithm: "v3",
-        }),
-        transformerNotationFocus({
-          matchAlgorithm: "v3",
-        }),
-      ],
-    });
-  };
+    async (code: string, lang: string) => {
+      return highlighter.codeToHtml(code, {
+        lang,
+        theme: "github-light-high-contrast",
+        transformers: [
+          transformerNotationHighlight({
+            matchAlgorithm: "v3",
+          }),
+          transformerNotationWordHighlight({
+            matchAlgorithm: "v3",
+          }),
+          transformerNotationDiff({
+            matchAlgorithm: "v3",
+          }),
+          transformerNotationFocus({
+            matchAlgorithm: "v3",
+          }),
+        ],
+      });
+    };
 
 export const highlightCode = highlightBy(highlighter);
 

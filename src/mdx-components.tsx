@@ -25,6 +25,7 @@ export const useMDXComponents = (components: MDXComponents): MDXComponents => {
       ) {
         return <Img {...children.props} />;
       }
+
       return <p {...props}>{children}</p>;
     },
     ...components,

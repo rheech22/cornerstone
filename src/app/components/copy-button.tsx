@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback,useState } from "react";
 
 // Define Icon components within the same file
 const CheckIcon = () => (
@@ -68,10 +68,10 @@ export const CopyButton = ({ text }: { text: string }) => {
       className={`absolute right-5 top-5 z-10 p-2 transition-all duration-300 border 
 hover:border-black hover:bg-[#efefef] hover:text-black cursor-copy
 ${
-  copied
-    ? "text-black border-black bg-[#efefef]"
-    : "border-transparent hover:border-black"
-}`}
+    copied
+      ? "text-black border-black bg-[#efefef]"
+      : "border-transparent hover:border-black"
+    }`}
       onClick={copyToClipboard}
       title={title}
       aria-label={title}

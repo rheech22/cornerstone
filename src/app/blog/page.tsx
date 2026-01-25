@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { getPostData } from "../lib/get-posts";
 
 const BlogPage = async () => {

@@ -6,6 +6,7 @@ export const parseImageOptions = (alt: string) => {
   for (let i = 1; i < parts.length; i++) {
     const part = parts[i];
     const match = part.match(/(\w+)\s*=\s*(['"])(.*?)\2/);
+
     if (match) {
       options[match[1]] = match[3];
     }
@@ -16,6 +17,7 @@ export const parseImageOptions = (alt: string) => {
 
   if (options.size) {
     const sizeParts = options.size.split('x');
+
     width = parseInt(sizeParts[0], 10);
     if (!isNaN(width)) {
       if (sizeParts.length > 1) {
@@ -28,7 +30,7 @@ export const parseImageOptions = (alt: string) => {
   }
 
   const rounded = options.round === undefined ? true : options.round !== 'false';
-  const shadow = options.shadow === undefined ? true : options.shadow !== 'false';
+  const shadow = options.shadow === undefined ? false : options.shadow !== 'false';
 
   const result = {
     alt: mainAlt,

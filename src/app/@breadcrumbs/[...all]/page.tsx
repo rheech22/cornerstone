@@ -1,5 +1,6 @@
-import { getCrumbs } from "@/app/lib/breadcrumbs";
 import Link from "next/link";
+
+import { getCrumbs } from "@/app/lib/breadcrumbs";
 
 type Props = {
   params: Promise<{
@@ -9,6 +10,7 @@ type Props = {
 
 const Page = async ({ params }: Props) => {
   const breadcrumbs = getCrumbs((await params).all);
+
   return (
     <header className="flex justify-start text-black font-bold p-6">
       {breadcrumbs.map((crumb, index) => (

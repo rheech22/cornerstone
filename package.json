@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "eslint --fix .",
+    "lint:check": "eslint .",
     "sync": "bash sync_icloud.sh",
     "sync:dev": "pnpm sync & pnpm dev"
   },
@@ -43,6 +45,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "postcss": "^8",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"

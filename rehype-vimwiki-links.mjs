@@ -8,6 +8,7 @@ export default function rehypeVimwikiLinks() {
       if (parent.tagName === "a") return;
 
       const matches = node.value.match(/\[\[(.*?)\]\]/g);
+
       if (!matches) return;
 
       let lastIndex = 0;
@@ -15,6 +16,7 @@ export default function rehypeVimwikiLinks() {
 
       matches.forEach((match) => {
         const startIndex = node.value.indexOf(match, lastIndex);
+
         if (startIndex > lastIndex) {
           children.push({
             type: "text",
@@ -25,8 +27,10 @@ export default function rehypeVimwikiLinks() {
         const innerContent = match.slice(2, -2);
 
         let href, text;
+
         if (innerContent.includes("|")) {
           const parts = innerContent.split("|");
+
           href = parts[0].trim();
           text = parts[1].trim();
         } else {
@@ -37,6 +41,7 @@ export default function rehypeVimwikiLinks() {
         }
 
         const linkText = "[[ " + text + " ]]";
+
         children.push({
           type: "element",
           tagName: "a",

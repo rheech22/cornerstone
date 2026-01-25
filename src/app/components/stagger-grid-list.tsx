@@ -1,7 +1,7 @@
 "use client";
 
-import { animate, createScope, Scope, stagger, utils } from "animejs";
 import { useEffect, useRef, useState } from "react";
+import { animate, createScope, Scope, stagger, utils } from "animejs";
 
 type Props = {
   children: React.ReactNode;
@@ -11,6 +11,7 @@ type Props = {
 const getViewportSize = () => {
   if (typeof window === "undefined") return { width: 0, height: 0 };
   const { innerWidth: width, innerHeight: height } = window;
+
   return { width, height };
 };
 
@@ -19,6 +20,7 @@ const getColumns = (width: number) => {
   if (width <= 1024) return 3;
   if (width <= 1280) return 4;
   if (width <= 1536) return 5;
+
   return 6;
 };
 
@@ -26,6 +28,7 @@ const getGrid = (count: number) => {
   const { width } = getViewportSize();
   const columns = getColumns(width);
   const rows = Math.ceil(count / columns);
+
   return [columns, rows];
 };
 
@@ -38,6 +41,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
     const initializeItemSize = () => {
       if (!root.current) return;
       const square = (root.current as HTMLElement).querySelector(".square");
+
       if (!square) return;
       setItemSize({ width: square.clientWidth, height: square.clientHeight });
     };
@@ -45,6 +49,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
     initializeItemSize();
 
     window.addEventListener("resize", initializeItemSize);
+
     return () => {
       window.removeEventListener("resize", initializeItemSize);
       scope.current?.revert();
@@ -54,6 +59,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
   useEffect(() => {
     if (!root.current) return;
     const squares = (root.current as HTMLElement).querySelectorAll(".square");
+
     if (squares.length === 0) return;
 
     const grid = getGrid(count);
@@ -72,6 +78,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
   useEffect(() => {
     if (!root.current) return;
     const squares = (root.current as HTMLElement).querySelectorAll(".square");
+
     if (squares.length === 0) return;
 
     const grid = getGrid(count);

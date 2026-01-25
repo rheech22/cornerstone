@@ -1,6 +1,7 @@
 "use client";
 
 import Link, { LinkProps } from "next/link";
+
 import { useMounted } from "../lib/use-mounted";
 
 type Props<RouteInferred> = {

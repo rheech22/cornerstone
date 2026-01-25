@@ -33,6 +33,7 @@ export const getPostData = (noteType: "blog" | "note") => {
         "utf8",
       );
       const { metadata, content } = parseFrontmatter(fileContent);
+
       return {
         slug: getSlug(fileName),
         metadata,
@@ -53,18 +54,24 @@ const parseFrontmatter = (
 
   frontMatterLines.forEach((line) => {
     const [key, value] = line.split(": ");
+
     switch (key) {
       case "tags":
         const cutted = value.slice(1, -1);
+
         metadata.tags = cutted.split(",").map((value) => trimQuotes(value));
+
         return;
       default:
         const stringified = JSON.stringify(trimQuotes(value));
+
         if (!stringified) return;
         metadata[key.trim() as keyof Metadata] = JSON.parse(stringified);
+
         return;
     }
   });
+
   return { metadata: metadata as Metadata, content };
 };
 
@@ -77,6 +84,7 @@ export const getExcerpt = (content: string): string => {
     .split("\n")
     .map((l) => {
       const line = l.trim();
+
       if (line.length === 0) return "";
       if (line.match(/^!\[.*]\(.*\)/)) return "";
       if (line.match(/^import(.*)["']@\/app\/components\/(.*)["'];$/)) {
@@ -84,6 +92,7 @@ export const getExcerpt = (content: string): string => {
       }
       if (line.match(/^<\/?Callout>$/)) return "";
       if (line.match(/^<\/?Blockquote>$/)) return "";
+
       return l.replace(/\[\[(.*?)\]\]/g, (_, g1) => {
         if (g1.includes("|")) {
           return g1.split("|")[1];

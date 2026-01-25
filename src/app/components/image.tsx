@@ -1,16 +1,17 @@
 import NextImage, { type ImageProps } from "next/image";
+
 import { parseImageOptions } from "../lib/image";
 
 type Props = ImageProps & {
   caption?: string;
-  rounded?: boolean;
-  shadow?: boolean;
+  rounded: boolean;
+  shadow: boolean;
 };
 
 export const Image: React.FC<Props> = ({
   caption,
-  rounded = true,
-  shadow = true,
+  rounded,
+  shadow,
   width,
   height,
   ...props
@@ -28,32 +29,35 @@ export const Image: React.FC<Props> = ({
 
   const containerClasses = [
     'inline-block',
-    rounded ? 'rounded-xl' : '',
+    rounded ? 'rounded-[16px] p-[8px] bg-[#ECECEC] border border-[#DFDFDF]' : '',
     shadow ? 'shadow-lg' : '',
     'overflow-hidden'
   ].filter(Boolean).join(' ').trim();
-
-
+	
   const hasCustomSize = width !== undefined || height !== undefined;
   const nextImageHeight = heightProvided && height ? height : undefined;
   const nextImageWidth = widthProvided && width ? width : undefined;
 
   return (
-    <figure className={`text-center ${hasCustomSize ? 'image-base-size' : ''}`} style={hasCustomSize ? { 
-      '--image-width': `${finalWidth}px`,
-      width: `${finalWidth}px`,
-      marginTop: '2.75em',
-      marginBottom: '3.25em',
-    } as React.CSSProperties : undefined}>
+    <figure 
+      className={`text-center ${hasCustomSize ? 'image-base-size' : 'image-wider'}`} 
+      style={hasCustomSize ? { 
+        '--image-width': `${finalWidth}px`,
+        width: `${finalWidth}px`,
+        marginTop: '2.75em',
+        marginBottom: '3.25em',
+      } as React.CSSProperties : undefined}>
       <div 
         className={containerClasses}
         style={{ 
           width: hasCustomSize ? `${finalWidth}px` : '100%',
-          height: 'auto'
+          maxWidth: '100%',
+          height: 'auto',
         }}
       >
         <NextImage
           {...props}
+				  className="rounded-[12px]"
           width={nextImageWidth || finalWidth || 1280}
           height={nextImageHeight || finalHeight || 720}
         />
@@ -76,6 +80,7 @@ interface ImgProps {
 export const Img: React.FC<ImgProps> = (props) => {
   if (typeof props.alt === 'string') {
     const { alt, caption, rounded, shadow, width, height } = parseImageOptions(props.alt);
+
     return (
       <Image
         {...props}
@@ -88,5 +93,6 @@ export const Img: React.FC<ImgProps> = (props) => {
       />
     );
   }
+
   return <Image {...props} alt="" />;
 };

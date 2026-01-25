@@ -8,6 +8,7 @@ const Notes = async () => {
   const processedNotes = await Promise.all(
     data.map(async ({ slug, metadata: { title }, content }) => {
       const excerpt = await highlightMarkdown(getExcerpt(content));
+
       return { slug, title, excerpt };
     }),
   );

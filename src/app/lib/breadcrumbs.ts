@@ -5,6 +5,7 @@ const home = {
 
 export const getCrumbs = (segments: string[]) => {
   const parent = segments.includes("index") ? "home" : segments[0];
+
   if (parent === "home") {
     return [home];
   }
@@ -17,6 +18,7 @@ export const getCrumbs = (segments: string[]) => {
       },
     ];
   }
+
   return [
     home,
     {
