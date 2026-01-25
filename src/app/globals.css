@@ -173,6 +173,11 @@ body {
     margin-bottom: 3.25em;
   }
 
+  figure.image-base-size {
+    left: calc(50% - var(--image-width, var(--expanded-width)) / 2);
+    width: var(--image-width, var(--expanded-width));
+  }
+
   /* blockquote */
   blockquote {
     position: relative;
@@ -415,6 +420,10 @@ body {
       left: 50%;
       transform: translateX(-50%);
     }
+
+    figure.image-base-size {
+      max-width: var(--image-width, var(--expanded-width));
+    }
   }
 }
 
@@ -430,6 +439,11 @@ body {
       width: 100%;
       left: 0;
       transform: none;
+    }
+
+    figure.image-base-size {
+      width: var(--image-width, 100%) !important;
+      max-width: 100% !important;
     }
 
     .code-block {

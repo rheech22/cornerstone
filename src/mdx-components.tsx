@@ -1,16 +1,14 @@
 import type { MDXComponents } from "mdx/types";
-import type { ImageProps } from "next/image";
 
 import { Blockquote } from "./app/components/blockquote";
-import { Image } from "./app/components/image";
 import { Code } from "./app/components/code";
+import { Img } from "./app/components/image";
 
 export const useMDXComponents = (components: MDXComponents): MDXComponents => {
   return {
     pre: Code,
     blockquote: Blockquote,
-    // eslint-disable-next-line jsx-a11y/alt-text
-    img: (props) => <Image {...(props as ImageProps)} />,
+    img: Img,
     p: ({ children, ...props }) => {
       if (
         Array.isArray(children) &&
@@ -18,21 +16,15 @@ export const useMDXComponents = (components: MDXComponents): MDXComponents => {
         children[0]?.props?.src &&
         children[0]?.props?.alt
       ) {
-        const imgProps = children[0]?.props;
-        // eslint-disable-next-line jsx-a11y/alt-text
-        return <Image {...(imgProps as ImageProps)} />;
+        return <Img {...children[0]?.props} />;
       }
-
       if (
         typeof children === "object" &&
         children.props?.src &&
         children.props?.alt
       ) {
-        const imgProps = children.props;
-        // eslint-disable-next-line jsx-a11y/alt-text
-        return <Image {...(imgProps as ImageProps)} />;
+        return <Img {...children.props} />;
       }
-
       return <p {...props}>{children}</p>;
     },
     ...components,
