@@ -1,0 +1,18 @@
+.gridWrap {
+  margin: 0 auto;
+  max-width: 980px;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (min-width: 980px) {
+  .grid {
+    grid-template-columns: repeat(8, 119px);
+    gap: 10px;
+  }
+}
