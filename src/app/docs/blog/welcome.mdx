@@ -1,13 +1,9 @@
 ---
 created: 2025-03-11 05:39:21 +0900
-updated: 2025-06-15 17:06:13 +0900
+updated: 2026-01-31 20:30:33 +0900
 title: "Components"
 tags: ['블로그']
 ---
-
-import { Fonts } from "@/app/components/fonts.tsx";
-import { Callout } from "@/app/components/callout.tsx"
-import { Blockquote } from "@/app/components/blockquote.tsx";
 
 # 이 곳에서 문서에 들어가는 모든 컴포넌트를 확인할 수 있습니다
 
@@ -51,11 +47,11 @@ This is some **bold** and _italics_ text.
 
 ## Images
 
-### From local
+### 로컬 이미지
 
 ![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
 
-### From remote
+### 원격 이미지
 
 ![remote](https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2629&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
 
@@ -77,6 +73,36 @@ This is some **bold** and _italics_ text.
 
 #### 모든 옵션 적용
 ![완전한 설정 | caption='모든 기능을 테스트하는 이미지' | size='600x400' | round='true' | shadow='true'](https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2629&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+
+#### Row
+
+<ImageGrid>
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+</ImageGrid>
+
+#### Column(not recommended)
+
+<ImageGrid r={2} c={1}>
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+</ImageGrid>
+
+#### Grid
+
+<ImageGrid r={2} c={2}>
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+![remote](https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2629&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+
+![2025-02-21-04-38-10.png](assets/2025-02-21-04-38-10.png)
+
+</ImageGrid>
 
 ## Quotes
 
