@@ -30,7 +30,7 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
               ))}
             </div>
             <div className={cn("flex items-center justify-center")}>
-              <span className={cn("text-lg text-black/30 lg:text-xl")}>• • •</span>
+              <span className={cn("text-lg text-[var(--foreground)] opacity-35 lg:text-xl")}>• • •</span>
             </div>
           </div>
         )}

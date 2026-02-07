@@ -1,4 +1,5 @@
 import { EmptyCell, GridCardHorizontal, GridCardLarge, GridCardSmall, GridCardVertical } from '@/app/components/grid-cards';
+import { HomeHeader } from '@/app/components/home-header';
 import { cn } from '@/app/lib/cn';
 import { getPostData } from '@/app/lib/get-posts';
 import { generateLayout } from '@/app/lib/layout-engine';
@@ -60,8 +61,9 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   return (
     <main className={cn('min-h-screen bg-[var(--color-grid-surface)] p-6')}>
+      <HomeHeader />
       <div className={styles.gridWrap}>
-        <h1 className={cn('mb-12 text-4xl font-bold text-[var(--color-grid-line)]')}>cnst.</h1>
+        <h1 className={cn('sr-only')}>cornerstone</h1>
         <div
           className={styles.grid}
           style={{

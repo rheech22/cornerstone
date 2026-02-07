@@ -9,7 +9,7 @@ interface BaseCardProps {
   className?: string;
 }
 
-const baseCardClass = cn('flex h-full w-full items-start break-all text-ellipsis rounded-[var(--radius-card)] border border-[var(--color-grid-line)] p-2 text-xs');
+const baseCardClass = cn('flex h-full w-full items-start break-all text-ellipsis rounded-[var(--radius-card)] border border-[var(--color-grid-line)]/70 p-2 text-xs');
 const titleClass = cn('font-medium tracking-tight text-[var(--color-grid-line)]');
 
 export function GridCardSmall({ post, className = '' }: BaseCardProps) {
