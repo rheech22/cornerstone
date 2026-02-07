@@ -59,6 +59,8 @@
 
     .shiki {
       overflow-x: auto;
+      background: var(--shiki-light-bg, transparent) !important;
+      color: var(--shiki-light, var(--foreground)) !important;
 
       code {
         font-size: 1rem;
@@ -135,5 +137,16 @@
         }
       }
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown > .code-block .shiki {
+    background: var(--shiki-dark-bg, transparent) !important;
+    color: var(--shiki-dark, var(--foreground)) !important;
+  }
+
+  .markdown > .code-block .shiki span[style*="--shiki-dark"] {
+    color: var(--shiki-dark) !important;
   }
 }

@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { cn } from "../lib/cn";
 import { getPostData } from "../lib/get-posts";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const BlogPage = async () => {
   const data = getPostData("blog");
@@ -13,7 +21,7 @@ const BlogPage = async () => {
           <li key={slug}>
             <Link
               href={`/blog/${slug}`}
-              className={cn("w-full text-start underline underline-offset-8 hover:text-blue-500 hover:no-underline hover:font-semibold")}
+              className={cn("w-full text-start underline underline-offset-8 hover:text-[var(--color-accent)] hover:no-underline hover:font-semibold")}
             >
               {title}
             </Link>

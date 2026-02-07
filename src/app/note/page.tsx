@@ -1,23 +1,32 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
 import { cn } from "../lib/cn";
-import { getExcerpt, getPostData } from "../lib/get-posts";
-import { highlightMarkdown } from "../lib/highlight-code";
-import { NoteList } from "./note-list";
+import { getPostData } from "../lib/get-posts";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const Notes = async () => {
   const data = getPostData("note");
 
-  const processedNotes = await Promise.all(
-    data.map(async ({ slug, metadata: { title }, content }) => {
-      const excerpt = await highlightMarkdown(getExcerpt(content));
-
-      return { slug, title, excerpt };
-    }),
-  );
-
   return (
-    <div className={cn("flex flex-col")}>
-      <NoteList notes={processedNotes} />
-    </div>
+    <ul className={cn("mt-12 flex flex-col items-center gap-2")}>
+      {data.map(({ slug, metadata: { title } }) => (
+        <li key={slug}>
+          <Link
+            href={`/note/${slug}`}
+            className={cn("w-full text-start underline underline-offset-8 hover:text-[var(--color-accent)] hover:no-underline hover:font-semibold")}
+          >
+            {title}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 };
 

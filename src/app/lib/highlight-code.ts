@@ -15,7 +15,7 @@ import {
 const highlighter = await createHighlighter({
   themes: [
     "github-light-high-contrast",
-    // ..
+    "github-dark-high-contrast",
   ],
   langs: [
     "typescript",
@@ -40,7 +40,10 @@ const highlightBy =
     async (code: string, lang: string) => {
       return highlighter.codeToHtml(code, {
         lang,
-        theme: "github-light-high-contrast",
+        themes: {
+          light: "github-light-high-contrast",
+          dark: "github-dark-high-contrast",
+        },
         transformers: [
           transformerNotationHighlight({
             matchAlgorithm: "v3",
