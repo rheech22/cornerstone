@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { animate, createScope, Scope, stagger, utils } from "animejs";
 
+import { cn } from "../lib/cn";
+
 type Props = {
   children: React.ReactNode;
   count: number;
@@ -111,10 +113,10 @@ export const StaggerGridList = ({ children, count }: Props) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col")}>
       <button
         onClick={handleClick}
-        className="flex items-center justify-start border-2 border-black p-1 text-sm ml-2 w-7 h-7 overflow-hidden hover:w-20 transition-all ease-[cubic-bezier(0.95,0.05,0.795,0.035)]"
+        className={cn("ml-2 flex h-7 w-7 items-center justify-start overflow-hidden border-2 border-black p-1 text-sm transition-all ease-[cubic-bezier(0.95,0.05,0.795,0.035)] hover:w-20")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +128,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="mr-1 shrink-0"
+          className={cn("mr-1 shrink-0")}
         >
           <path d="m18 14 4 4-4 4" />
           <path d="m18 2 4 4-4 4" />
@@ -136,7 +138,7 @@ export const StaggerGridList = ({ children, count }: Props) => {
         </svg>
         shuffle!
       </button>
-      <ul ref={root} className="relative flex flex-wrap">
+      <ul ref={root} className={cn("relative flex flex-wrap")}>
         {children}
       </ul>
     </div>

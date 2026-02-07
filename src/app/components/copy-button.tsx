@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback,useState } from "react";
+import { useCallback, useState } from "react";
+
+import { cn } from "../lib/cn";
 
 // Define Icon components within the same file
 const CheckIcon = () => (
@@ -14,11 +16,11 @@ const CheckIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="h-5 w-5"
+    className={cn("h-5 w-5")}
   >
     <path
       d="M4 12L9 17L20 6"
-      className="check-mark"
+      className={cn("check-mark")}
       style={{
         strokeDasharray: 30,
         strokeDashoffset: 30,
@@ -39,7 +41,7 @@ const CopyIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="h-5 w-5"
+    className={cn("h-5 w-5")}
   >
     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -65,18 +67,17 @@ export const CopyButton = ({ text }: { text: string }) => {
 
   return (
     <button
-      className={`absolute right-5 top-5 z-10 p-2 transition-all duration-300 border 
-hover:border-black hover:bg-[#efefef] hover:text-black cursor-copy
-${
-    copied
-      ? "text-black border-black bg-[#efefef]"
-      : "border-transparent hover:border-black"
-    }`}
+      className={cn(
+        "absolute right-5 top-5 z-10 cursor-copy border p-2 transition-all duration-300 hover:border-black hover:bg-[#efefef] hover:text-black",
+        copied
+          ? "border-black bg-[#efefef] text-black"
+          : "border-transparent hover:border-black",
+      )}
       onClick={copyToClipboard}
       title={title}
       aria-label={title}
     >
-      <span className="sr-only">{title}</span>
+      <span className={cn("sr-only")}>{title}</span>
       {copied ? <CheckIcon /> : <CopyIcon />}
       {/* Keep the style jsx block for the checkmark animation */}
       <style jsx>{`

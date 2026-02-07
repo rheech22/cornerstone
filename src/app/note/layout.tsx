@@ -1,7 +1,9 @@
+import { cn } from "../lib/cn";
+
 export default function NoteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className="pt-6 px-2 pb-8">{children}</main>;
+  return <main className={cn("px-2 pt-6 pb-8")}>{children}</main>;
 }

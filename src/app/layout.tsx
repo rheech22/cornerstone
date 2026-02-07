@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
+import { cn } from "./lib/cn";
+
 import "./globals.css";
+import "./styles/markdown-base.css";
+import "./styles/markdown-code.css";
+import "./styles/markdown-components.css";
+import "./styles/markdown-layout.css";
 
 export const metadata: Metadata = {
   title: "cornerstone",
@@ -22,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${sans.className} antialiased relative flex flex-col text-base md:text-lg lg:text-xl`}
+        className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl")}
       >
         {breadcrumbs}
         {children}

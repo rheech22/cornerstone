@@ -1,0 +1,106 @@
+@layer components {
+  .markdown {
+    position: relative;
+    width: 100%;
+    max-width: var(--md-content-width);
+    margin: 0 auto;
+  }
+
+  .markdown > h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    --optical-align: 2px;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    scroll-margin-top: var(--md-heading-scroll-margin);
+    font-weight: 700;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  .markdown > h1 {
+    font-size: 2em;
+    border-bottom: 1px solid var(--md-rule-strong);
+  }
+
+  .markdown h2 {
+    font-size: 1.5em;
+    color: var(--md-heading-2-color);
+    border-bottom: 1px solid var(--md-rule-medium);
+  }
+
+  .markdown h3 {
+    font-size: 1.25em;
+    color: var(--md-heading-3-color);
+    border-bottom: 1px solid var(--md-rule-subtle);
+  }
+
+  .markdown h4 {
+    font-style: italic;
+    color: var(--md-heading-4-color);
+    border-bottom: 1px solid var(--md-rule-faint);
+  }
+
+  .markdown p {
+    line-height: 1.7;
+    margin-bottom: var(--md-paragraph-gap);
+    word-break: keep-all;
+  }
+
+  .markdown ol,
+  .markdown ul {
+    margin-bottom: var(--md-paragraph-gap);
+
+    li + li {
+      margin-top: 1em;
+    }
+
+    li > ul,
+    li > ol {
+      margin-top: 1em;
+    }
+  }
+
+  .markdown ol {
+    list-style-type: decimal;
+    padding-left: var(--md-list-indent);
+
+    li::marker {
+      color: var(--highlight-blue);
+      font-weight: 600;
+    }
+  }
+
+  .markdown ul {
+    list-style-type: disc;
+    padding-left: var(--md-list-indent);
+
+    li::marker {
+      color: var(--highlight-blue);
+    }
+  }
+
+  .markdown a {
+    font-weight: 700;
+    word-break: break-word;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &.wiki-link {
+      text-decoration: none;
+      color: var(--foreground);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &:hover {
+      color: var(--highlight-blue);
+      text-decoration: none;
+    }
+  }
+}

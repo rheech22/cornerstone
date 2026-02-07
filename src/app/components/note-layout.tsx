@@ -1,3 +1,5 @@
+import { cn } from "../lib/cn";
+
 type Frontmatter = {
   created: string;
   updated: string;
@@ -10,35 +12,39 @@ type Props = {
   frontmatter?: Frontmatter;
 };
 
+const panelClass = cn("border-4 border-black p-4");
+const metaItemClass = cn("border-2 border-black p-2");
+const metaLabelClass = cn("font-mono text-xs font-bold");
+
 export const NoteLayout = ({ children, frontmatter }: Props) => {
   return (
-    <div className="max-w-(--breakpoint-xl) mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className={cn("mx-auto max-w-(--breakpoint-xl) px-4 py-6 sm:px-6 lg:px-8")}>
       {/* Mobile */}
-      <div className="lg:hidden">
+      <div className={cn("lg:hidden")}>
         {frontmatter && (
-          <div className="border-4 border-black p-4 mb-6">
-            <h1 className="font-mono text-3xl font-bold mb-4 break-words">
+          <div className={cn(panelClass, "mb-6")}>
+            <h1 className={cn("mb-4 break-words font-mono text-3xl font-bold")}>
               {frontmatter.title}
             </h1>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="border-2 border-black p-2">
-                <div className="font-mono text-xs font-bold">CREATED</div>
+            <div className={cn("mb-4 grid grid-cols-2 gap-4")}>
+              <div className={cn(metaItemClass)}>
+                <div className={cn(metaLabelClass)}>CREATED</div>
                 <div>
                   {new Date(frontmatter.created).toLocaleString("ko-KR")}
                 </div>
               </div>
-              <div className="border-2 border-black p-2">
-                <div className="font-mono text-xs font-bold">UPDATED</div>
+              <div className={cn(metaItemClass)}>
+                <div className={cn(metaLabelClass)}>UPDATED</div>
                 <div>
                   {new Date(frontmatter.updated).toLocaleString("ko-KR")}
                 </div>
               </div>
             </div>
-            <div className="border-2 border-black p-2">
-              <div className="font-mono text-xs font-bold mb-1">TAGS</div>
-              <div className="flex flex-wrap gap-1">
+            <div className={cn(metaItemClass)}>
+              <div className={cn(metaLabelClass, "mb-1")}>TAGS</div>
+              <div className={cn("flex flex-wrap gap-1")}>
                 {frontmatter.tags.map((tag) => (
-                  <span key={tag} className="border border-black px-1">
+                  <span key={tag} className={cn("border border-black px-1")}>
                     #{tag}
                   </span>
                 ))}
@@ -46,40 +52,40 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
             </div>
           </div>
         )}
-        <article className="border-4 border-black p-4 markdown">
+        <article className={cn("markdown border-4 border-black p-4")}>
           {children}
         </article>
       </div>
       {/* Desktop */}
-      <div className="hidden lg:flex lg:gap-8">
+      <div className={cn("hidden lg:flex lg:gap-8")}>
         {frontmatter && (
-          <div className="w-80 shrink-0">
-            <div className="sticky top-6 border-4 border-black p-4">
-              <h1 className="font-mono text-3xl font-bold mb-6 break-words">
+          <div className={cn("w-80 shrink-0")}>
+            <div className={cn("sticky top-6", panelClass)}>
+              <h1 className={cn("mb-6 break-words font-mono text-3xl font-bold")}>
                 {frontmatter.title}
               </h1>
-              <div className="space-y-4">
-                <div className="border-2 border-black p-2">
-                  <div className="font-mono text-xs font-bold">CREATED</div>
+              <div className={cn("space-y-4")}>
+                <div className={cn(metaItemClass)}>
+                  <div className={cn(metaLabelClass)}>CREATED</div>
                   <div>
                     {new Date(frontmatter.created).toLocaleString("ko-KR")}
                   </div>
                 </div>
 
-                <div className="border-2 border-black p-2">
-                  <div className="font-mono text-xs font-bold">UPDATED</div>
+                <div className={cn(metaItemClass)}>
+                  <div className={cn(metaLabelClass)}>UPDATED</div>
                   <div>
                     {new Date(frontmatter.updated).toLocaleString("ko-KR")}
                   </div>
                 </div>
 
-                <div className="border-2 border-black p-2">
-                  <div className="font-mono text-xs font-bold mb-2">TAGS</div>
-                  <div className="flex flex-wrap gap-1">
+                <div className={cn(metaItemClass)}>
+                  <div className={cn(metaLabelClass, "mb-2")}>TAGS</div>
+                  <div className={cn("flex flex-wrap gap-1")}>
                     {frontmatter.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-block border border-black px-1 mb-1"
+                        className={cn("mb-1 inline-block border border-black px-1")}
                       >
                         #{tag}
                       </span>
@@ -90,7 +96,7 @@ export const NoteLayout = ({ children, frontmatter }: Props) => {
             </div>
           </div>
         )}
-        <article className="grow border-4 border-black p-8 markdown">
+        <article className={cn("markdown grow border-4 border-black p-8")}>
           {children}
         </article>
       </div>

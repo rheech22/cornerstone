@@ -1,3 +1,5 @@
+import { cn } from "../lib/cn";
+
 export const Blockquote = async ({
   children,
   from,
@@ -7,8 +9,8 @@ export const Blockquote = async ({
 }) => {
   return (
     <blockquote>
-      <div className="text-[1.5em] leading-none font-medium">{children}</div>
-      {from && <span className="text-[1.25em] font-light">— {from}</span>}
+      <div className={cn("text-[1.5em] leading-none font-medium")}>{children}</div>
+      {from && <span className={cn("text-[1.25em] font-light")}>— {from}</span>}
     </blockquote>
   );
 };

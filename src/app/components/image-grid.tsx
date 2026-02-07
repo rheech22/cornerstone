@@ -1,6 +1,8 @@
 import { isValidElement, ReactElement } from "react";
 import NextImage from "next/image";
 
+import { cn } from "../lib/cn";
+
 interface Props {
 	r?: number,
 	c?: number;
@@ -21,7 +23,7 @@ export const ImageGrid = ({children, r, c}: Props) => {
 
   return (
     <figure 
-	 		className="image-wider"
+		 		className={cn("image-wider")}
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -91,4 +93,3 @@ const extractImageProps = (element: ReactElement): { src: string; alt: string; w
     console.error(e)
   }
 };
-

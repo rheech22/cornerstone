@@ -9,8 +9,8 @@ interface BaseCardProps {
   className?: string;
 }
 
-const baseCardClass = cn('flex h-full w-full items-start border border-[#FFFAF6] p-2 text-xs break-all text-ellipsis rounded-xl');
-const titleClass = cn('font-medium text-[#FFFAF6] tracking-tight');
+const baseCardClass = cn('flex h-full w-full items-start break-all text-ellipsis rounded-[var(--radius-card)] border border-[var(--color-grid-line)] p-2 text-xs');
+const titleClass = cn('font-medium tracking-tight text-[var(--color-grid-line)]');
 
 export function GridCardSmall({ post, className = '' }: BaseCardProps) {
   return (
@@ -27,7 +27,7 @@ export function GridCardHorizontal({ post, className = '' }: BaseCardProps) {
   return (
     <Link
       href={`/${post.type}/${post.id}`}
-      className={cn(baseCardClass,  className)}
+      className={cn(baseCardClass, className)}
     >
       <span className={cn(titleClass)}>{post.title}</span>
     </Link>
@@ -49,7 +49,7 @@ export function GridCardLarge({ post, className = '' }: BaseCardProps) {
   return (
     <Link
       href={`/${post.type}/${post.id}`}
-      className={cn(baseCardClass,   className)}
+      className={cn(baseCardClass, className)}
     >
       <span className={cn(titleClass)}>{post.title}</span>
     </Link>

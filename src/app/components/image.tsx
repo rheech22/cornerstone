@@ -1,5 +1,6 @@
 import NextImage, { type ImageProps } from "next/image";
 
+import { cn } from "../lib/cn";
 import { parseImageOptions } from "../lib/image";
 
 type Props = ImageProps & {
@@ -29,7 +30,7 @@ export const Image: React.FC<Props> = ({
 
   const containerClasses = [
     'inline-block',
-    rounded ? 'rounded-[16px] p-[8px] bg-[#ECECEC] border border-[#DFDFDF]' : '',
+    rounded ? 'rounded-[var(--radius-media-outer)] border border-[var(--color-surface-line)] bg-[var(--color-surface-muted)] p-2' : '',
     shadow ? 'shadow-lg' : '',
     'overflow-hidden'
   ].filter(Boolean).join(' ').trim();
@@ -40,7 +41,7 @@ export const Image: React.FC<Props> = ({
 
   return (
     <figure 
-      className={`text-center ${hasCustomSize ? 'image-base-size' : 'image-wider'}`} 
+      className={cn("text-center", hasCustomSize ? "image-base-size" : "image-wider")}
       style={hasCustomSize ? { 
         '--image-width': `${finalWidth}px`,
         width: `${finalWidth}px`,
@@ -48,7 +49,7 @@ export const Image: React.FC<Props> = ({
         marginBottom: '3.25em',
       } as React.CSSProperties : undefined}>
       <div 
-        className={containerClasses}
+        className={cn(containerClasses)}
         style={{ 
           width: hasCustomSize ? `${finalWidth}px` : '100%',
           maxWidth: '100%',
@@ -57,13 +58,13 @@ export const Image: React.FC<Props> = ({
       >
         <NextImage
           {...props}
-				  className="rounded-[12px]"
+				  className={cn("rounded-[var(--radius-media-inner)]")}
           width={nextImageWidth || finalWidth || 1280}
           height={nextImageHeight || finalHeight || 720}
         />
       </div>
       {caption && (
-        <figcaption className="text-sm text-gray-500 mt-1 text-left w-full">
+        <figcaption className={cn("mt-1 w-full text-left text-sm text-gray-500")}>
           {caption}
         </figcaption>
       )}

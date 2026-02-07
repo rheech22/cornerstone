@@ -1,3 +1,4 @@
+import { cn } from "../lib/cn";
 import { getExcerpt, getPostData } from "../lib/get-posts";
 import { highlightMarkdown } from "../lib/highlight-code";
 import { NoteList } from "./note-list";
@@ -14,7 +15,7 @@ const Notes = async () => {
   );
 
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col")}>
       <NoteList notes={processedNotes} />
     </div>
   );

@@ -1,9 +1,8 @@
 import { EmptyCell, GridCardHorizontal, GridCardLarge, GridCardSmall, GridCardVertical } from '@/app/components/grid-cards';
+import { cn } from '@/app/lib/cn';
 import { getPostData } from '@/app/lib/get-posts';
 import { generateLayout } from '@/app/lib/layout-engine';
 import type { Post } from '@/app/lib/layout-types';
-
-import { cn } from './lib/cn';
 
 import styles from './page.module.css';
 
@@ -48,8 +47,8 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   if (!layout) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-6">
-        <div className="text-center text-sm text-neutral-700">
+      <main className={cn('min-h-screen flex items-center justify-center p-6')}>
+        <div className={cn('text-center text-sm text-neutral-700')}>
           <p>Layout generation failed.</p>
           <p>Posts: {allPosts.length}</p>
         </div>
@@ -60,9 +59,9 @@ export default async function HomePage({ searchParams }: PageProps) {
   const postMap = new Map(allPosts.map(p => [p.id, p]));
 
   return (
-    <main className="min-h-screen p-6 bg-[#181818]">
+    <main className={cn('min-h-screen bg-[var(--color-grid-surface)] p-6')}>
       <div className={styles.gridWrap}>
-        <h1 className={cn('text-4xl font-bold text-white mb-12')}>cnst.</h1>
+        <h1 className={cn('mb-12 text-4xl font-bold text-[var(--color-grid-line)]')}>cnst.</h1>
         <div
           className={styles.grid}
           style={{
@@ -82,26 +81,26 @@ export default async function HomePage({ searchParams }: PageProps) {
             switch (placement.type) {
               case 'S':
                 return (
-                  <div key={`${placement.postId}-${index}`} style={style} className="h-full">
-                    <GridCardSmall post={post} className="h-full" />
+                  <div key={`${placement.postId}-${index}`} style={style} className={cn('h-full')}>
+                    <GridCardSmall post={post} className={cn('h-full')} />
                   </div>
                 );
               case 'MX':
                 return (
-                  <div key={`${placement.postId}-${index}`} style={style} className="h-full">
-                    <GridCardHorizontal post={post} className="h-full" />
+                  <div key={`${placement.postId}-${index}`} style={style} className={cn('h-full')}>
+                    <GridCardHorizontal post={post} className={cn('h-full')} />
                   </div>
                 );
               case 'MY':
                 return (
-                  <div key={`${placement.postId}-${index}`} style={style} className="h-full">
-                    <GridCardVertical post={post} className="h-full" />
+                  <div key={`${placement.postId}-${index}`} style={style} className={cn('h-full')}>
+                    <GridCardVertical post={post} className={cn('h-full')} />
                   </div>
                 );
               case 'L':
                 return (
-                  <div key={`${placement.postId}-${index}`} style={style} className="h-full">
-                    <GridCardLarge post={post} className="h-full" />
+                  <div key={`${placement.postId}-${index}`} style={style} className={cn('h-full')}>
+                    <GridCardLarge post={post} className={cn('h-full')} />
                   </div>
                 );
               default:
@@ -123,7 +122,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                 gridRow: `${row + 1}`
               };
 
-              return <EmptyCell key={`empty-${row}-${col}`} className="h-full w-full" style={style} />;
+              return <EmptyCell key={`empty-${row}-${col}`} className={cn('h-full w-full')} style={style} />;
             })
           )}
         </div>

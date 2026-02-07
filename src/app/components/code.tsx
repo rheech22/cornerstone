@@ -1,3 +1,4 @@
+import { cn } from "@/app/lib/cn";
 import { highlightCode } from "@/app/lib/highlight-code";
 
 import { CopyButton } from "./copy-button";
@@ -29,13 +30,13 @@ export const Code = async ({ children }: { children: PreElementWithProps }) => {
   const html = await highlightCode(pre.code, pre.lang);
 
   return (
-    <div className="code-block">
-      {pre.title && <div className="code-block__title">{pre.title}</div>}
-      <div className="code-block__content">
+    <div className={cn("code-block")}>
+      {pre.title && <div className={cn("code-block__title")}>{pre.title}</div>}
+      <div className={cn("code-block__content")}>
         <CopyButton text={pre.code} />
         <code dangerouslySetInnerHTML={{ __html: html }} />
       </div>
-      {pre.caption && <div className="code-block__caption">{pre.caption}</div>}
+      {pre.caption && <div className={cn("code-block__caption")}>{pre.caption}</div>}
     </div>
   );
 };

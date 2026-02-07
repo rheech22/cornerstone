@@ -1,0 +1,85 @@
+@layer components {
+  .markdown > h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    position: relative;
+    left: calc(50% - var(--md-expanded-width) / 2);
+    width: var(--md-expanded-width);
+    text-align: start;
+  }
+
+  .markdown > figure,
+  .markdown > blockquote,
+  .markdown > .code-block {
+    position: relative;
+    width: var(--md-expanded-width);
+    margin-top: var(--md-block-gap-top);
+    margin-bottom: var(--md-block-gap-bottom);
+    margin-inline: auto;
+  }
+
+  .markdown > figure.image-base-size {
+    max-width: 100% !important;
+  }
+
+  .markdown > figure.image-wider {
+    left: calc(50% - var(--image-width, var(--md-expanded-width)) / 2);
+    width: var(--image-width, var(--md-expanded-width));
+  }
+
+  .markdown > blockquote {
+    left: calc(50% - var(--md-expanded-width) / 2);
+
+    p {
+      margin-bottom: 0;
+    }
+
+    span {
+      font-style: italic;
+    }
+  }
+
+  .markdown .katex-display {
+    display: block;
+    margin-top: var(--md-block-gap-top);
+    margin-bottom: var(--md-block-gap-bottom);
+
+    .katex-html {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 1380px) {
+  .markdown > h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4,
+  .markdown > .code-block,
+  .markdown > figure.image-wider,
+  .markdown > blockquote {
+    width: 90vw;
+    max-width: var(--md-expanded-width);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 560px) {
+  .markdown > h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4,
+  .markdown > .code-block,
+  .markdown > figure.image-wider,
+  .markdown > blockquote {
+    width: 100%;
+    left: 0;
+    transform: none;
+  }
+
+  .markdown > .code-block .shiki code {
+    font-size: 0.8rem;
+  }
+}

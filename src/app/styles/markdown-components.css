@@ -1,0 +1,86 @@
+@layer components {
+  .markdown .callout {
+    --r: 1.125em;
+    --s: 1.5em;
+    width: 100%;
+    border-radius: var(--r);
+    clip-path: shape(
+      from 0 0,
+      hline to calc(100% - var(--s) - 2 * var(--r)),
+      arc by var(--r) var(--r) of var(--r) cw,
+      arc by var(--s) var(--s) of var(--s),
+      arc by var(--r) var(--r) of var(--r) cw,
+      vline to 100%,
+      hline to 0
+    );
+    background-color: var(--highlight-blue);
+    color: var(--background);
+
+    ol > li::marker,
+    ul > li::marker {
+      color: var(--background);
+    }
+
+    a:hover {
+      color: white;
+    }
+
+    &::selection {
+      background-color: var(--background);
+      color: var(--highlight-blue);
+    }
+
+    code:not(:has(> *)) {
+      background-color: var(--background);
+      color: var(--highlight-blue);
+
+      &::selection {
+        color: var(--background);
+        background-color: var(--highlight-blue);
+      }
+    }
+  }
+
+  .square-link-excerpt {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-weight: 400;
+
+    .shiki {
+      text-align: left;
+      line-height: 1;
+      margin: 1em 0;
+      padding: 1em 0.25em;
+      background: transparent !important;
+      border: 1px solid var(--foreground);
+
+      code {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.5em;
+        gap: 4px;
+
+        span {
+          white-space: pre-wrap;
+          word-break: break-all;
+        }
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 1em 0;
+      font-weight: 700;
+    }
+
+    p {
+      margin-bottom: 0.75em;
+      overflow-wrap: break-word;
+    }
+  }
+}
