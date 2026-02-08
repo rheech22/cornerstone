@@ -720,7 +720,7 @@ class LayoutEngine {
     this.trimGrid();
 
     return {
-      cols: 8,
+      cols: this.config.gridCols,
       rows: this.grid.length,
       placements: this.placements
     };

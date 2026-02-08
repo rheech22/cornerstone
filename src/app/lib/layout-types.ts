@@ -10,7 +10,7 @@ export type Placement = {
 };
 
 export type LayoutResult = {
-  cols: 8;
+  cols: number;
   rows: number;
   placements: Placement[];
 };

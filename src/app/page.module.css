@@ -4,15 +4,35 @@
   width: 100%;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 8px;
+.gridStack {
+  width: 100%;
+  container-type: inline-size;
 }
 
-@media (min-width: 980px) {
-  .grid {
-    grid-template-columns: repeat(8, 119px);
-    gap: 4px;
+.grid {
+  --grid-cols: 4;
+  --grid-gap: 8px;
+  --cell-size: calc((100cqw - (var(--grid-cols) - 1) * var(--grid-gap)) / var(--grid-cols));
+  display: grid;
+  gap: var(--grid-gap);
+  grid-auto-rows: var(--cell-size);
+}
+
+.desktopGrid {
+  display: none;
+  --grid-gap: 4px;
+}
+
+.mobileGrid {
+  display: grid;
+}
+
+@media (min-width: 900px) {
+  .desktopGrid {
+    display: grid;
+  }
+
+  .mobileGrid {
+    display: none;
   }
 }
