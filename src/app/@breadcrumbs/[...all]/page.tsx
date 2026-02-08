@@ -18,7 +18,7 @@ const Page = async ({ params }: Props) => {
   }
 
   return (
-    <header className={cn("flex justify-start p-6")}>
+    <header className={cn("flex justify-start p-6 noise-bg")}>
       <Link
         href="/"
         aria-label="Go home"

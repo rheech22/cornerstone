@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl")}
+        className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl min-h-screen")}
       >
         {breadcrumbs}
         {children}

@@ -5,5 +5,5 @@ export default function NoteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className={cn("px-2 pt-6 pb-8")}>{children}</main>;
+  return <main className={cn("flex-1 px-2 pt-6 pb-8 noise-bg")}>{children}</main>;
 }

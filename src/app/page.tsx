@@ -76,7 +76,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const resolvedMobileLayout = mobileLayout ?? fallbackLayout;
 
   return (
-    <main className={cn('min-h-screen bg-[var(--color-grid-surface)] p-6')}>
+    <main className={cn('min-h-screen noise-bg p-6')}>
       <HomeHeader />
       <div className={styles.gridWrap}>
         <h1 className={cn('sr-only')}>cornerstone</h1>
