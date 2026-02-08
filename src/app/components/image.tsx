@@ -30,7 +30,7 @@ export const Image: React.FC<Props> = ({
 
   const containerClasses = [
     'inline-block',
-    rounded ? 'rounded-[var(--radius-media-outer)] border border-[var(--color-surface-line)] bg-[var(--color-surface-muted)] p-2' : '',
+    rounded ? 'rounded-[var(--radius-media-outer)]' : '',
     shadow ? 'shadow-lg' : '',
     'overflow-hidden'
   ].filter(Boolean).join(' ').trim();
