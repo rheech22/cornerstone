@@ -36,7 +36,7 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
         )}
         <article className={cn("markdown grow")}>{children}</article>
         {frontmatter && (
-          <div className={cn("mx-auto mb-2 text-sm text-black/60")}>
+          <div className={cn("mx-auto mb-2 text-sm text-[var(--foreground)]/70")}>
             <span>
               published {from(new Date(frontmatter.created))} {" · "} last
               updated {from(new Date(frontmatter.updated))}
