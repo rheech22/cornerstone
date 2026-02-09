@@ -53,6 +53,8 @@
   .markdown ol,
   .markdown ul {
     margin-bottom: var(--md-paragraph-gap);
+    word-break: break-all;
+
 
     li + li {
       margin-top: 1em;
