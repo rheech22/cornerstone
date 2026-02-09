@@ -56,7 +56,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   if (!desktopLayout && !mobileLayout) {
     return (
-      <main className={cn('min-h-screen flex items-center justify-center p-6')}>
+      <main className={cn('min-h-dvh flex items-center justify-center p-6')}>
         <div className={cn('text-center text-sm text-neutral-700')}>
           <p>Layout generation failed.</p>
           <p>Posts: {allPosts.length}</p>
@@ -76,7 +76,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const resolvedMobileLayout = mobileLayout ?? fallbackLayout;
 
   return (
-    <main className={cn('min-h-screen noise-bg p-6')}>
+    <main className={cn('min-h-dvh noise-bg p-6')}>
       <HomeHeader />
       <div className={styles.gridWrap}>
         <h1 className={cn('sr-only')}>cornerstone</h1>
