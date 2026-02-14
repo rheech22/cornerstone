@@ -1,15 +1,13 @@
 ---
 created: 2025-03-24 16:09:21 +0900
-updated: 2025-04-20 20:36:46 +0900
+updated: 2026-02-14 22:09:07 +0900
 title: "Object.is()"
 tags: ["javascript", "language", "basics"]
 ---
 
-import { Callout } from "@/app/components/callout.tsx";
-
 `Object.is()`는 두 값이 같은 값인지 알려준다.
 
-```js title="출처는 MDN"
+```js title="출처: MDN"
 // Case 1: 평가 결과는 ===을 사용한 것과 동일합니다
 Object.is(25, 25); // true
 Object.is("foo", "foo"); // true
@@ -46,17 +44,17 @@ Object.is(NaN, Number.NaN); // true
 - 둘 다 같은 숫자(`+0`과 `-0`을 다르다고 봄)
 - 둘 다 `NaN`
 
-<Callout title="📌 동등 연산자와 같지 않다.">
+<Callout title="동등 연산자와 같지 않다.">
 `==` 연산자는 서로 형(type)이 같지 않다면 강제로 형 변환을 하는 것과 달리 `Object.is()`는 어떤 변환도 하지 않는다.
 </Callout>
 
-<Callout title="📌 일치 연산자와도 같지 않다.">
+<Callout title="일치 연산자와도 같지 않다.">
 `===` 연산자는 `+0`과 `-0`을 같다고 본다. 한편 `NaN`을 서로 비교할 때 다르게 처리한다.
 </Callout>
 
-실무 코드에서도 `Object.is()`를 종종 목격할 수 있다.
+zustand에서도 `Object.is()`를 목격할 수 있다.
 
-```js title="바닐라로 작성된 zustand store 생성 함수"
+```js title="바닐라JS로 작성된 zustand store 생성 함수"
 // [!code word:Object.is(nextState, state)]
 const createStoreImpl = (createState) => {
   let state;
