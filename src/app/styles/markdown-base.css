@@ -47,7 +47,10 @@
   .markdown p {
     line-height: 1.7;
     margin-bottom: var(--md-paragraph-gap);
-    word-break: keep-all;
+		
+		hyphens: auto;
+		text-align: justify;
+		word-break: keep-all;
   }
 
   .markdown ol,
@@ -90,8 +93,10 @@
     word-break: break-word;
     text-decoration: underline;
     text-underline-offset: 2px;
+		margin-right: 2px;
 
     &.wiki-link {
+			font-weight: 500;
       text-decoration: none;
       color: var(--foreground);
 
@@ -104,5 +109,44 @@
       color: var(--highlight-blue);
       text-decoration: none;
     }
+  }
+
+  .markdown table {
+    border-collapse: collapse;
+    border: 0.6px solid var(--foreground);
+    width: 100%;
+    table-layout: auto;
+    margin-top: var(--md-block-gap-top);
+    margin-bottom: var(--md-block-gap-bottom);
+    background: var(--background);
+    font-size: 0.9em;
+    line-height: 1.55;
+  }
+
+  .markdown th,
+  .markdown td {
+    border: 0.6px solid var(--foreground);
+    padding: 0.55em 0.75em;
+    text-align: left !important;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .markdown thead th {
+    background: var(--color-surface-muted);
+    font-weight: 700;
+  }
+
+  .markdown tbody tr:nth-child(even) {
+    background: var(--color-surface-muted);
+  }
+
+  .markdown th:first-child,
+  .markdown td:first-child,
+  .markdown th:last-child,
+  .markdown td:last-child {
+    width: 1%;
+    white-space: nowrap;
   }
 }

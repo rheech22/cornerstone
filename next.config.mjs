@@ -26,6 +26,7 @@ const withMDX = createMDX({
     remarkPlugins: [
       "remark-parse",
       "remark-math",
+      "remark-gfm",
       "remark-frontmatter",
       "remark-mdx-frontmatter",
       "remark-rehype",

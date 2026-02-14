@@ -31,6 +31,7 @@
     "rehype-mdx-import-media": "^1.2.0",
     "rehype-stringify": "^10.0.1",
     "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "remark-mdx-frontmatter": "^5.0.0",
     "remark-parse": "^11.0.0",

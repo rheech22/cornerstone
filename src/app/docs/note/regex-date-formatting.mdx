@@ -1,6 +1,6 @@
 ---
 created: 2023-03-28 00:00:00 +0900
-updated: 2023-08-22 00:37:02 +0900
+updated: 2026-02-14 13:37:43 +0900
 title: "정규 표현식으로 날짜 자동 포맷팅하기"
 tags: ["regex", "javascript", "input-validation"]
 ---
@@ -89,7 +89,7 @@ input.addEventListener('input', (e) => {
 
 8자리 숫자를 입력하면 원하는 자리에 점을 찍어주고 있다. 
 
-![regex1](./assets/regex-date-regex1.gif)
+![regex1 | size="400"](./assets/regex-date-regex1.gif)
 그러나 사실 내가 원했던 것은 8자리를 모두 입력하지 않더라도 필요한 시점에 점이 찍히는 것이다. 수량자를 변경해보자. 각 그룹이 0개의 숫자부터 캡쳐링할 수 있도록 수량자를 조절한다. 하지만 이렇게만 하면 `1..`처럼 점이 연속으로 찍히고 그 다음 입력은 마지막 자리에 붙게 된다.
 
 ```js{4}
@@ -135,7 +135,8 @@ input.addEventListener('input', (e) => {
 
 이제는 입력 중에도 원하는 위치에 점을 잘 찍는다.
 
-![regex2](./assets/regex-date-regex2.gif)
+![regex2 | size="400"](./assets/regex-date-regex2.gif)
+
 ## 입력 구분하기
 
 지금까지는 백스페이스로 삭제를 하더라도 정규식 패턴에 의해 점이 다시 찍히기 때문에 삭제 기능이 동작하지 않았다. 삭제를 할 때는 자동 포맷팅을 하지 않도록 해야 한다. 이런 경우에 `InputEvent` 인터페이스가 제공하는 `inputType` 속성을 사용할 수 있다. `inputType`속성은 타이핑에 의한 **텍스트 주입**이라면 `“insertText”` 값을 갖는다. 입력을 추가할 때만 `replace()`를 호출한다.
@@ -181,7 +182,7 @@ input.addEventListener('input', (e) => {
 
 이렇게만 해도 어느 정도는 잘 된다.
 
-![regex3](./assets/regex-date-regex3.gif)
+![regex3 | size="400"](./assets/regex-date-regex3.gif)
 다만 날짜를 모두 지우거나 종료 날짜가 없음에도 보여주고 있는 하이픈(-)을 지우고 싶다. 정규식을 하나 더 추가한다. 부정 전방 탐색을 사용하여 뒤에 `숫자`, 또는 `공백 + 숫자`가 오지 않는 하이픈에 대한 매칭을 수행한다. 하이픈의 앞뒤에는 공백 문자가 0개 이상 올 수 있다.
 
 ```js{12}
@@ -213,7 +214,7 @@ input.addEventListener('input', (e) => {
 
 이제 원하는 모습이 됐다.
 
-![regex4](./assets/regex-date-regex4.gif)
+![regex4 | size="400"](./assets/regex-date-regex4.gif)
 ## 코드 리팩토링
 
 `replace()`의 호출을 위한 중복 코드를 제거하고 정규 표현식과 대체 문자열/패턴을 분리하면 코드가 더 읽기 좋아질 것 같아 리팩토링을 했다.

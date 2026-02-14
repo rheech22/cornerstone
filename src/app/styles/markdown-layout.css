@@ -11,12 +11,17 @@
 
   .markdown > figure,
   .markdown > blockquote,
-  .markdown > .code-block {
+  .markdown > .code-block,
+  .markdown > table {
     position: relative;
     width: var(--md-expanded-width);
     margin-top: var(--md-block-gap-top);
     margin-bottom: var(--md-block-gap-bottom);
     margin-inline: auto;
+  }
+
+  .markdown > table {
+    left: calc(50% - var(--md-expanded-width) / 2);
   }
 
   .markdown > figure.image-base-size {
@@ -57,6 +62,7 @@
   .markdown h3,
   .markdown h4,
   .markdown > .code-block,
+  .markdown > table,
   .markdown > figure.image-wider,
   .markdown > blockquote {
     width: 90vw;
@@ -72,6 +78,7 @@
   .markdown h3,
   .markdown h4,
   .markdown > .code-block,
+  .markdown > table,
   .markdown > figure.image-wider,
   .markdown > blockquote {
     width: 100%;

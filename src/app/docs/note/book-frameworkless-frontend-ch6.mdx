@@ -1,6 +1,6 @@
 ---
 created: 2023-03-04 00:00:00 +0900
-updated: 2023-08-22 00:39:19 +0900
+updated: 2026-02-14 13:24:19 +0900
 title: "프레임워크 없는 프론트엔드 개발 6장"
 tags: ["book", "frontend", "javascript"]
 ---
@@ -8,8 +8,6 @@ tags: ["book", "frontend", "javascript"]
 ## 싱글 페이지 애플리케이션
 
 SPA는 하나의 HTML 페이지로 실행되는 애플리케이션이다. 사용자가 다른 화면으로 이동할 때 뷰를 동적으로 재구성하여 보여주기 때문에 사용자가 경험할 수 있는 지연을 감소시키고 일반적으로 더 나은 UX를 제공할 수 있다.
-
-
 
 ## 라우팅 시스템
 
@@ -19,8 +17,6 @@ SPA는 하나의 HTML 페이지로 실행되는 애플리케이션이다. 사용
 - 현재 URL의 리스너
 
 라우터는 URL이 변경될 때마다 해당 경로에 바인딩된 컴포넌트로 기존의 것을 대체한다.
-
-
 
 ## 프래그먼트 식별자를 이용한 라우터 구현
 
@@ -203,10 +199,10 @@ router
 
 동작하는 해시 라우터
 
-![router](./assets/book-frameworkless-ch6-router.gif)
+![router | size="480"](./assets/book-frameworkless-ch6-router.gif)
 라우터 흐름은 이렇다.
 
-![flow](./assets/book-frameworkless-ch6-flow.png)
+![flow | size="480"](./assets/book-frameworkless-ch6-flow.png)
 ## 정규식을 통한 경로 매개변수 추출
 
 경로 매개변수(path parameter)는 URL에서 리소스를 식별해야 할 때 사용한다.
@@ -397,7 +393,9 @@ const checkRoutes = () => {
 ```
 
 동작하는 매개변수 탐색  
-![params](./assets/book-frameworkless-ch6-params.gif)
+
+![params | size="480"](./assets/book-frameworkless-ch6-params.gif)
+
 ## 히스토리 API를 이용한 라우터
 
 히스토리 라우터는 프래그먼트 식별자를 사용하지 않는다.
@@ -459,6 +457,8 @@ const routes = {
 ```
 
 동작하는 히스토리 라우터  
-![history](./assets/book-frameworkless-ch6-history.gif)
+
+![history | size="480"](./assets/book-frameworkless-ch6-history.gif)
+
 ## 출처
 _프란세스코 스트라츨로, [『프레임워크 없는 프론트엔드 개발』](https://search.shopping.naver.com/book/search?bookTabType=ALL&pageIndex=1&pageSize=40&query=%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC%20%EC%97%86%EB%8A%94%20%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C%20%EA%B0%9C%EB%B0%9C&sort=REL), 에이콘 출판(2021.01.21.)_

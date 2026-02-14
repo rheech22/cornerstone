@@ -1,6 +1,6 @@
 ---
 created: 2024-10-13 14:53:44 +0900
-updated: 2026-02-14 12:06:40 +0900
+updated: 2026-02-14 13:22:14 +0900
 title: "리액트에서 데이터는 어떻게 가져와야 할까"
 tags: ["react", "frontend", "data-fetching"]
 ---
@@ -13,7 +13,7 @@ tags: ["react", "frontend", "data-fetching"]
 
 데이터에 관심을 가지는 여러 컴포넌트가 있다고 가정했을 때 공통 부모 컴포넌트에서 가져오는 방식이다.
 
-![공통_부모에서_가져오기](./assets/react-data-common_parent.png)
+![공통_부모에서_가져오기 | size='480'](./assets/react-data-common_parent.png)
 
 ```js
 const CommonParent = () => {
@@ -43,7 +43,7 @@ const CommonParent = () => {
 
 로딩 인디케이터를 보여주고자 하는 곳에서 데이터를 가져오기도 한다.
 
-![로딩_인디케이터_위치에서_가져오기_1](./assets/react-data-loading-indicator-1.png)
+![로딩_인디케이터_위치에서_가져오기_1 | size='480'](./assets/react-data-loading-indicator-1.png)
 
 ```js
 const CommonParent = () => {
@@ -84,7 +84,7 @@ const CommonParent = () => {
 
 만약, 가장 상위 레벨에서 로딩 인디케이터를 보여줘야 한다면 끌어 올려야 할 수도 있다.
 
-![로딩_인디케이터_위치에서_가져오기_2](./assets/react-data-loading-indicator-2.png)
+![로딩_인디케이터_위치에서_가져오기_2 | size='480'](./assets/react-data-loading-indicator-2.png)
 
 ```js
 const TopLevelCompoenent = () => {
@@ -124,7 +124,7 @@ const TopLevelCompoenent = () => {
 
 또는, 각 컴포넌트에서 로딩 인디케이터를 보여준다면 `props`로 넘기는 방법도 있겠다.
 
-![로딩_인디케이터_위치에서_가져오기_3](./assets/react-data-loading-indicator-3.png)
+![로딩_인디케이터_위치에서_가져오기_3 | size='480'](./assets/react-data-loading-indicator-3.png)
 
 ```js
 const CommonParent = () => {

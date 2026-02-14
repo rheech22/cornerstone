@@ -1,6 +1,6 @@
 ---
 created: 2023-02-07 00:00:00 +0900
-updated: 2026-02-14 12:01:04 +0900
+updated: 2026-02-14 13:26:07 +0900
 title: "프레임워크 없는 프론트엔드 개발 2장"
 tags: ["book", "frontend", "javascript"]
 ---
@@ -155,7 +155,7 @@ const appView = (targetElement, { todos, filter: currentFilter }) => {
 
 브라우저에서 상태에 맞게 그려진 할 일 목록을 볼 수 있다.
 
-![todos-1](./assets/book-frameworkless-ch2-todos-1.png)
+![todos-1 | size="480"](./assets/book-frameworkless-ch2-todos-1.png)
 
 ### 중간 리팩토링
 
@@ -268,7 +268,9 @@ const appView = (targetElement, state) => {
 ```
 
 선언적 방식이라면 뭔가 '해 줘' 느낌이 나야 한다.
-![do](./assets/book-frameworkless-ch2-do.jpeg)
+
+![do | size="480"](./assets/book-frameworkless-ch2-do.jpeg)
+
 `class` 대신 `data-component` 속성에 컴포넌트의 이름을 넣는다. 이제부터 뷰에서 [데이터 속성](https://developer.mozilla.org/ko/docs/Learn/HTML/Howto/Use_data_attributes)을 사용한다.
 
 ```html{12, 15, 16}
@@ -539,7 +541,8 @@ init();
 
 5초마다 새로운 할 일이 추가된다.
 
-![todos-2](./assets/book-frameworkless-ch2-todos-2.png)
+![todos-2 | size="480"](./assets/book-frameworkless-ch2-todos-2.png)
+
 ### 가상 DOM
 
 가상 DOM의 핵심은 비교 알고리즘이다. 더 이상 전체 목록을 교체하지 않고 변경된 요소가 실제 DOM에 필요한 유일한 작업이라는 사실을 시스템이 이해하도록 하는 것이 가상 DOM의 목적이다.  

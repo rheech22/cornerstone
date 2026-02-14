@@ -1,6 +1,6 @@
 ---
 created: 2024-10-09 17:13:11 +0900
-updated: 2024-10-09 17:46:03 +0900
+updated: 2026-02-14 13:41:47 +0900
 title: "컴포지션으로 조건부 컴포넌트 렌더링 개선"
 tags: ["react", "frontend", "composition"]
 ---
@@ -160,20 +160,21 @@ const CartPage = () => {
 
 - 로딩 상태 뿐만 아니라 에러 처리에 대한 내용도 포함되어야 한다는 코멘트가 인상적이었다. 컴포넌트가 직접 데이터를 받아오는 경우에는 `Promise` 객체의 상태에 따라 관심사를 분리하는 것이 복잡성을 많이 줄여준다는 내용이다. 그리고 발생할 수 있는 여러 에러 타입에 대해서도 어떻게 접근하면 좋을지 [자신의 글](https://dev.to/jaeyeophan/client-centered-user-exception-handling-23a1)을 소개하기도 한다. (알고보니 토스에 재직하시는 분이었다..!)
 - 패턴 매칭 함수를 소개하는 내용도 인상적이었다. 각 조건에 따라 반환될 컴포넌트만 함수에 전달하는 방식으로 구현 복잡성을 크게 낮출 수 있을 것 같아서 실무에서도 써볼만한 코드라고 생각했다. 구현 코드는 [링크](https://gist.github.com/gpichot/df6b586c0ac09ebde794c7f5bef5800f)에서 확인할 수 있다.
-    ```js
-    export default function SessionsList() {
-      const sessionsQuery = useSessionsListQuery();
 
-      return (
-        <PageLayout title="My sessions">
-          {matchQueryStatus(sessionsQuery, {
-            Loading: <Skeleton />
-            Errored: <Alert kind="error" icon={<IconAlertCircle size="1rem" />} />,
-            Empty: <Alert kind="default" description="No session scheduled" />,
-            Success: ({ data }) => <SessionList items={data} />
-          })}
-        </PageLayout>
-      );
-    }
-    ```
+```js
+export default function SessionsList() {
+	const sessionsQuery = useSessionsListQuery();
+
+	return (
+		<PageLayout title="My sessions">
+			{matchQueryStatus(sessionsQuery, {
+				Loading: <Skeleton />
+				Errored: <Alert kind="error" icon={<IconAlertCircle size="1rem" />} />,
+				Empty: <Alert kind="default" description="No session scheduled" />,
+				Success: ({ data }) => <SessionList items={data} />
+			})}
+		</PageLayout>
+	);
+}
+```
 

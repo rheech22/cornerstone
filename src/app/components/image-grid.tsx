@@ -16,37 +16,34 @@ export const ImageGrid = ({children, r, c}: Props) => {
   const elements = Array.isArray(children) ? [...children]: [children]
   const imageProps = elements.map(extractImageProps).filter((props) => props !== undefined);
 
-  if(!imageProps) return null;
+  if(imageProps.length === 0) return null;
 
-  const rows = r ?? 1;
+  const rows = r;
   const columns = c ?? imageProps.length;
 
   return (
     <figure 
-		 		className={cn("image-wider")}
+		 	className={cn("image-wider")}
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        gridTemplateRows: rows ? `repeat(${rows}, auto)` : undefined,
         gap: '.5rem',
         alignItems: 'start',
-        justifyItems: 'center',
+        justifyItems: 'stretch',
       }}>
 		  {imageProps.map((props, i) => {
         return (
           <div
             key={props.alt + i}
-            style={{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: '16 / 9',
-            }}
+            className={cn("w-full")}
           >
             <NextImage
               alt={props.alt}
-              fill
               src={props.src}
-              style={{ objectFit: 'cover' }}
+              width={props.width ?? 1200}
+              height={props.height ?? 800}
+              className={cn("h-auto w-full")}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>

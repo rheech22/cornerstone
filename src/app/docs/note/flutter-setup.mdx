@@ -1,6 +1,6 @@
 ---
 created: 2024-12-31 20:49:29 +0900
-updated: 2025-01-01 20:09:20 +0900
+updated: 2026-02-14 13:31:35 +0900
 title: "플러터 설치하고 개발환경 세팅"
 tags: ["flutter", "setup", "mobile"]
 ---
@@ -40,7 +40,7 @@ open -a Simulator
 
 시뮬레이터가 실행된다면 정상
 
-<img src="./assets/flutter-ios_simulator.png" />
+![iOS 시뮬레이터 화면 | size="400"](./assets/flutter-ios_simulator.png)
 
 **디바이스 설정**: Xcode의 메뉴바 > `Window` > `Device and Simulator` > `Simulators` > `+ 버튼` 클릭
 
@@ -191,7 +191,7 @@ flutter emulators --launch apple_ios_simulator
 flutter run
 ```
 
-<img src="./assets/flutter-app_ios.png"/>
+![iOS에서 flutter run 실행 화면 | size="400"](./assets/flutter-app_ios.png)
 
 ## Android
 
@@ -224,7 +224,7 @@ flutter emulators --launch Pixel_8_Pro
 flutter run
 ```
 
-<img src="./assets/flutter-app_and.png" />
+![Android에서 flutter run 실행 화면 | size='400'](./assets/flutter-app_and.png)
 
 처음에는 이것저것 다운로드하느라 시간이 좀 걸리는 것 같음
 
@@ -232,11 +232,11 @@ flutter run
 
 VSCode Command Palette에서 `Flutter: Launch Emulator`에서 쉽게 에뮬레이터 구동이 가능함
 
-<img src="./assets/flutter-emulators.png" />
+![VSCode Flutter Launch Emulator 화면](./assets/flutter-emulators.png)
 
 `Flutter: Select Device`에서는 에뮬레이터 뿐만 아니라 기본 디바이스 선택 가능
 
-<img src="./assets/flutter-devices.png" />
+![VSCode Flutter Select Device 화면](./assets/flutter-devices.png)
 
 플러터 개발자들은 보통 무엇을 띄어놓고 개발하는지 궁금
 
@@ -249,7 +249,7 @@ VSCode Command Palette에서 `Flutter: Launch Emulator`에서 쉽게 에뮬레�
 
 아래 설정을 변경함
 
-<img src="./assets/flutter-reload.png" />
+![VSCode Flutter reload 설정 화면 | size="400"](./assets/flutter-reload.png)
 
 `setting.json`에서는 다음 설정을 추가함
 
@@ -282,8 +282,6 @@ linter:
     require_trailing_commas: true
 ```
 
-
-
 다양한 편의 기능을 제공하는 [device_preview](https://pub.dev/packages/device_preview) 패키지를 사용해 볼 예정
 
-<img src="./assets/flutter-preview.png" />
+![device_preview 패키지 미리보기 화면](./assets/flutter-preview.png)
