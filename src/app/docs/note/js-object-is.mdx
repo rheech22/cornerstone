@@ -1,13 +1,13 @@
 ---
 created: 2025-03-24 16:09:21 +0900
-updated: 2026-02-14 22:09:07 +0900
+updated: 2026-02-17 16:51:13 +0900
 title: "Object.is()"
 tags: ["javascript", "language", "basics"]
 ---
 
 `Object.is()`는 두 값이 같은 값인지 알려준다.
 
-```js title="출처: MDN"
+```javascript title="출처: MDN"
 // Case 1: 평가 결과는 ===을 사용한 것과 동일합니다
 Object.is(25, 25); // true
 Object.is("foo", "foo"); // true
@@ -54,7 +54,7 @@ Object.is(NaN, Number.NaN); // true
 
 zustand에서도 `Object.is()`를 목격할 수 있다.
 
-```js title="바닐라JS로 작성된 zustand store 생성 함수"
+```javascript title="바닐라JS로 작성된 zustand store 생성 함수"
 // [!code word:Object.is(nextState, state)]
 const createStoreImpl = (createState) => {
   let state;

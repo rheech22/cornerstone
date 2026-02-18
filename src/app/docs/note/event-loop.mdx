@@ -1,6 +1,6 @@
 ---
 created: 2025-03-31 19:49:23 +0900
-updated: 2026-02-14 23:44:15 +0900
+updated: 2026-02-17 17:46:03 +0900
 title: '이벤트 루프'
 tags: ["javascript", "web", "runtime"]
 ---
@@ -57,3 +57,21 @@ tags: ["javascript", "web", "runtime"]
 ## 참고
 
 - [자바스크립트와 이벤트 루프](https://meetup.nhncloud.com/posts/89)
+
+```js
+console.log('a');
+(async () => {
+  console.log('a-b');
+  setTimeout(() => console.log('t'), 1);
+  await new Promise((resolve) => { resolve() });
+  console.log('b');
+})();
+requestAnimationFrame(() => new Promise((res) => { res(); }).then(() => console.log('rt')));
+requestAnimationFrame(() => requestAnimationFrame(() => new Promise((res) => { res(); }).then(() => console.log('rt2'))));
+(async () => {
+  await new Promise((resolve) => { resolve() });
+  requestAnimationFrame(() => console.log('rt3'));
+})();
+requestAnimationFrame(() => setTimeout(() => console.log('t2'), 1));
+console.log('c');
+```

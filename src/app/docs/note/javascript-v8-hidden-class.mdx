@@ -1,0 +1,105 @@
+---
+created: 2026-02-18 13:45:43 +0900
+updated: 2026-02-18 14:57:21 +0900
+title: V8 Hidden Class와 Inline Cache
+tags: [javascript, performance, runtime]
+---
+
+## Hidden Class
+
+- 히든 클래스(Hidden Class)는 객체의 프로퍼티 구조를 엔진 내부에서 정적으로 표현한 메타데이터
+- JS 객체를 내부적으로 C 구조체처럼 다루기 위한 최적화 방식
+- JS 코드에는 안 보이지만(hidden), 엔진은 내부적으로 히든 클래스를 생성
+- 객체는 언제든지 속성을 추가/제거할 수 있고, 순서도 런타임에 결정되며 타입도 제멋대로임
+- 이대로 구현하면 매번 "이 객체에 b 있나?"를 문자열 비교로 찾아야 함 -> 느려짐
+- 해시 테이블처럼 `O(1)`의 시간 복잡도를 갖지만, 히든 클래스는 상수가 거의 0에 근접하여 접근 비용이 매우 낮음
+- 히든 클래스는 이런 정보를 담고 있음
+	- 어떤 프로퍼티가 있는지
+	- 어떤 순서로 추가되었는지
+	- 각 프로퍼티가 메모리상 몇 번째 오프셋에 있는지
+- 대략 아래와 같은 모양
+
+```bash title="Hidden Class"
+HiddenClass #1
+{
+  a → offset 0
+  b → offset 1
+  c → offset 2
+}
+```
+```javascript title="이렇게 속성을 추가한다고 했을 때"
+const obj = {};
+obj.a = 1;
+obj.b = 2;
+obj.c = 3;
+```
+
+```bash title="엔진 내부 흐름은" caption="프로퍼티 추가할 때마다 클래스 전이(transition)"
+1.	{} → HiddenClass A
+2.	obj.a = 1 → HiddenClass B
+3.	obj.b = 2 → HiddenClass C
+```
+
+```javascript caption="프로퍼티의 이름, 순서가 같고 동적 변경이 없다면 히든 클래스를 공유할 수 있음"
+const a = {};
+a.x = 1;
+a.y = 2;
+
+const b = {};
+b.x = 1;
+b.y = 2;
+```
+
+## Inline Cache
+
+- 인라인 캐시(Inline Cache)와 결합되되면 더 효율적임
+
+```javascript title="이 함수를 여러 번 실행하다고 가정"
+function printX(obj) {
+  return obj.x;
+}
+```
+
+- 처음에는 어떤 객체가 올지도 모르고, x가 있는지도 모름
+
+```bash title="첫 실행시(IC 미스)" caption="IC에는 코드의 위치, 히든 클래스 정보가 저장됨"
+1. obj의 히든 클래스 확인
+2. 이 클래스에 x가 있는지 lookup
+3. x의 offset 계산
+4. 그 결과를 IC에 기록
+```
+
+- 두 번째 실행부터는 문자열 비교(X), 해시(X)
+
+```bash title="IC 히트"
+obj의 히든 클래스 === A ?
+  YES → offset 0에서 바로 읽기
+  NO  → 일반 경로
+```
+
+- 히든 클래스는 구조를 고정하고, 인라인 캐시는 접근을 기억함
+
+## Good to know
+
+- 히든 클래스는 구조가 안정적이고, Key가 적고, 접근 패턴이 예측 가능할 때 꽤나 강력함
+- 단, 구조 안정성이 깨지면 엔진이 알아서 딕셔너리 모드로 전환
+  - 속성 추가 순서가 계속 달라지면, 호출할 때마다 다른 히든 클래스, IC는 계속 미스
+  - 생성 시점 이후 속성 추가가 많아지면 히든 클래스 전이 비용이 높아지고 체인이 길어짐
+  - 속성 삭제(delete)를 사용하면 히든 클래스 깨짐, 인덱스 매핑 무효화, dictionary mode 직행(hash 사용)
+  - 키 개수가 많아져서 `O(1) offset 접근 < O(1) 해시 접근` 성립이 깨지는 경우
+- 딕셔너리 모드로의 전환이 예상되는 객체라면, 객체 대신 Map 사용을 고려
+- 언제 Map을 사용하면 좋을까?
+	- Key가 동적일 때
+	- Key 개수가 많이 변할 때
+	- delete를 써야할 때
+	- 데이터 구조를 표현할 때
+- 언제 객체를 사용하면 좋을까?
+	- 프로퍼티 구조가 고정일 때
+	- 생성 패턴이 동일할 때
+	- 도메인 모델을 표현할 때
+
+## Later
+
+- [V8 engine JSObject structure analysis and memory optimization ideas](https://medium.com/%40bpmxmqd/v8-engine-jsobject-structure-analysis-and-memory-optimization-ideas-be30cfcdcd16)
+- Collision: Quadratic Probing, Open Addressing, Separate Chaining
+- Inline Cache: Monomorphic, Polymorphic, Megamorphic
