@@ -141,12 +141,4 @@
   .markdown tbody tr:nth-child(even) {
     background: var(--color-surface-muted);
   }
-
-  .markdown th:first-child,
-  .markdown td:first-child,
-  .markdown th:last-child,
-  .markdown td:last-child {
-    width: 1%;
-    white-space: nowrap;
-  }
 }
