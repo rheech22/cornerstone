@@ -1,0 +1,26 @@
+---
+created: 2026-05-10 08:17:16 +0900
+updated: 2026-05-10 08:17:16 +0900
+title: "WezTerm macOS IME preedit 렌더링 한계"
+tags: ["wezterm","macos","ime","terminal","한글입력"]
+session_id: ses_1f11
+source: opencode
+---
+
+TL;DR: macOS WezTerm에서 한글 조합 중 블록 커서가 나타나는 문제는 IME preedit 렌더링의 터미널 수준 한계 때문이며, 설정으로 해결되지 않습니다. 이 문서는 그 원인과 현재의 실용적 대안을 정리합니다.
+
+macOS에서 WezTerm은 IME 조합 중 글자를 블록 커서로 감싸는 기본 렌더링을 우회하기 어렵습니다. IME(Input Method Editor) preedit는 한글과 같은 조합 문자 입력 시, 최종 글자가 확정되기 전 중간 조합 상태(예: ㅎ, 하, 한)를 표시하는 단계입니다. 일반적으로 터미널은 이 preedit 텍스트를 애플리케이션(예: Neovim)에 전달하고, 애플리케이션은 `guicursor` 설정에 따라 해당 위치의 커서 모양을 제어합니다.
+
+그러나 WezTerm은 macOS에서 IME preedit 렌더링을 내부적으로 처리하며, 이 과정에서 조합 중인 글자를 블록 형태의 커서로 감싸는 고정된 방식을 사용합니다. 이는 터미널 수준의 동작으로, Neovim의 `guicursor`나 WezTerm 설정의 `default_cursor_style`(예: SteadyUnderline)으로 변경할 수 없습니다. `config.ime_preedit_rendering = "System"` 설정도 macOS에서는 현재 효과가 없다고 WezTerm 공식 설정 문서의 ime_preedit_rendering 항목에 명시되어 있습니다.
+
+결과적으로, 한글 조합 중에는 insert 모드에서도 커서가 underline이나 bar가 아닌 block으로 표시되어 글자가 가려지는 불편함이 발생할 수 있습니다. 이는 WezTerm의 macOS IME 구현 방식에 따른 한계이며, 설정 조정만으로는 해결되지 않습니다.
+
+현재 WezTerm 저장소에는 macOS IME preedit 렌더링 방식을 개선하는 PR(#7494)가 열려 있으나, 2026년 1월 기준 아직 병합되지 않았으며, 따라서 현재 사용 중인 WezTerm 버전에는 해당 개선이 포함되어 있지 않습니다. 실질적인 해결책은 WezTerm의 해당 개선이 반영된 새 버전을 기다리거나, IME 처리 방식이 다른 터미널(Ghostty, Kitty, iTerm2)을 시도해 보는 것입니다.
+
+이 한계를 인지하면, 한글 입력 환경이 중요한 경우 터미널 선택 시 WezTerm의 현재 동작을 고려할 수 있습니다. 또한, Neovim이나 shell(zsh-vi-mode)에서 insert 모드 커서를 underline로 설정하는 것은 확정된 글자 이후의 커서 모양만 개선하므로, 조합 중 불편함을 완전히 해결하지는 못합니다.
+
+참고: Apple 기본 IME와 서드파티 IME 간 차이, WezTerm nightly 빌드의 동작 변화는 추가 확인이 필요함.
+
+참고자료:
+- WezTerm 공식 설정 문서의 ime_preedit_rendering 항목
+- WezTerm GitHub PR #7494 (macOS IME preedit 렌더링 개선)

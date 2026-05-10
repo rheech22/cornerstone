@@ -1,0 +1,18 @@
+---
+created: 2026-05-10 08:18:25 +0900
+updated: 2026-05-10 08:18:25 +0900
+title: "macOS 터미널 IME preedit 렌더링과 커서 설정의 한계"
+tags: ["macos","terminal","ime","cursor","wezterm"]
+session_id: ses_1f11
+source: opencode
+---
+
+macOS 터미널에서 한글 IME 조합 중, 즉 preedit 상태에 보이는 block 형태의 커서는 터미널이나 편집기의 커서 설정으로 완전히 제어하기 어려운 구조적 한계를 가집니다. 이는 IME preedit 렌더링이 별도 레이어에서 처리되기 때문입니다.
+
+터미널(예: WezTerm, Kitty, iTerm2)이나 터미널 내에서 실행된 편집기(Neovim) 또는 셸(zsh-vi-mode)에서 설정하는 커서 모양, 예를 들어 `guicursor`, `default_cursor_style`, 플러그인 설정 등은 주로 입력이 확정된 이후의 모드 커서를 제어합니다. 반면, 한글 자모가 결합되는 중인 IME preedit 상태의 표시는 macOS의 입력 메서드 관리자와 터미널 간의 별도 렌더링 경로를 통해 처리됩니다.
+
+이 분리된 처리로 인해, 편집기나 셸이 Insert 모드로 설정되어 있어도(예: underline 또는 bar 커서로 설정됨), 한글 조합 중에는 preedit 텍스트 주변에 block 형태의 시각적 요소가 나타날 수 있습니다. 이 요소는 터미널 구현에 따라 다르게 보일 수 있으나, 근본적으로는 애플리케이션 계층의 커서 설정과 독립된 IME 시스템의 조합 UI입니다. WezTerm 문서에 따르면 macOS에서는 `ime_preedit_rendering` 설정이 현재 효과가 없으며, 이 계층의 개선은 터미널 자체의 구현 변경, 예를 들어 관련 PR 반영을 기다려야 합니다.
+
+따라서 이 한계를 인지하면, 터미널 환경에서 한글 입력 사용성을 개선할 때 실질적인 기대치를 설정할 수 있습니다. 설정 튜닝(Insert 모드 커서를 underline/bar로 고정)으로는 확정된 입력 이후의 체감 불편만 줄일 수 있으며, 조합 중 표시까지 완벽히 통제하는 것은 현재 기술적 한계 내에서는 어렵습니다. 근본적인 개선을 원한다면 터미널 구현의 IME 처리 개선을 기다리거나, GUI 애플리케이션(전용 편집기)에서의 IME 동작과 비교 검토하는 것이 더 효과적인 접근입니다.
+
+이 주제와 관련된 항목으로는 WezTerm 커서 설정 (`default_cursor_style`), Neovim `guicursor` 옵션, zsh-vi-mode 커서 스타일 제어, 터미널 IME 통합 구현 등이 있습니다. 또한, 아직 해결되지 않은 질문으로는 특정 한글 IME(서드파티)와 기본 macOS 한글 IME 간에 이 현상의 차이가 있는지 여부, 그리고 다른 터미널(Alacritty, Ghostty)에서의 IME preedit 렌더링 방식과 사용성 비교 등이 있습니다.
