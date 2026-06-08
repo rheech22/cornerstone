@@ -1,0 +1,252 @@
+---
+created: 2026-06-07 16:56:42 +0900
+updated: 2026-06-07 16:58:05 +0900
+title: Perlin Noise
+tags: [perlin-noise, p5, nature-of-code, randomness]
+---
+
+# Perlin Noise
+
+Perlin noise는 완전히 독립적인 난수를 매번 새로 뽑는 방식이 아니라, 가까운 입력값끼리는 비슷한 결과가 나오도록 설계된 랜덤 함수다.
+
+`random()`은 호출할 때마다 이전 값과 관계없는 값을 반환한다.
+
+```ts
+p.random(); // 0.81
+p.random(); // 0.12
+p.random(); // 0.67
+```
+
+반면 `noise(t)`는 입력값 `t`에 대응하는 값을 반환한다. 같은 seed와 같은 입력값을 쓰면 결과는 항상 같다.
+
+```ts
+p.noise(10);
+p.noise(10); // 같은 값
+```
+
+즉 `noise()`는 "호출할 때마다 새 랜덤을 뽑는 함수"라기보다, 랜덤하게 만들어진 고정된 지형에서 특정 좌표의 높이를 읽는 함수에 가깝다.
+
+```text
+random() = 호출할 때마다 새 값
+noise(t) = t 위치에 정해져 있는 값
+```
+
+## 왜 부드러운가
+
+`noise()`는 입력값이 조금 변하면 출력값도 조금만 변한다.
+
+```ts
+p.noise(0.00);
+p.noise(0.01);
+p.noise(0.02);
+```
+
+위 값들은 서로 가까운 입력을 사용하므로 결과도 보통 비슷하다. 그래서 시간값 `t`를 조금씩 증가시키면 자연스럽고 부드러운 움직임이 만들어진다.
+
+```ts
+this.x = p.map(p.noise(this.tx), 0, 1, 0, p.width);
+this.tx += 0.01;
+```
+
+여기서 `p.noise(this.tx)`는 `0~1` 사이 값을 반환하고, `p.map()`은 그 값을 화면 좌표 범위로 바꾼다.
+
+```text
+noise 값: 0 ~ 1
+x 좌표: 0 ~ p.width
+```
+
+## Seed
+
+seed는 noise의 전체 패턴을 결정한다. 같은 seed와 같은 좌표를 쓰면 같은 noise 값이 나온다.
+
+```ts
+p.noiseSeed(1);
+const a = p.noise(10.5);
+
+p.noiseSeed(1);
+const b = p.noise(10.5);
+```
+
+`a`와 `b`는 같다.
+
+seed가 달라지면 내부의 랜덤 구조가 달라지므로 같은 좌표에서도 다른 값이 나올 수 있다.
+
+```ts
+p.noiseSeed(1);
+const a = p.noise(10.5);
+
+p.noiseSeed(2);
+const b = p.noise(10.5);
+```
+
+보통 seed는 전체 noise 세계를 새롭게 구성하고 싶을 때 바꾼다. 부드러운 움직임을 만드는 도중에 매 프레임 seed를 바꾸면, noise의 연속성이 깨져서 `random()`처럼 튀는 느낌이 된다.
+
+```text
+seed 유지 = 같은 noise 세계를 재현
+seed 변경 = 다른 noise 세계를 생성
+```
+
+## 격자점
+
+1차원 noise에서는 정수 위치를 기준으로 생각할 수 있다.
+
+```text
+0 ---- 1 ---- 2 ---- 3 ---- 4
+```
+
+하지만 Perlin noise는 2D, 3D로 확장된다. 2D에서는 정수 하나가 아니라 `(x, y)` 좌표의 점들이 기준이 된다.
+
+```text
+(0,0) ---- (1,0) ---- (2,0)
+  |          |          |
+(0,1) ---- (1,1) ---- (2,1)
+  |          |          |
+(0,2) ---- (1,2) ---- (2,2)
+```
+
+그래서 일반적으로는 정수 위치보다 격자점, 즉 `grid point` 또는 `lattice point`라고 부른다.
+
+```text
+1D = 정수 위치
+2D = 정수 좌표의 점
+3D = 정수 좌표의 꼭짓점
+```
+
+## Gradient
+
+Perlin noise는 각 격자점마다 랜덤한 gradient를 둔다. gradient는 그 지점에서 값이 어느 방향으로 증가하려는지를 나타내는 방향 벡터다.
+
+산 지형으로 비유하면 gradient는 "그 지점에서 가장 가파르게 올라가는 방향"이다.
+
+```text
+value noise = 격자점마다 랜덤한 값 자체를 둠
+gradient noise = 격자점마다 랜덤한 기울기 방향을 둠
+```
+
+Perlin noise는 대표적인 `gradient noise`다.
+
+각 격자점의 gradient는 seed와 격자 좌표를 기준으로 결정된다. 그래서 매 호출마다 새로 뽑히는 것이 아니라, 같은 seed와 같은 격자점에서는 항상 같은 gradient가 사용된다.
+
+```text
+같은 seed + 같은 격자점 = 같은 gradient
+다른 seed + 같은 격자점 = 다른 gradient 가능
+```
+
+## Contribution
+
+현재 위치가 두 격자점 사이에 있다고 하자.
+
+```text
+3 ---- 3.25 ---- 4
+```
+
+Perlin noise는 주변 격자점들이 현재 위치에 대해 각각 하나의 contribution을 내도록 만든다.
+
+1차원으로 단순화하면 이런 질문에 가깝다.
+
+```text
+3번 격자점의 gradient 입장에서 3.25 위치의 값은 어느 정도인가?
+4번 격자점의 gradient 입장에서 3.25 위치의 값은 어느 정도인가?
+```
+
+이 contribution은 격자점의 gradient와, 그 격자점에서 현재 위치까지의 거리로 계산된다.
+
+```text
+gradient = 격자점의 방향 성향
+distance = 현재 위치가 격자점에서 얼마나 떨어졌는지
+contribution = gradient와 distance를 이용해 계산한 제안값
+```
+
+2D에서는 각 꼭짓점의 gradient vector와 현재 위치까지의 distance vector를 내적해서 contribution을 구한다.
+
+## Fade와 보간
+
+주변 격자점들의 contribution을 그냥 섞으면 격자 경계에서 변화의 방향이나 속도가 어색하게 바뀔 수 있다. 값 자체가 끊기는 것이 아니라, 기울기가 갑자기 꺾이는 느낌이 생긴다.
+
+```text
+값은 이어져 있지만
+변화 방향이나 속도가 갑자기 바뀌는 상태
+```
+
+이를 줄이기 위해 Perlin noise는 `fade()` 함수를 사용한다.
+
+```ts
+fade(t) = 6t^5 - 15t^4 + 10t^3
+```
+
+이 함수는 `0~1` 사이의 보간 비율을 더 부드럽게 바꿔준다.
+
+```text
+fade(0) = 0
+fade(1) = 1
+fade'(0) = 0
+fade'(1) = 0
+```
+
+즉 시작점에서는 천천히 출발하고, 끝점에서는 천천히 멈추는 곡선이다.
+
+실제 값을 섞는 것은 `lerp()`이고, `fade()`는 `lerp()`에 넣을 비율을 부드럽게 만드는 역할을 한다.
+
+```ts
+const u = fade(localX);
+const value = lerp(contribution0, contribution1, u);
+```
+
+## 전체 흐름
+
+Perlin noise의 계산 흐름은 다음처럼 이해할 수 있다.
+
+```text
+1. 현재 좌표가 속한 주변 격자점을 찾는다.
+2. 각 격자점에 고정된 랜덤 gradient를 확인한다.
+3. 각 격자점에서 현재 좌표까지의 distance를 계산한다.
+4. gradient와 distance로 각 격자점의 contribution을 계산한다.
+5. 현재 좌표가 격자 안에서 어느 비율 위치에 있는지 계산한다.
+6. 그 비율을 fade()로 부드럽게 변형한다.
+7. contribution들을 lerp()로 섞어 최종 noise 값을 만든다.
+```
+
+짧게 정리하면 다음과 같다.
+
+```text
+Perlin noise = 고정된 랜덤 gradient field + distance 기반 contribution + smooth interpolation
+```
+
+## p5 예시
+
+```ts
+class Walker {
+  x: number;
+  y: number;
+  tx: number;
+  ty: number;
+
+  constructor() {
+    this.x = p.width / 2;
+    this.y = p.height / 2;
+    this.tx = 0;
+    this.ty = 10000;
+  }
+
+  show(): void {
+    p.stroke(0);
+    p.point(this.x, this.y);
+  }
+
+  step(): void {
+    this.x = p.map(p.noise(this.tx), 0, 1, 0, p.width);
+    this.y = p.map(p.noise(this.ty), 0, 1, 0, p.height);
+    this.tx += 0.01;
+    this.ty += 0.01;
+  }
+}
+```
+
+`tx`와 `ty`를 다르게 시작하면 `x`와 `y`가 서로 다른 noise 흐름을 따른다. 둘 다 같은 값에서 시작하면 움직임이 더 단조롭게 보일 수 있다.
+
+```ts
+this.tx = 0;
+this.ty = 10000;
+```
+
+`tx += 0.01`의 값을 작게 하면 변화가 더 느리고 부드럽다. 크게 하면 더 빠르고 거칠게 움직인다.
