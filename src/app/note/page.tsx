@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { cn } from "../lib/cn";
-import { getPostData } from "../lib/get-posts";
+import { cn } from "@/shared/lib/cn";
+import { getPostData } from "@/shared/lib/get-posts";
 
 export const metadata: Metadata = {
   robots: {

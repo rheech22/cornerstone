@@ -1,11 +1,11 @@
-import { MdxLayout } from "@/app/components/mdx-layout";
-import { PostLayout } from "@/app/components/post-layout";
-import { getPosts, getSlug } from "@/app/lib/get-posts";
+import { MdxLayout } from "@/shared/components/mdx-layout";
+import { PostLayout } from "@/shared/components/post-layout";
+import { getPosts, getSlug } from "@/shared/lib/get-posts";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
   const { default: Post, frontmatter } = await import(
-    `../../docs/blog/${slug}.mdx`
+    `../../_shared/content/blog/${slug}.mdx`
   );
 
   return (

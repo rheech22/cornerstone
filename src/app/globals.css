@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./_shared/styles/vague.css";
 
 @layer base {
   *,
@@ -146,9 +147,5 @@ body {
   100% {
     --border-angle: 1.5turn;
   }
-}
-
-.noise-bg {
-  background: url(/noise-light.png);
 }
 

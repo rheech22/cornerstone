@@ -1,11 +1,11 @@
 import type { MDXComponents } from "mdx/types";
 
-import { Blockquote } from "./app/components/blockquote";
-import { Callout } from "./app/components/callout";
-import { Code } from "./app/components/code";
-import { Fonts } from "./app/components/fonts";
-import { Img } from "./app/components/image";
-import { ImageGrid } from "./app/components/image-grid";
+import { Blockquote } from "@/shared/components/mdx/blockquote";
+import { Callout } from "@/shared/components/mdx/callout";
+import { Code } from "@/shared/components/mdx/code";
+import { Fonts } from "@/shared/components/mdx/fonts";
+import { Img } from "@/shared/components/mdx/image";
+import { ImageGrid } from "@/shared/components/mdx/image-grid";
 
 export const useMDXComponents = (components: MDXComponents): MDXComponents => {
   return {

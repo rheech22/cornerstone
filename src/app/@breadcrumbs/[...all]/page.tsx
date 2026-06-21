@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { ArrowLeftIcon } from "@/app/components/arrow-left";
-import { cn } from "@/app/lib/cn";
+import { cn } from "@/shared/lib/cn";
+
+import { ArrowLeftIcon } from "../_components/arrow-left";
 
 type Props = {
   params: Promise<{

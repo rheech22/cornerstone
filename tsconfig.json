@@ -23,6 +23,9 @@
       }
     ],
     "paths": {
+      "@/shared/*": [
+        "./src/app/_shared/*"
+      ],
       "@/*": [
         "./src/*"
       ]

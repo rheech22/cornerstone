@@ -1,0 +1,9 @@
+@theme {
+  --color-vague-bg: #0f0f10;
+  --color-vague-surface: #1c1c24;
+  --color-vague-statusline: #161620;
+  --color-vague-fg: #cdcdcd;
+  --color-vague-fg-bright: #f0eef4;
+  --color-vague-muted: #5c5c70;
+  --color-vague-accent: #b4a7c5;
+}
