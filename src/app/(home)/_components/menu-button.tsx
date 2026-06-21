@@ -14,7 +14,7 @@ type MenuButtonProps = {
 
 const menuButtonClass = cn(
   'group flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-base text-vague-fg',
-  'transition-colors hover:bg-vague-surface hover:text-vague-fg-bright',
+  'hover:bg-vague-surface hover:text-vague-fg-bright',
   'focus:bg-vague-surface focus:text-vague-fg-bright focus:outline-none',
 );
 

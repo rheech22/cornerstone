@@ -9,10 +9,19 @@ type OverlayProps = {
   label: string;
   id?: string;
   className?: string;
+  backdropClassName?: string;
   children: ReactNode;
 };
 
-export const Overlay = ({ open, onClose, label, id, className, children }: OverlayProps) => {
+export const Overlay = ({
+  open,
+  onClose,
+  label,
+  id,
+  className,
+  backdropClassName,
+  children,
+}: OverlayProps) => {
   useShortcuts(open ? [{ key: 'Escape', onTrigger: onClose }] : []);
 
   return (
@@ -21,7 +30,7 @@ export const Overlay = ({ open, onClose, label, id, className, children }: Overl
         type="button"
         aria-label={`close ${label}`}
         onClick={onClose}
-        className={cn('fixed inset-0 z-40 bg-vague-bg/70 backdrop-blur-sm')}
+        className={cn('fixed inset-0 z-40', backdropClassName ?? 'bg-vague-bg/70 backdrop-blur-sm')}
       />
       <div className={cn('pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4')}>
         <div
@@ -29,7 +38,7 @@ export const Overlay = ({ open, onClose, label, id, className, children }: Overl
           role="dialog"
           aria-modal="true"
           aria-label={label}
-          className={cn('pointer-events-auto w-full max-w-sm', className)}
+          className={cn('pointer-events-auto w-full', className ?? 'max-w-sm')}
         >
           {children}
         </div>

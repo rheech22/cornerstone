@@ -59,7 +59,10 @@ const parseFrontmatter = (
       case "tags":
         const cutted = value.slice(1, -1);
 
-        metadata.tags = cutted.split(",").map((value) => trimQuotes(value));
+        metadata.tags = cutted
+          .split(",")
+          .map((value) => trimQuotes(value.trim()).trim())
+          .filter(Boolean);
 
         return;
       default:

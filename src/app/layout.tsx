@@ -9,6 +9,7 @@ import "./_shared/styles/markdown-base.css";
 import "./_shared/styles/markdown-code.css";
 import "./_shared/styles/markdown-components.css";
 import "./_shared/styles/markdown-layout.css";
+import "./_shared/styles/tui.css";
 
 export const metadata: Metadata = {
   title: "cornerstone",

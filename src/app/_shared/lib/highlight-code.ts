@@ -38,8 +38,10 @@ const highlighter = await createHighlighter({
 const highlightBy =
   (highlighter: HighlighterGeneric<BundledLanguage, BundledTheme>) =>
     async (code: string, lang: string) => {
-      return highlighter.codeToHtml(code, {
-        lang,
+      const base = (lang ?? "").trim().match(/^[a-zA-Z0-9_-]+/)?.[0] ?? "";
+
+      const options = (resolved: string) => ({
+        lang: resolved,
         themes: {
           light: "github-light-high-contrast",
           dark: "github-dark-high-contrast",
@@ -59,6 +61,12 @@ const highlightBy =
           }),
         ],
       });
+
+      try {
+        return highlighter.codeToHtml(code, options(base || "text"));
+      } catch {
+        return highlighter.codeToHtml(code, options("text"));
+      }
     };
 
 export const highlightCode = highlightBy(highlighter);

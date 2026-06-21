@@ -73,9 +73,11 @@
   }
 }
 
-* {
+html {
   scroll-behavior: smooth;
+}
 
+html:has(.reading) {
   &::-webkit-scrollbar-track {
     border: .6px solid var(--foreground);
     background-color: var(--background);
