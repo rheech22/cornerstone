@@ -1,9 +1,30 @@
 @theme {
-  --color-vague-bg: #0f0f10;
+  --color-vague-bg: #141415;
   --color-vague-surface: #1c1c24;
   --color-vague-statusline: #161620;
+  --color-vague-line: #252530;
+  --color-vague-selection: #333738;
+  --color-vague-search: #405065;
+  --color-vague-border: #878787;
+
   --color-vague-fg: #cdcdcd;
   --color-vague-fg-bright: #f0eef4;
-  --color-vague-muted: #5c5c70;
-  --color-vague-accent: #b4a7c5;
+  --color-vague-muted: #606079;
+
+  --color-vague-rose: #c48282;
+  --color-vague-sand: #e8b589;
+  --color-vague-amber: #e0a363;
+  --color-vague-mist: #c3c3d5;
+  --color-vague-lavender: #aeaed1;
+  --color-vague-mauve: #bb9dbd;
+  --color-vague-mint: #b4d4cf;
+  --color-vague-blue: #6e94b2;
+  --color-vague-sage: #9bb4bc;
+  --color-vague-steel: #90a0b5;
+
+  --color-vague-accent: #bb9dbd;
+  --color-vague-error: #d8647e;
+  --color-vague-warning: #f3be7c;
+  --color-vague-hint: #7e98e8;
+  --color-vague-success: #7fa563;
 }
