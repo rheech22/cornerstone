@@ -54,6 +54,25 @@ describe('filterDocs', () => {
     expect(filterDocs(docs, 'atomic')[0].slug).toBe('atomic-write');
   });
 
+  it('matches English fuzzy terms', () => {
+    expect(filterDocs(docs, 'atmc')[0].slug).toBe('atomic-write');
+  });
+
+  it('matches Korean choseong terms and ranks tighter matches first', () => {
+    const ds = [
+      make({ slug: 'jeju-seogwipo', title: '제주특별자치도 서귀포시' }),
+      make({ slug: 'jeongseon', title: '정선군' }),
+    ];
+
+    expect(filterDocs(ds, 'ㅈㅅㄱ').map((d) => d.slug)).toEqual(['jeongseon', 'jeju-seogwipo']);
+  });
+
+  it('matches Korean partial syllable terms', () => {
+    const ds = [make({ slug: 'pick', title: '골라 쓰기' })];
+
+    expect(filterDocs(ds, '고라').map((d) => d.slug)).toEqual(['pick']);
+  });
+
   it('matches #tag case-insensitively (#ui ↔ a UI tag, either direction)', () => {
     const ds = [make({ slug: 'x', tags: ['UI', 'Design'], text: 'x' })];
 

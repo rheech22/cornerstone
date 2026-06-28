@@ -1,3 +1,4 @@
+import { fuzzyMatch } from './fuzzy';
 import type { DocEntry, Scope } from './types';
 
 const SCOPE_TOKENS = ['blog', 'note'] as const;
@@ -31,12 +32,21 @@ const matchesScopes = (entry: DocEntry, scopes: Scope[]): boolean =>
 const hasTags = (entry: DocEntry, tags: string[]): boolean =>
   tags.every((tag) => entry.tags.some((t) => t.toLowerCase().includes(tag)));
 
-const termScore = (entry: DocEntry, term: string): number => {
-  if (entry.title.toLowerCase().includes(term)) return 3;
-  if (entry.tags.some((t) => t.toLowerCase().includes(term))) return 2;
-  if (entry.text.includes(term)) return 1;
+const fieldScore = (term: string, target: string, weight: number, threshold = 0.4): number => {
+  const match = fuzzyMatch(term, target);
 
-  return 0;
+  if (!match || match.score < threshold) return 0;
+
+  return match.score * weight;
+};
+
+const termScore = (entry: DocEntry, term: string): number => {
+  const titleScore = fieldScore(term, entry.title, 3);
+  const tagScore = Math.max(...entry.tags.map((tag) => fieldScore(term, tag, 2)), 0);
+  const textExactScore = entry.text.includes(term) ? 1 : 0;
+  const textFuzzyScore = term.length > 1 ? fieldScore(term, entry.text, 0.75, 0.68) : 0;
+
+  return Math.max(titleScore, tagScore, textExactScore, textFuzzyScore);
 };
 
 export const countByType = (entries: DocEntry[]) => ({
