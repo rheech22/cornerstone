@@ -1,6 +1,10 @@
+'use client';
+
+import { useState } from 'react';
 import type { Route } from 'next';
 import Link from 'next/link';
 
+import { ScrambleText } from '@/shared/components/scramble-text';
 import { cn } from '@/shared/lib/cn';
 
 type MenuButtonProps = {
@@ -19,11 +23,25 @@ const menuButtonClass = cn(
 );
 
 export const MenuButton = (props: MenuButtonProps) => {
-  const body = <MenuButtonBody shortcut={props.shortcut} label={props.label} />;
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const body = <MenuButtonBody shortcut={props.shortcut} label={props.label} active={hovered || focused} />;
+  const onFocus = () => {
+    setFocused(true);
+    props.onFocus?.();
+  };
 
   if (props.href) {
     return (
-      <Link href={props.href} className={menuButtonClass} data-menu-item="true" onFocus={props.onFocus}>
+      <Link
+        href={props.href}
+        className={menuButtonClass}
+        data-menu-item="true"
+        onFocus={onFocus}
+        onBlur={() => setFocused(false)}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+      >
         {body}
       </Link>
     );
@@ -35,7 +53,10 @@ export const MenuButton = (props: MenuButtonProps) => {
       className={menuButtonClass}
       data-menu-item="true"
       onClick={props.onClick}
-      onFocus={props.onFocus}
+      onFocus={onFocus}
+      onBlur={() => setFocused(false)}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
       aria-expanded={props.expanded}
       aria-controls={props.controls}
     >
@@ -44,22 +65,29 @@ export const MenuButton = (props: MenuButtonProps) => {
   );
 };
 
-const MenuButtonBody = ({ shortcut, label }: Pick<MenuButtonProps, 'shortcut' | 'label'>) => (
+const MenuButtonBody = ({
+  shortcut,
+  label,
+  active,
+}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean }) => (
   <>
     <span className={cn('flex-1')}>
-      <MenuLabel label={label} shortcut={shortcut} />
+      <MenuLabel label={label} shortcut={shortcut} active={active} />
     </span>
     <span
       className={cn(
         'text-vague-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100',
       )}
     >
-      ↵
     </span>
   </>
 );
 
-const MenuLabel = ({ label, shortcut }: Pick<MenuButtonProps, 'shortcut' | 'label'>) => {
+const MenuLabel = ({
+  label,
+  shortcut,
+  active,
+}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean }) => {
   const hint = cn('text-vague-amber');
   const index = label.toLowerCase().indexOf(shortcut.toLowerCase());
 
@@ -72,11 +100,5 @@ const MenuLabel = ({ label, shortcut }: Pick<MenuButtonProps, 'shortcut' | 'labe
     );
   }
 
-  return (
-    <span>
-      {label.slice(0, index)}
-      <span className={hint}>{label[index]}</span>
-      {label.slice(index + 1)}
-    </span>
-  );
+  return <ScrambleText text={label} active={active} highlightIndex={index} playOnMount />;
 };
