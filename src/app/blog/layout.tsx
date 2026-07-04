@@ -5,5 +5,5 @@ export default function BlogLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className={cn("reading w-full noise-bg")}>{children}</main>;
+  return <main className={cn("reading w-full flex-1 flex flex-col")}>{children}</main>;
 }
