@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { ChevronFirstIcon } from "@/shared/components/icons/chevron-first";
+import { XIcon } from "@/shared/components/icons/x";
 import { cn } from "@/shared/lib/cn";
 
 import type { StackPanel } from "./build-stack";
@@ -37,17 +39,17 @@ export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
             type="button"
             data-fold-slug={slug}
             aria-label={`collapse ${slug}`}
-            className={cn("px-1 text-vague-muted hover:text-vague-fg")}
+            className={cn("inline-flex size-5 items-center justify-center text-vague-muted hover:text-vague-fg")}
           >
-            ▕
+            <ChevronFirstIcon aria-hidden="true" className={cn("flex size-full items-center justify-center")} size={14} />
           </button>
           <button
             type="button"
             data-close-slug={slug}
             aria-label={`close ${slug}`}
-            className={cn("px-1 text-vague-muted hover:text-vague-fg")}
+            className={cn("inline-flex size-5 items-center justify-center text-vague-muted hover:text-vague-fg")}
           >
-            ×
+            <XIcon aria-hidden="true" className={cn("flex size-full items-center justify-center")} size={14} />
           </button>
         </div>
       </header>

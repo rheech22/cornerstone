@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 
+import { ChevronRightIcon } from '@/shared/components/icons/chevron-right';
 import { cn } from '@/shared/lib/cn';
 
 export type ArchivePost = {
@@ -25,20 +26,13 @@ type ArchiveProps = {
 };
 
 const Chevron = ({ open }: { open: boolean }) => (
-  <motion.svg
+  <motion.span
     animate={{ rotate: open ? 90 : 0 }}
     transition={{ duration: 0.25, ease: 'easeInOut' }}
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    className={cn('inline-flex')}
   >
-    <polyline points="9 18 15 12 9 6" />
-  </motion.svg>
+    <ChevronRightIcon aria-hidden="true" className={cn('flex size-4 items-center justify-center')} size={14} />
+  </motion.span>
 );
 
 const MonthLabel = ({ year, month }: { year: number; month: number }) => (
