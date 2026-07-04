@@ -9,10 +9,11 @@ import { useShortcuts } from '@/shared/lib/use-shortcuts';
 import { MENU, type MenuEntry } from '../menu';
 import { Explorer,EXPLORER_PANEL_ID } from './explorer/explorer';
 import type { DocEntry } from './explorer/types';
-import { HELP_PANEL_ID, HelpPanel } from './help-panel';
+import { HelpPanel } from './help-panel';
 import { MenuButton } from './menu-button';
+import { StatusLine } from './status-line';
 
-export const Menu = ({ docs }: { docs: DocEntry[] }) => {
+export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.ReactNode }) => {
   const router = useRouter();
   const navRef = useRef<HTMLElement>(null);
   const activeIndexRef = useRef(0);
@@ -58,47 +59,44 @@ export const Menu = ({ docs }: { docs: DocEntry[] }) => {
   );
 
   return (
-    <>
-      <nav ref={navRef} className={cn('flex flex-col gap-3')}>
-        <ul className={cn('flex flex-col gap-1')}>
-          {MENU.map((item, index) => (
-            <li key={item.label}>
-              {'href' in item ? (
-                <MenuButton
-                  shortcut={item.shortcut}
-                  label={item.label}
-                  href={item.href}
-                  onFocus={() => {
-                    activeIndexRef.current = index;
-                  }}
-                />
-              ) : (
-                <MenuButton
-                  shortcut={item.shortcut}
-                  label={item.label}
-                  onClick={toggleExplorer}
-                  expanded={explorerOpen}
-                  controls={EXPLORER_PANEL_ID}
-                  onFocus={() => {
-                    activeIndexRef.current = index;
-                  }}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-        <button
-          type="button"
-          onClick={toggleHelp}
-          aria-expanded={helpOpen}
-          aria-controls={HELP_PANEL_ID}
-          className={cn('self-start text-xs text-vague-muted transition-colors hover:text-vague-fg')}
-        >
-          <span className={cn('text-vague-amber')}>?</span> help
-        </button>
-      </nav>
+    <main className={cn('vague-select flex min-h-dvh flex-col bg-vague-bg font-mono text-vague-fg')}>
+      <div className={cn('flex flex-1 items-center justify-center px-6')}>
+        <div className={cn('flex w-full max-w-sm flex-col gap-10')}>
+          {children}
+          <nav ref={navRef} className={cn('flex flex-col gap-3')}>
+            <ul className={cn('flex flex-col gap-1')}>
+              {MENU.map((item, index) => (
+                <li key={item.label}>
+                  {'href' in item ? (
+                    <MenuButton
+                      shortcut={item.shortcut}
+                      label={item.label}
+                      href={item.href}
+                      onFocus={() => {
+                        activeIndexRef.current = index;
+                      }}
+                    />
+                  ) : (
+                    <MenuButton
+                      shortcut={item.shortcut}
+                      label={item.label}
+                      onClick={toggleExplorer}
+                      expanded={explorerOpen}
+                      controls={EXPLORER_PANEL_ID}
+                      onFocus={() => {
+                        activeIndexRef.current = index;
+                      }}
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <StatusLine helpOpen={helpOpen} onToggleHelp={toggleHelp} />
       <Explorer docs={docs} open={explorerOpen} onClose={() => setExplorerOpen(false)} />
       <HelpPanel open={helpOpen} onClose={() => setHelpOpen(false)} />
-    </>
+    </main>
   );
 };
