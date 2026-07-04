@@ -6,7 +6,7 @@ export const HELP_PANEL_ID = 'help-panel';
 const KEYMAP = [
   { keys: ['j', 'k', '↓', '↑'], desc: 'move' },
   { keys: ['enter'], desc: 'open' },
-  { keys: ['a', 'e', 'p', 'n', 's'], desc: 'jump to item' },
+  { keys: ['a', 'c', 'p', 'n', 's'], desc: 'jump to item' },
   { keys: ['?', '/'], desc: 'help' },
   { keys: ['esc'], desc: 'close' },
 ];

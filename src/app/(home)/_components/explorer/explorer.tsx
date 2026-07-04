@@ -12,7 +12,7 @@ import { CabinetStatusline } from './cabinet-statusline';
 import { Cards } from './cards';
 import { type CompletionItem, CompletionPopup } from './completion';
 import { Peek } from './peek';
-import { countByType, filterDocs, parseQuery, tagIndex } from './search';
+import { countByType, filterDocs, tagIndex } from './search';
 import type { DocEntry } from './types';
 import { useCompletion } from './use-completion';
 import { usePreview } from './use-preview';
@@ -101,14 +101,11 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
     { key: 'ctrl+k', onTrigger: () => focusCard(clampedCard - 1) },
   ]);
 
-  const { scopes, tags } = parseQuery(query);
-  const filterLabel = [...scopes.map((s) => `@${s}`), ...tags.map((t) => `#${t}`)].join(' ') || 'all';
-
   return (
     <Overlay
       open={open}
       onClose={onClose}
-      label="explorer"
+      label="cabinet"
       id={EXPLORER_PANEL_ID}
       className="max-w-5xl"
       backdropClassName="bg-vague-bg/25"
@@ -153,12 +150,7 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
           <Peek entry={selected} html={preview.html} loading={preview.loading} scrollRef={peekRef} />
         </div>
 
-        <CabinetStatusline
-          mode={query.trim() ? 'SEARCH' : 'BROWSE'}
-          filterLabel={filterLabel}
-          matched={filtered.length}
-          total={docs.length}
-        />
+        <CabinetStatusline />
       </Window>
     </Overlay>
   );
