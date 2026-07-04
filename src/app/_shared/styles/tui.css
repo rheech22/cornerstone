@@ -227,4 +227,19 @@
     outline: 1px solid var(--color-vague-accent);
     outline-offset: -1px;
   }
+
+  [data-note-mobile-stack="true"] .note-panel {
+    width: 100% !important;
+    border-right: 0;
+  }
+
+  [data-note-mobile-stack="true"] .note-panel-spine,
+  [data-note-mobile-stack="true"] [data-fold-slug],
+  [data-note-mobile-stack="true"] [data-close-slug] {
+    display: none !important;
+  }
+
+  [data-note-mobile-stack="true"] .note-panel-body {
+    display: flex !important;
+  }
 }

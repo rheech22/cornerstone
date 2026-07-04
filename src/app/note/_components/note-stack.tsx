@@ -6,12 +6,14 @@ import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/shared/lib/cn';
+import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import {
   buildNoteStackUrl,
   getAutoSpineSlugs,
   getFocusScrollLeft,
+  getMobileStackSlugs,
   getStackAction,
   NOTE_SPINE_WIDTH,
   type PanelMetric,
@@ -27,6 +29,7 @@ type NoteStackProps = {
 
 export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: NoteStackProps) => {
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const containerRef = useRef<HTMLDivElement>(null);
   const prevLength = useRef(0);
   const highlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,6 +38,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const [autoSpineSlugs, setAutoSpineSlugs] = useState<string[]>([]);
 
   const childArray = Children.toArray(children);
+  const activeMobileChild = childArray[childArray.length - 1];
   const noteStackStyle = {
     '--note-spine-width': `${spineWidth}px`,
   } as CSSProperties;
@@ -184,6 +188,20 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     }
   };
 
+  const handleMobileClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const link = target.closest('a.wiki-link');
+
+    if (!link) return;
+
+    e.preventDefault();
+
+    const href = link.getAttribute('href') ?? '';
+    const targetSlug = slugFromNoteHref(href);
+
+    if (targetSlug) router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug })));
+  };
+
   useShortcuts([
     {
       key: 'Escape',
@@ -200,6 +218,8 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   }, [slugs]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const container = containerRef.current;
 
     if (!container) return;
@@ -214,13 +234,17 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       container.removeEventListener('scroll', updateAutoSpines);
       observer.disconnect();
     };
-  }, [updateAutoSpines]);
+  }, [isMobile, updateAutoSpines]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     updateAutoSpines();
-  }, [manualFoldedSlugs, updateAutoSpines]);
+  }, [isMobile, manualFoldedSlugs, updateAutoSpines]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     if (slugs.length <= prevLength.current) {
       prevLength.current = slugs.length;
 
@@ -238,7 +262,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
       autoSpineTimer.current = setTimeout(updateAutoSpines, 450);
     }
-  }, [slugs.length, updateAutoSpines]);
+  }, [isMobile, slugs.length, updateAutoSpines]);
 
   useEffect(
     () => () => {
@@ -247,6 +271,14 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     },
     [],
   );
+
+  if (isMobile) {
+    return (
+      <div data-note-mobile-stack="true" onClick={handleMobileClick} className={cn('h-full overflow-y-auto tui-scroll')}>
+        {activeMobileChild}
+      </div>
+    );
+  }
 
   return (
     <div className={cn('h-full overflow-hidden')} onClick={handleClick} style={noteStackStyle}>

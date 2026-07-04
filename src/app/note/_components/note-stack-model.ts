@@ -41,6 +41,20 @@ export const getStackAction = ({
   return { type: 'navigate', slugs: [...slugs.slice(0, fromIndex + 1), targetSlug] };
 };
 
+export const getMobileStackSlugs = ({
+  slugs,
+  targetSlug,
+}: {
+  slugs: string[];
+  targetSlug: string;
+}) => {
+  const existingIndex = slugs.indexOf(targetSlug);
+
+  if (existingIndex !== -1) return slugs.slice(0, existingIndex + 1);
+
+  return [...slugs, targetSlug];
+};
+
 export const getAutoSpineSlugs = ({
   manualFoldedSlugs,
   panels,
