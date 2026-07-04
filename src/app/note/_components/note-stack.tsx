@@ -281,7 +281,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   }
 
   return (
-    <div className={cn('h-full overflow-hidden')} onClick={handleClick} style={noteStackStyle}>
+    <div className={cn('h-full border-t-1 border-vague-line overflow-hidden')} onClick={handleClick} style={noteStackStyle}>
       <div ref={containerRef} onScroll={updateAutoSpines} className={cn('flex h-full overflow-x-auto tui-scroll')}>
         {childArray.map((child, index) => {
           const slug = slugs[index];

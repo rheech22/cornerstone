@@ -31,7 +31,7 @@ export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
           "flex shrink-0 items-center justify-between border-b border-vague-line px-4 py-2",
         )}
       >
-        <span className={cn("font-mono text-xs text-vague-muted")}>~/note/{slug}</span>
+        <span className={cn("truncate font-mono text-xs font-medium text-vague-fg")}>{frontmatter?.title ?? slug}</span>
         <div className={cn("flex items-center gap-1")}>
           <button
             type="button"
@@ -51,11 +51,6 @@ export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
           </button>
         </div>
       </header>
-      {frontmatter && (
-        <h1 className={cn("shrink-0 px-4 pt-6 pb-2 text-lg font-semibold text-vague-fg-bright")}>
-          {frontmatter.title}
-        </h1>
-      )}
       <article className={cn("markdown px-4 py-4")}>{children}</article>
     </div>
   </section>

@@ -184,6 +184,51 @@
     transition: width 180ms ease, outline-color 180ms ease;
   }
 
+  .note-panel .markdown {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .note-panel .markdown p {
+    line-height: 1.65;
+  }
+
+  .note-panel .markdown > h1 {
+    font-size: 1.35em;
+  }
+
+  .note-panel .markdown h2 {
+    font-size: 1.18em;
+  }
+
+  .note-panel .markdown h3 {
+    font-size: 1.08em;
+  }
+
+  .note-panel .markdown h4 {
+    font-size: 1em;
+  }
+
+  .note-panel .markdown code:not(:has(> *)) {
+    font-size: 0.85em;
+  }
+
+  .note-panel .code-block .code-block__title {
+    font-size: 0.8rem;
+  }
+
+  .note-panel .code-block .code-block__caption {
+    font-size: 0.72rem;
+  }
+
+  .note-panel .code-block pre {
+    padding: 0.9em 0.5em;
+  }
+
+  .note-panel .code-block .shiki code {
+    font-size: 0.875rem;
+  }
+
   [data-stack-panel][data-folded="true"] .note-panel {
     width: var(--note-spine-width) !important;
     overflow: hidden !important;
