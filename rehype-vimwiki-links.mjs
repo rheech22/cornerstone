@@ -40,13 +40,11 @@ export default function rehypeVimwikiLinks() {
           text = slug.split("/").pop().replaceAll("_", " ");
         }
 
-        const linkText = "[[ " + text + " ]]";
-
         children.push({
           type: "element",
           tagName: "a",
           properties: { href, class: "wiki-link" },
-          children: [{ type: "text", value: linkText }],
+          children: [{ type: "text", value: text }],
         });
 
         lastIndex = startIndex + match.length;
