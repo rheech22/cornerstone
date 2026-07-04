@@ -5,8 +5,8 @@ import { cn } from '@/shared/lib/cn';
 import { ArrowLeftIcon } from './arrow-left';
 import { BackShortcut } from './back-shortcut';
 
-export const BlogBreadcrumbs = () => (
-  <header className={cn('flex justify-start bg-vague-bg p-3 font-mono')}>
+export const NoteBreadcrumbs = () => (
+  <header className={cn('flex justify-start bg-vague-bg p-3')}>
     <BackShortcut />
     <Link
       href="/"

@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from '../_components/arrow-left';
 import { BackShortcut } from '../_components/back-shortcut';
 
 const Page = () => (
-  <header className={cn('flex justify-start p-6 noise-bg')}>
+  <header className={cn('flex justify-start p-3')}>
     <BackShortcut />
     <Link
       href="/"
@@ -14,7 +14,7 @@ const Page = () => (
       title="Home"
       className={cn('inline-flex items-center justify-center')}
     >
-      <ArrowLeftIcon />
+      <ArrowLeftIcon size={20} />
     </Link>
   </header>
 );

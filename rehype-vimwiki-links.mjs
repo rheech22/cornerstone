@@ -31,13 +31,13 @@ export default function rehypeVimwikiLinks() {
         if (innerContent.includes("|")) {
           const parts = innerContent.split("|");
 
-          href = parts[0].trim();
+          href = `/note/${parts[0].trim()}`;
           text = parts[1].trim();
         } else {
-          href = innerContent.trim();
-          text = href
-            .split("/")
-            [href.split("/").length - 1].replaceAll("_", " ");
+          const slug = innerContent.trim();
+
+          href = `/note/${slug}`;
+          text = slug.split("/").pop().replaceAll("_", " ");
         }
 
         const linkText = "[[ " + text + " ]]";
