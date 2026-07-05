@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./_shared/styles/vague.css";
 
 @layer base {
   *,
@@ -72,9 +73,11 @@
   }
 }
 
-* {
+html {
   scroll-behavior: smooth;
+}
 
+html:has(.reading) {
   &::-webkit-scrollbar-track {
     border: .6px solid var(--foreground);
     background-color: var(--background);
@@ -146,9 +149,5 @@ body {
   100% {
     --border-angle: 1.5turn;
   }
-}
-
-.noise-bg {
-  background: url(/noise-light.png);
 }
 

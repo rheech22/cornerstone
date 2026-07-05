@@ -1,19 +1,30 @@
-import { MdxLayout } from "@/app/components/mdx-layout";
-import { PostLayout } from "@/app/components/post-layout";
-import { getPosts, getSlug } from "@/app/lib/get-posts";
+import { getPosts, getSlug } from "@/shared/lib/get-posts";
 
-const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const slug = (await params).slug;
-  const { default: Post, frontmatter } = await import(
-    `../../docs/note/${slug}.mdx`
-  );
+import { buildStack } from "../_components/build-stack";
+import { NotePanel } from "../_components/note-panel";
+import { NoteStack } from "../_components/note-stack";
+
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const { slug } = await params;
+  const { n } = await searchParams;
+  const stackedSlugs = Array.isArray(n) ? n : n ? [n] : [];
+  const slugs = [slug, ...stackedSlugs];
+  const panels = await buildStack(slugs);
 
   return (
-    <MdxLayout>
-      <PostLayout frontmatter={frontmatter}>
-        <Post />
-      </PostLayout>
-    </MdxLayout>
+    <NoteStack slugs={panels.map((p) => p.slug)}>
+      {panels.map(({ backlinks, slug: panelSlug, frontmatter, Post }) => (
+        <NotePanel key={panelSlug} backlinks={backlinks} slug={panelSlug} frontmatter={frontmatter}>
+          <Post />
+        </NotePanel>
+      ))}
+    </NoteStack>
   );
 };
 

@@ -2,13 +2,15 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
-import { cn } from "./lib/cn";
+import { AppChrome } from '@/shared/components/chrome/app-chrome';
+import { cn } from "@/shared/lib/cn";
 
 import "./globals.css";
-import "./styles/markdown-base.css";
-import "./styles/markdown-code.css";
-import "./styles/markdown-components.css";
-import "./styles/markdown-layout.css";
+import "./_shared/styles/markdown-base.css";
+import "./_shared/styles/markdown-code.css";
+import "./_shared/styles/markdown-components.css";
+import "./_shared/styles/markdown-layout.css";
+import "./_shared/styles/tui.css";
 
 export const metadata: Metadata = {
   title: "cornerstone",
@@ -26,19 +28,11 @@ export default function RootLayout({
   breadcrumbs: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
-        className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl min-h-dvh")}
+        className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl h-dvh overflow-hidden")}
       >
-        {breadcrumbs}
-        {children}
-        {/*
-        <footer className="absolute bottom-0 w-full flex justify-center py-4">
-          <span className="text-center underline underline-offset-4 font-semibold shrink-0">
-            ©️ copyright 2025 by lch
-          </span>
-        </footer>
-	*/}
+        <AppChrome breadcrumbs={breadcrumbs}>{children}</AppChrome>
         <Analytics />
       </body>
     </html>

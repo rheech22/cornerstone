@@ -1,35 +1,22 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { ArrowLeftIcon } from "@/app/components/arrow-left";
-import { cn } from "@/app/lib/cn";
+import { cn } from '@/shared/lib/cn';
 
-type Props = {
-  params: Promise<{
-    all: string[];
-  }>;
-};
+import { ArrowLeftIcon } from '../_components/arrow-left';
+import { BackShortcut } from '../_components/back-shortcut';
 
-const Page = async ({ params }: Props) => {
-  const segments = (await params).all;
-  const section = segments[0];
-
-  if (section !== "blog" && section !== "note") {
-    return null;
-  }
-
-  return (
-    <header className={cn("flex justify-start p-6 noise-bg")}>
-      <Link
-        href="/"
-        aria-label="Go home"
-        title="Home"
-        className={cn("inline-flex items-center justify-center")}
-      >
-        <ArrowLeftIcon/>
-      </Link>
-    </header>
-  );
-};
+const Page = () => (
+  <header className={cn('flex justify-start bg-vague-bg p-3')}>
+    <BackShortcut />
+    <Link
+      href="/"
+      aria-label="Go home"
+      title="Home"
+      className={cn('inline-flex items-center justify-center')}
+    >
+      <ArrowLeftIcon size={20} />
+    </Link>
+  </header>
+);
 
 export default Page;
-

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { cn } from "../lib/cn";
-import { getPostData } from "../lib/get-posts";
+import { buildStack } from "./_components/build-stack";
+import { NotePanel } from "./_components/note-panel";
+import { NoteStack } from "./_components/note-stack";
 
 export const metadata: Metadata = {
   robots: {
@@ -11,23 +11,25 @@ export const metadata: Metadata = {
   },
 };
 
-const Notes = async () => {
-  const data = getPostData("note");
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const { n } = await searchParams;
+  const stackedSlugs = Array.isArray(n) ? n : n ? [n] : [];
+  const slugs = ['index', ...stackedSlugs];
+  const panels = await buildStack(slugs);
 
   return (
-    <ul className={cn("mt-12 flex flex-col items-center gap-2")}>
-      {data.map(({ slug, metadata: { title } }) => (
-        <li key={slug}>
-          <Link
-            href={`/note/${slug}`}
-            className={cn("w-full text-start underline underline-offset-8 hover:text-[var(--color-accent)] hover:no-underline hover:font-semibold")}
-          >
-            {title}
-          </Link>
-        </li>
+    <NoteStack slugs={panels.map((p) => p.slug)}>
+      {panels.map(({ backlinks, slug, frontmatter, Post }) => (
+        <NotePanel key={slug} backlinks={backlinks} slug={slug} frontmatter={frontmatter}>
+          <Post />
+        </NotePanel>
       ))}
-    </ul>
+    </NoteStack>
   );
 };
 
-export default Notes;
+export default Page;

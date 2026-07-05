@@ -7,7 +7,7 @@ const DRIVE_FOLDER_MIME = 'application/vnd.google-apps.folder';
 const DRIVE_NATIVE_MIME_PREFIX = 'application/vnd.google-apps.';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
 const ROOT_FOLDER_NAME = 'wiki';
-const docsRoot = path.join(process.cwd(), 'src/app/docs');
+const docsRoot = path.join(process.cwd(), 'src/app/_shared/content');
 
 const syncTargets = [
   {
