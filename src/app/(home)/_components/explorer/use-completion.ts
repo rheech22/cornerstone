@@ -52,6 +52,8 @@ export const useCompletion = (
 
   const move = (delta: number) => setIndex((i) => Math.min(Math.max(i + delta, 0), items.length - 1));
 
+  const activate = (nextIndex: number) => setIndex(Math.min(Math.max(nextIndex, 0), items.length - 1));
+
   const accept = (item: CompletionItem | undefined = items[index]) => {
     if (!item) return;
 
@@ -61,5 +63,5 @@ export const useCompletion = (
 
   const dismiss = () => setDismissed(true);
 
-  return { items, index, isOpen, move, accept, dismiss };
+  return { items, index, isOpen, move, activate, accept, dismiss };
 };

@@ -29,6 +29,14 @@
     background-color: var(--color-vague-muted);
   }
 
+  .tui-scroll-hidden {
+    scrollbar-width: none;
+  }
+
+  .tui-scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
   .peek-md {
     font-size: 0.85rem;
     line-height: 1.65;

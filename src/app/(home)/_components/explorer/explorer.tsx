@@ -25,6 +25,8 @@ type ExplorerProps = {
   onClose: () => void;
 };
 
+type InteractionMode = 'searching' | 'browsing';
+
 export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -33,6 +35,7 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
 
   const [query, setQuery] = useState('');
   const [cardIndex, setCardIndex] = useState(0);
+  const [interactionMode, setInteractionMode] = useState<InteractionMode>('searching');
 
   const scopeCounts = useMemo(() => countByType(docs), [docs]);
   const tagList = useMemo(() => tagIndex(docs), [docs]);
@@ -41,12 +44,20 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
   const clampedCard = Math.min(cardIndex, Math.max(filtered.length - 1, 0));
   const selected = filtered[clampedCard] ?? null;
 
-  const completion = useCompletion(query, setQuery, scopeCounts, tagList);
+  const updateQuery = (next: string) => {
+    setInteractionMode((mode) => (mode === 'searching' ? mode : 'searching'));
+    setQuery(next);
+  };
+
+  const completion = useCompletion(query, updateQuery, scopeCounts, tagList);
   const preview = usePreview(open, selected);
 
   useEffect(() => setCardIndex(0), [query]);
   useEffect(() => {
-    if (open) searchRef.current?.focus();
+    if (open) {
+      setInteractionMode('searching');
+      searchRef.current?.focus();
+    }
   }, [open]);
 
   const openIndex = (index: number) => {
@@ -58,20 +69,33 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
     router.push(`/${doc.type}/${doc.slug}` as Route);
   };
 
-  const moveCard = (delta: number) =>
-    setCardIndex(() => Math.min(Math.max(clampedCard + delta, 0), Math.max(filtered.length - 1, 0)));
+  const moveCard = (delta: number) => {
+    setInteractionMode((mode) => (mode === 'browsing' ? mode : 'browsing'));
+    setCardIndex((index) => Math.min(Math.max(index + delta, 0), Math.max(filtered.length - 1, 0)));
+  };
 
-  const focusCard = (index: number) => {
+  const focusCard = (delta: number) => {
     const cards = cardsRef.current?.querySelectorAll<HTMLButtonElement>('[data-card]');
 
     if (!cards || cards.length === 0) return;
 
-    cards[Math.min(Math.max(index, 0), cards.length - 1)].focus({ preventScroll: true });
+    const focusedIndex = Array.from(cards).findIndex((card) => card === document.activeElement);
+    const currentIndex = focusedIndex >= 0 ? focusedIndex : clampedCard;
+    const nextIndex = Math.min(Math.max(currentIndex + delta, 0), cards.length - 1);
+
+    setInteractionMode((mode) => (mode === 'browsing' ? mode : 'browsing'));
+    setCardIndex(nextIndex);
+    cards[nextIndex]?.focus({ preventScroll: true });
   };
 
   const acceptCompletion = (item?: CompletionItem) => {
     completion.accept(item);
     searchRef.current?.focus();
+  };
+
+  const hoverCard = (index: number) => {
+    setInteractionMode((mode) => (mode === 'browsing' ? mode : 'browsing'));
+    setCardIndex(index);
   };
 
   const whenCompleting = () => completion.isOpen;
@@ -95,10 +119,10 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
   ]);
 
   const listKeymap = keymap([
-    { key: 'ArrowDown', onTrigger: () => focusCard(clampedCard + 1) },
-    { key: 'ctrl+j', onTrigger: () => focusCard(clampedCard + 1) },
-    { key: 'ArrowUp', onTrigger: () => focusCard(clampedCard - 1) },
-    { key: 'ctrl+k', onTrigger: () => focusCard(clampedCard - 1) },
+    { key: 'ArrowDown', onTrigger: () => focusCard(1) },
+    { key: 'ctrl+j', onTrigger: () => focusCard(1) },
+    { key: 'ArrowUp', onTrigger: () => focusCard(-1) },
+    { key: 'ctrl+k', onTrigger: () => focusCard(-1) },
   ]);
 
   return (
@@ -110,7 +134,7 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
       className="max-w-5xl"
       backdropClassName="bg-vague-bg/25"
     >
-      <Window className={cn('flex h-[85vh] w-full flex-col bg-vague-surface/40 backdrop-blur-md')}>
+      <Window className={cn('flex h-[85vh] w-full flex-col bg-vague-surface')}>
         <Window.Title>cabinet</Window.Title>
 
         <div className={cn('relative flex items-center gap-2 border-b border-vague-line px-3 py-2')}>
@@ -118,7 +142,7 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
           <input
             ref={searchRef}
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => updateQuery(event.target.value)}
             onKeyDown={inputKeymap}
             placeholder="검색…  @blog @note  #태그  키워드"
             spellCheck={false}
@@ -130,6 +154,7 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
             <CompletionPopup
               items={completion.items}
               activeIndex={completion.index}
+              onActiveChange={completion.activate}
               onSelect={acceptCompletion}
             />
           )}
@@ -140,8 +165,9 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
             <Cards
               items={filtered}
               activeIndex={clampedCard}
+              interactionMode={interactionMode}
               listRef={cardsRef}
-              onHover={setCardIndex}
+              onHover={hoverCard}
               onOpen={openIndex}
               onKeyDown={listKeymap}
             />

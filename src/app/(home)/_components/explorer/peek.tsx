@@ -26,10 +26,10 @@ export const Peek = ({ entry, html, loading, scrollRef }: PeekProps) => {
   return (
     <div
       ref={scrollRef}
-      className={cn('tui-scroll hidden min-h-0 select-none flex-col overflow-y-auto p-4 md:flex')}
+      className={cn('tui-scroll hidden min-h-0 select-none flex-col overflow-y-auto bg-vague-bg p-4 md:flex')}
     >
       <p className={cn('text-[0.65rem] uppercase tracking-wider text-vague-muted')}>
-        {entry.type} · slip
+        {entry.type}
       </p>
       <h2 className={cn('mt-1 text-base text-vague-fg-bright')}>{entry.title}</h2>
       <div className={cn('mt-1 flex flex-wrap items-center gap-2 text-xs')}>
