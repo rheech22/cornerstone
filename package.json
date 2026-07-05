@@ -12,7 +12,7 @@
     "lint:check": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "sync": "bash sync_icloud.sh",
+    "sync": "bash sync_gdrive_local.sh",
     "sync:dev": "pnpm sync & pnpm dev"
   },
   "dependencies": {

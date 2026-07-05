@@ -32,7 +32,7 @@ updated: 2026-06-21
 - `pnpm build` — 프로덕션 빌드 (타입드 라우트 + MDX 검증 포함)
 - `pnpm lint` / `pnpm lint:fix`
 - `pnpm test` — vitest
-- `pnpm sync`(iCloud) / `pnpm drive:sync`(Drive) — `src/app/_shared/content` 채우기
+- `pnpm sync`(로컬 Google Drive 마운트) / `pnpm drive:sync`(Drive API) — `src/app/_shared/content` 채우기
 
 ## 검증
 
