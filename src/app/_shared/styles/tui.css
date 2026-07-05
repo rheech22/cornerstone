@@ -165,6 +165,32 @@
     color: var(--shiki-dark) !important;
   }
 
+  .vague-markdown {
+    --background: var(--color-vague-bg);
+    --foreground: var(--color-vague-fg);
+    --highlight-blue: var(--color-vague-hint);
+    --highlight-red: var(--color-vague-error);
+    --color-surface-muted: var(--color-vague-surface);
+    --md-content-width: 100%;
+    --md-expanded-width: 100%;
+    --md-heading-2-color: var(--color-vague-fg-bright);
+    --md-heading-3-color: var(--color-vague-fg);
+    --md-heading-4-color: var(--color-vague-muted);
+    --md-rule-strong: var(--color-vague-border);
+    --md-rule-medium: var(--color-vague-line);
+    --md-rule-subtle: var(--color-vague-line);
+    --md-rule-faint: var(--color-vague-line);
+  }
+
+  .vague-markdown.markdown {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .vague-markdown.markdown p {
+    line-height: 1.65;
+  }
+
   .note-panel {
     --background: var(--color-vague-bg);
     --foreground: var(--color-vague-fg);
