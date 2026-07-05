@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { ChevronFirstIcon } from "@/shared/components/icons/chevron-first";
 import { XIcon } from "@/shared/components/icons/x";
+import { WikiPreviewScope } from "@/shared/components/wiki-preview/wiki-preview-scope";
 import { cn } from "@/shared/lib/cn";
 
 import type { StackPanel } from "./build-stack";
@@ -54,7 +55,9 @@ export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
           </button>
         </div>
       </header>
-      <article data-note-scroll="true" className={cn("markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}>{children}</article>
+      <WikiPreviewScope>
+        <article data-note-scroll="true" className={cn("markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}>{children}</article>
+      </WikiPreviewScope>
     </div>
   </section>
 );

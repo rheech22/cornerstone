@@ -88,12 +88,12 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     const link = target.closest('a.wiki-link');
 
     if (link) {
-      e.preventDefault();
-
       const href = link.getAttribute('href') ?? '';
       const targetSlug = slugFromNoteHref(href);
 
       if (!targetSlug) return;
+
+      e.preventDefault();
 
       const fromIndex = slugs.indexOf(panelSlug);
 
@@ -137,12 +137,13 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
     if (!link) return;
 
-    e.preventDefault();
-
     const href = link.getAttribute('href') ?? '';
     const targetSlug = slugFromNoteHref(href);
 
-    if (targetSlug) router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug })));
+    if (!targetSlug) return;
+
+    e.preventDefault();
+    router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug })));
   };
 
   useShortcuts(

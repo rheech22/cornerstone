@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Overlay, Window } from '@/shared/components/tui';
 import { cn } from '@/shared/lib/cn';
 import type { DocEntry } from '@/shared/lib/explorer-types';
+import { usePreview } from '@/shared/lib/use-preview';
 import { keymap } from '@/shared/lib/use-shortcuts';
 
 import { CabinetStatusline } from './cabinet-statusline';
@@ -15,7 +16,6 @@ import { type CompletionItem, CompletionPopup } from './completion';
 import { Peek } from './peek';
 import { countByType, filterDocs, tagIndex } from './search';
 import { useCompletion } from './use-completion';
-import { usePreview } from './use-preview';
 
 export const CABINET_PANEL_ID = 'cabinet-panel';
 const CABINET_COMPLETION_ID = 'cabinet-completion-list';

@@ -17,10 +17,13 @@ export const ArchiveRow = ({ active, browsing, index, row, onActivate }: Archive
   <Link
     href={`/blog/${row.slug}` as Route}
     data-blog-row="true"
+    data-wiki-type="blog"
+    data-wiki-slug={row.slug}
+    data-wiki-label={row.title}
     onFocus={() => onActivate(index)}
     onMouseEnter={() => onActivate(index)}
     className={cn(
-      'group/row relative grid min-h-10 grid-cols-[4.25rem_3.75rem_2.5rem_minmax(0,1fr)] items-baseline gap-0 py-3 text-sm transition-colors duration-200 after:absolute after:right-0 after:bottom-0 after:h-px after:content-[""] focus:outline-none sm:grid-cols-[5rem_4.25rem_2.75rem_minmax(0,1fr)]',
+      'wiki-link group/row relative grid min-h-10 grid-cols-[4.25rem_3.75rem_2.5rem_minmax(0,1fr)] items-baseline gap-0 py-3 text-sm transition-colors duration-200 after:absolute after:right-0 after:bottom-0 after:h-px after:content-[""] focus:outline-none sm:grid-cols-[5rem_4.25rem_2.75rem_minmax(0,1fr)]',
       getArchiveBorderClassName(row),
       active ? 'after:bg-vague-muted' : 'after:bg-vague-line/70 hover:after:bg-vague-muted',
     )}

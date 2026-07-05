@@ -1,3 +1,4 @@
+import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-scope';
 import { cn } from '@/shared/lib/cn';
 import { from } from '@/shared/lib/date';
 
@@ -34,7 +35,9 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
             </div>
           </div>
         )}
-        <article className={cn('markdown blog-post-markdown grow')}>{children}</article>
+        <WikiPreviewScope>
+          <article className={cn('markdown blog-post-markdown grow')}>{children}</article>
+        </WikiPreviewScope>
         {frontmatter && (
           <div className={cn('mx-auto mb-2 text-sm text-vague-muted')}>
             <span>
