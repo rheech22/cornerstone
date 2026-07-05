@@ -1,9 +1,9 @@
-import { cn } from "@/shared/lib/cn";
+import { cn } from '@/shared/lib/cn';
 
-export default function BlogLayout({
+const BlogLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
-  return <main className={cn("reading flex min-h-0 w-full flex-1 flex-col overflow-y-auto")}>{children}</main>;
-}
+}>) => <main className={cn('flex min-h-0 w-full flex-1 flex-col overflow-y-auto bg-vague-bg text-vague-fg tui-scroll')}>{children}</main>;
+
+export default BlogLayout;
