@@ -5,7 +5,7 @@ import { cn } from '@/shared/lib/cn';
 const Root = ({ children, className }: { children: ReactNode; className?: string }) => (
   <section
     className={cn(
-      'relative rounded-md border border-vague-border font-mono text-vague-fg shadow-xl',
+      'relative rounded-md border border-vague-border text-vague-fg shadow-xl',
       className ?? 'bg-vague-surface',
     )}
   >

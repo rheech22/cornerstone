@@ -28,7 +28,7 @@ const SitemapPage = () => {
   const externalLinks = buildExternalLinks({ blogs: posts, notes });
 
   return (
-    <main className={cn('min-h-0 flex-1 overflow-y-auto bg-vague-bg font-mono text-vague-fg tui-scroll')}>
+    <main className={cn('min-h-0 flex-1 overflow-y-auto bg-vague-bg text-vague-fg tui-scroll')}>
       <div className={cn('mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6')}>
         <header className={cn('mb-2')}>
           <p className={cn('text-xs uppercase tracking-[0.3em] text-vague-muted')}>~/map</p>

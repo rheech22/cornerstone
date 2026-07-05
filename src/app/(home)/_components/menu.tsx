@@ -59,7 +59,7 @@ export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.Re
   );
 
   return (
-    <main className={cn('vague-select flex min-h-dvh flex-col bg-vague-bg font-mono text-vague-fg')}>
+    <main className={cn('vague-select flex min-h-dvh flex-col bg-vague-bg text-vague-fg')}>
       <div className={cn('flex flex-1 items-center justify-center px-6')}>
         <div className={cn('flex w-full max-w-sm flex-col gap-10')}>
           {children}
