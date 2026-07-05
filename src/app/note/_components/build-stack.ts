@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { type Backlink,getBacklinks } from "@/shared/lib/backlinks";
 import { getPosts, getSlug } from "@/shared/lib/get-posts";
 
 type Frontmatter = {
@@ -10,6 +11,7 @@ type Frontmatter = {
 };
 
 export type StackPanel = {
+  backlinks: Backlink[];
   slug: string;
   frontmatter: Frontmatter | undefined;
   Post: ComponentType;
@@ -32,6 +34,7 @@ export const buildStack = async (slugs: string[]): Promise<StackPanel[]> => {
       const mod = await import(`../../_shared/content/note/${slug}.mdx`);
 
       return {
+        backlinks: getBacklinks({ type: "note", slug }),
         slug,
         frontmatter: mod.frontmatter as Frontmatter | undefined,
         Post: mod.default as ComponentType,

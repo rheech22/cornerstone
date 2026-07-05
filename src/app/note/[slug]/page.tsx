@@ -19,8 +19,8 @@ const Page = async ({
 
   return (
     <NoteStack slugs={panels.map((p) => p.slug)}>
-      {panels.map(({ slug: panelSlug, frontmatter, Post }) => (
-        <NotePanel key={panelSlug} slug={panelSlug} frontmatter={frontmatter}>
+      {panels.map(({ backlinks, slug: panelSlug, frontmatter, Post }) => (
+        <NotePanel key={panelSlug} backlinks={backlinks} slug={panelSlug} frontmatter={frontmatter}>
           <Post />
         </NotePanel>
       ))}

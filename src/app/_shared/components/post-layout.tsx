@@ -1,4 +1,6 @@
+import { Backlinks } from '@/shared/components/backlinks';
 import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-scope';
+import type { Backlink } from '@/shared/lib/backlinks';
 import { cn } from '@/shared/lib/cn';
 import { from } from '@/shared/lib/date';
 
@@ -11,10 +13,11 @@ type Frontmatter = {
 
 type Props = {
   children: React.ReactNode;
+  backlinks?: Backlink[];
   frontmatter?: Frontmatter;
 };
 
-export const PostLayout = ({ children, frontmatter }: Props) => {
+export const PostLayout = ({ children, backlinks = [], frontmatter }: Props) => {
   return (
     <div className={cn('mx-auto px-[1.125em] py-[.3em]')}>
       <div className={cn('flex flex-col items-center gap-8')}>
@@ -36,7 +39,10 @@ export const PostLayout = ({ children, frontmatter }: Props) => {
           </div>
         )}
         <WikiPreviewScope>
-          <article className={cn('markdown blog-post-markdown grow')}>{children}</article>
+          <article className={cn('markdown blog-post-markdown grow')}>
+            {children}
+            <Backlinks backlinks={backlinks} />
+          </article>
         </WikiPreviewScope>
         {frontmatter && (
           <div className={cn('mx-auto mb-2 text-sm text-vague-muted')}>
