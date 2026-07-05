@@ -64,7 +64,7 @@ export const Image: React.FC<Props> = ({
         />
       </div>
       {caption && (
-        <figcaption className={cn("mt-1 w-full text-left text-sm text-gray-500")}>
+        <figcaption className={cn("mt-1 w-full text-left text-sm text-vague-muted")}>
           {caption}
         </figcaption>
       )}

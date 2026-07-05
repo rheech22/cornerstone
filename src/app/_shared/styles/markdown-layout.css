@@ -35,12 +35,16 @@
 
   .markdown > blockquote {
     left: calc(50% - var(--md-expanded-width) / 2);
+    border-left: 2px solid var(--md-blockquote-accent-color, var(--highlight-blue));
+    color: var(--md-blockquote-color, var(--foreground));
+    padding-left: 1.25em;
 
     p {
       margin-bottom: 0;
     }
 
     span {
+      color: var(--md-blockquote-source-color, var(--foreground));
       font-style: italic;
     }
   }

@@ -25,15 +25,22 @@ const parsePre = (pre: PreElementWithProps) => {
   };
 };
 
+const isSingleLineCode = (code: string): boolean => {
+  const normalizedCode = code.replace(/\r\n/g, "\n").replace(/\n$/, "");
+
+  return !normalizedCode.includes("\n");
+};
+
 export const Code = async ({ children }: { children: PreElementWithProps }) => {
   const pre = parsePre(children);
+  const singleLine = isSingleLineCode(pre.code);
   const html = await highlightCode(pre.code, pre.lang);
 
   return (
-    <div className={cn("code-block")}>
+    <div className={cn("code-block group/code-block")}>
       {pre.title && <div className={cn("code-block__title")}>{pre.title}</div>}
       <div className={cn("code-block__content")}>
-        <CopyButton text={pre.code} />
+        <CopyButton text={pre.code} singleLine={singleLine} />
         <code dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       {pre.caption && <div className={cn("code-block__caption")}>{pre.caption}</div>}

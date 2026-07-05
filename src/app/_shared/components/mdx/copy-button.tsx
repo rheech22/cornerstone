@@ -48,7 +48,12 @@ const CopyIcon = () => (
   </svg>
 );
 
-export const CopyButton = ({ text }: { text: string }) => {
+type CopyButtonProps = {
+  singleLine?: boolean;
+  text: string;
+};
+
+export const CopyButton = ({ singleLine = false, text }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = useCallback(async () => {
@@ -68,10 +73,11 @@ export const CopyButton = ({ text }: { text: string }) => {
   return (
     <button
       className={cn(
-        "absolute right-5 top-5 z-10 cursor-copy border p-2 transition-all duration-300 hover:border-black hover:bg-[#efefef] hover:text-black",
+        "absolute right-5 z-10 cursor-copy border p-2 opacity-0 transition-all duration-300 pointer-events-none group-hover/code-block:pointer-events-auto group-hover/code-block:opacity-100 group-focus-within/code-block:pointer-events-auto group-focus-within/code-block:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 hover:border-vague-line hover:bg-vague-surface hover:text-vague-amber",
+        singleLine ? "top-1/2 -translate-y-1/2" : "top-5",
         copied
-          ? "border-black bg-[#efefef] text-black"
-          : "border-transparent hover:border-black",
+          ? "border-vague-line bg-vague-surface text-vague-success"
+          : "border-transparent",
       )}
       onClick={copyToClipboard}
       title={title}

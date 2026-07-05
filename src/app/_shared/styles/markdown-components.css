@@ -13,30 +13,30 @@
       vline to 100%,
       hline to 0
     );
-    background-color: var(--highlight-blue);
-    color: var(--background);
+    background-color: var(--md-callout-bg, var(--highlight-blue));
+    color: var(--md-callout-fg, var(--background));
 
     ol > li::marker,
     ul > li::marker {
-      color: var(--background);
+      color: var(--md-callout-marker-color, var(--background));
     }
 
     a:hover {
-      color: white;
+      color: var(--md-callout-link-hover-color, var(--background));
     }
 
     &::selection {
-      background-color: var(--background);
-      color: var(--highlight-blue);
+      background-color: var(--md-callout-selection-bg, var(--background));
+      color: var(--md-callout-selection-color, var(--highlight-blue));
     }
 
     code:not(:has(> *)) {
-      background-color: var(--background);
-      color: var(--highlight-blue);
+      background-color: var(--md-callout-code-bg, var(--background));
+      color: var(--md-callout-code-color, var(--highlight-blue));
 
       &::selection {
-        color: var(--background);
-        background-color: var(--highlight-blue);
+        color: var(--md-callout-selection-bg, var(--background));
+        background-color: var(--md-callout-selection-color, var(--highlight-blue));
       }
     }
   }
@@ -53,7 +53,7 @@
       margin: 1em 0;
       padding: 1em 0.25em;
       background: transparent !important;
-      border: 1px solid var(--foreground);
+      border: 1px solid var(--md-code-frame-color, var(--foreground));
 
       code {
         display: flex;

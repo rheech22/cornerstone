@@ -12,12 +12,13 @@
 		font-family: "Fira Code", "Courier New", monospace;
 		letter-spacing: -0.5px;
 
-		background-color: var(--highlight-blue);
-		color: var(--background);
+		background-color: var(--md-inline-code-bg, var(--highlight-blue));
+		border: 1px solid var(--md-inline-code-border-color, transparent);
+		color: var(--md-inline-code-color, var(--background));
 
 		&::selection {
-			background-color: var(--background);
-			color: var(--highlight-blue);
+			background-color: var(--md-inline-code-selection-bg, var(--background));
+			color: var(--md-inline-code-selection-color, var(--highlight-blue));
 		}
 	}
 
@@ -35,7 +36,7 @@
 			margin-bottom: 0;
 			padding: 0.3em 0.5em;
 			font-style: italic;
-			border: .6px solid var(--foreground);
+			border: .6px solid var(--md-code-frame-color, var(--foreground));
 		}
 
 		.code-block__title {
@@ -55,7 +56,7 @@
 		pre {
 			padding: 1.25em 0.5em;
 			background: transparent !important;
-			border: .6px solid var(--foreground);
+			border: .6px solid var(--md-code-frame-color, var(--foreground));
 
 		}
 
@@ -95,24 +96,24 @@
 					text-decoration: underline;
 					text-decoration-thickness: 2px;
 					text-underline-offset: 8px;
-					text-decoration-color: var(--highlight-blue);
+					text-decoration-color: var(--md-code-highlight-color, var(--highlight-blue));
 				}
 
 				&.diff {
-					border-bottom: 2px solid var(--highlight-blue);
+					border-bottom: 2px solid var(--md-code-add-color, var(--highlight-blue));
 					padding: 0.1em 0.2em;
 
 					&.add {
 						span:first-child::before {
 							content: "+";
 							margin-right: 0.5rem;
-							color: var(--highlight-blue);
+							color: var(--md-code-add-color, var(--highlight-blue));
 							font-weight: 700;
 						}
 					}
 
 					&.remove {
-						border-color: var(--highlight-red);
+						border-color: var(--md-code-remove-color, var(--highlight-red));
 
 						span {
 							text-decoration: line-through;
@@ -122,7 +123,7 @@
 						span:first-child::before {
 							content: "-";
 							margin-right: 0.5rem;
-							color: var(--highlight-red);
+							color: var(--md-code-remove-color, var(--highlight-red));
 							font-weight: 700;
 						}
 					}
@@ -135,7 +136,7 @@
 						text-decoration: underline;
 						text-decoration-thickness: 2px;
 						text-underline-offset: 8px;
-						text-decoration-color: var(--highlight-blue);
+						text-decoration-color: var(--md-code-highlight-color, var(--highlight-blue));
 					}
 				}
 			}

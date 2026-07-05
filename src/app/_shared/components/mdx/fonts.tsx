@@ -2,7 +2,7 @@ import { cn } from "@/shared/lib/cn";
 
 export const Fonts = () => {
   return (
-    <div className={cn("my-10 w-full border-1 border-black/20 p-4")}>
+    <div className={cn("my-10 w-full border-1 border-vague-line p-4")}>
       <h1 className={cn("text-4xl font-bold")}>Font 폰트</h1>
       <p>Mixed: English와 한국어가 함께 사용됩니다.</p>
       <p>

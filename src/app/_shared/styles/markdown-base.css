@@ -4,6 +4,7 @@
     width: 100%;
     max-width: var(--md-content-width);
     margin: 0 auto;
+    color: var(--foreground);
   }
 
   .markdown > h1,
@@ -74,7 +75,7 @@
     padding-left: var(--md-list-indent);
 
     li::marker {
-      color: var(--highlight-blue);
+      color: var(--md-ordered-marker-color, var(--highlight-blue));
       font-weight: 600;
     }
   }
@@ -84,11 +85,12 @@
     padding-left: var(--md-list-indent);
 
     li::marker {
-      color: var(--highlight-blue);
+      color: var(--md-unordered-marker-color, var(--highlight-blue));
     }
   }
 
   .markdown a {
+    color: var(--md-link-color, var(--foreground));
     font-weight: 700;
     word-break: break-word;
     text-decoration: underline;
@@ -98,12 +100,16 @@
     &.wiki-link {
 			font-weight: 500;
       text-decoration: underline;
-      color: var(--foreground);
+      color: var(--md-wiki-link-color, var(--foreground));
       text-underline-offset: 2px;
 
       &:hover {
         text-decoration: none;
       }
+    }
+
+    &.external-link {
+      color: var(--md-external-link-color, var(--md-link-color, var(--foreground)));
     }
 
     &.external-link::after {
@@ -112,6 +118,7 @@
       width: 0.82em;
       height: 0.82em;
       margin-left: 0.18em;
+      opacity: var(--md-external-link-icon-opacity, 0.75);
       vertical-align: -0.08em;
       background-color: currentColor;
       -webkit-mask: url("/icons/external-link.svg") center / contain no-repeat;
@@ -119,14 +126,14 @@
     }
 
     &:hover {
-      color: var(--highlight-blue);
+      color: var(--md-link-hover-color, var(--highlight-blue));
       text-decoration: none;
     }
   }
 
   .markdown table {
     border-collapse: collapse;
-    border: 0.6px solid var(--foreground);
+    border: 0.6px solid var(--md-table-border-color, var(--foreground));
     width: 100%;
     table-layout: auto;
     margin-top: var(--md-block-gap-top);
@@ -138,7 +145,7 @@
 
   .markdown th,
   .markdown td {
-    border: 0.6px solid var(--foreground);
+    border: 0.6px solid var(--md-table-border-color, var(--foreground));
     padding: 0.55em 0.75em;
     text-align: left !important;
     vertical-align: top;
@@ -147,11 +154,11 @@
   }
 
   .markdown thead th {
-    background: var(--color-surface-muted);
+    background: var(--md-table-surface-color, var(--color-surface-muted));
     font-weight: 700;
   }
 
   .markdown tbody tr:nth-child(even) {
-    background: var(--color-surface-muted);
+    background: var(--md-table-surface-color, var(--color-surface-muted));
   }
 }
