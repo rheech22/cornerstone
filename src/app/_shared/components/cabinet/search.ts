@@ -1,5 +1,6 @@
+import type { DocEntry, Scope } from '@/shared/lib/explorer-types';
+
 import { fuzzyMatch } from './fuzzy';
-import type { DocEntry, Scope } from './types';
 
 const SCOPE_TOKENS = ['blog', 'note'] as const;
 

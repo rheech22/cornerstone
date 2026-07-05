@@ -3,14 +3,18 @@ import { cn } from '@/shared/lib/cn';
 export type CompletionItem = { insert: string; label: string; count: number };
 
 type CompletionPopupProps = {
+  id: string;
   items: CompletionItem[];
   activeIndex: number;
   onActiveChange: (index: number) => void;
   onSelect: (item: CompletionItem) => void;
 };
 
-export const CompletionPopup = ({ items, activeIndex, onActiveChange, onSelect }: CompletionPopupProps) => (
+export const CompletionPopup = ({ id, items, activeIndex, onActiveChange, onSelect }: CompletionPopupProps) => (
   <ul
+    id={id}
+    role="listbox"
+    aria-label="cabinet suggestions"
     className={cn(
       'tui-scroll absolute top-full left-7 z-30 mt-1 max-h-64 w-56 overflow-y-auto rounded-md border border-vague-border bg-vague-surface py-1 shadow-xl',
     )}
@@ -23,7 +27,10 @@ export const CompletionPopup = ({ items, activeIndex, onActiveChange, onSelect }
             event.preventDefault();
             onSelect(item);
           }}
-          onMouseMove={() => onActiveChange(index)}
+          id={`${id}-${index}`}
+          role="option"
+          aria-selected={index === activeIndex}
+          onMouseEnter={() => onActiveChange(index)}
           onFocus={() => onActiveChange(index)}
           aria-current={index === activeIndex}
           className={cn(

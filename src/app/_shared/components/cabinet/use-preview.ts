@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import type { DocEntry } from './types';
+import type { DocEntry } from '@/shared/lib/explorer-types';
 
 const DEBOUNCE_MS = 120;
 

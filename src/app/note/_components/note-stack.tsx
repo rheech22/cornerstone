@@ -1,8 +1,7 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { Children, useCallback, useEffect, useRef, useState } from 'react';
-import type { Route } from 'next';
+import { Children, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppChrome } from '@/shared/components/chrome/app-chrome';
@@ -12,15 +11,14 @@ import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import {
   buildNoteStackUrl,
-  getAutoSpineSlugs,
-  getFocusScrollLeft,
   getMobileStackSlugs,
-  getStackAction,
   NOTE_SPINE_WIDTH,
-  type PanelMetric,
-  sameSlugs,
   slugFromNoteHref,
 } from './note-stack-model';
+import { pruneFoldedSlugs, useActiveNotePanel } from './use-active-note-panel';
+import { useAutoSpines } from './use-auto-spines';
+import { useNoteStackActions } from './use-note-stack-actions';
+import { useNoteStackFocus } from './use-note-stack-focus';
 
 type NoteStackProps = {
   slugs: string[];
@@ -34,183 +32,51 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const isMobile = useMediaQuery('(max-width: 767px)');
   const containerRef = useRef<HTMLDivElement>(null);
   const prevLength = useRef(0);
-  const activeSlugRef = useRef(slugs[slugs.length - 1] ?? '');
-  const pendingActiveSlugRef = useRef('');
-  const autoSpineTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const focusPanelRef = useRef<(slug: string) => void>(() => {});
-  const [activeSlug, setActiveSlug] = useState(slugs[slugs.length - 1] ?? '');
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
-  const [autoSpineSlugs, setAutoSpineSlugs] = useState<string[]>([]);
 
   const childArray = Children.toArray(children);
   const activeMobileChild = childArray[childArray.length - 1];
-  const slugsKey = slugs.join('\0');
   const noteStackStyle = {
     '--note-spine-width': `${spineWidth}px`,
   } as CSSProperties;
-
-  const getPanelMetrics = useCallback((): PanelMetric[] => {
-    const container = containerRef.current;
-
-    if (!container) return [];
-
-    return Array.from(container.querySelectorAll<HTMLElement>('[data-stack-panel]'))
-      .map((panel) => ({
-        slug: panel.dataset.stackSlug ?? '',
-        offsetLeft: panel.offsetLeft,
-        offsetWidth: panel.offsetWidth,
-      }))
-      .filter((panel) => panel.slug.length > 0);
-  }, []);
-
-  const updateAutoSpines = useCallback(() => {
-    const container = containerRef.current;
-
-    if (!container) return;
-
-    const selected = getAutoSpineSlugs({
-      manualFoldedSlugs,
-      panels: getPanelMetrics(),
-      spineWidth,
-      scrollLeft: container.scrollLeft,
-    });
-
-    setAutoSpineSlugs((current) => (sameSlugs(current, selected) ? current : selected));
-  }, [getPanelMetrics, manualFoldedSlugs, spineWidth]);
-
-  const focusPanel = useCallback(
-    (slug: string) => {
-      const container = containerRef.current;
-      const panel = Array.from(container?.querySelectorAll<HTMLElement>('[data-panel-slug]') ?? []).find(
-        (el) => el.dataset.panelSlug === slug,
-      );
-      const panels = getPanelMetrics();
-      const targetIndex = panels.findIndex((panel) => panel.slug === slug);
-
-      if (!container || !panel || targetIndex === -1) return;
-
-      panel.focus({ preventScroll: true });
-      container.scrollTo({ left: getFocusScrollLeft({ panels, spineWidth, targetIndex }), behavior: 'smooth' });
-
-      if (autoSpineTimer.current) clearTimeout(autoSpineTimer.current);
-
-      autoSpineTimer.current = setTimeout(updateAutoSpines, 450);
-    },
-    [getPanelMetrics, spineWidth, updateAutoSpines],
-  );
-
-  useEffect(() => {
-    focusPanelRef.current = focusPanel;
-  }, [focusPanel]);
-
-  const unfoldPanel = (slug: string) => {
-    setManualFoldedSlugs((current) => current.filter((s) => s !== slug));
-  };
-
-  const activatePanel = (slug: string) => {
-    activeSlugRef.current = slug;
-    setActiveSlug(slug);
-  };
-
-  const focusExistingPanel = (slug: string) => {
-    activatePanel(slug);
-    unfoldPanel(slug);
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => focusPanel(slug));
-    });
-  };
-
-  const pushToStack = (fromIndex: number, targetSlug: string) => {
-    const action = getStackAction({ fromIndex, slugs, targetSlug });
-
-    if (action.type === 'focus') {
-      focusExistingPanel(action.slug);
-
-      return;
-    }
-
-    if (action.type === 'navigate') {
-      pendingActiveSlugRef.current = action.slugs[action.slugs.length - 1] ?? '';
-      router.push(buildNoteStackUrl(action.slugs));
-    }
-  };
-
-  const closePanel = (slug: string, nextActiveSlug = '') => {
-    const remaining = slugs.filter((s) => s !== slug);
-
-    if (remaining.length === 0) {
-      router.push('/note' as Route);
-
-      return;
-    }
-
-    pendingActiveSlugRef.current = nextActiveSlug;
-    router.push(buildNoteStackUrl(remaining));
-  };
-
-  const getNextActiveAfterClose = (slug: string) => {
-    const remaining = slugs.filter((s) => s !== slug);
-
-    if (remaining.length === 0) return '';
-
-    const nextIndex = Math.min(Math.max(slugs.indexOf(slug), 0), remaining.length - 1);
-
-    return remaining[nextIndex] ?? '';
-  };
-
-  const moveActivePanel = (delta: number) => {
-    if (slugs.length === 0) return;
-
-    const currentSlug = slugs.includes(activeSlugRef.current) ? activeSlugRef.current : slugs[slugs.length - 1];
-    const currentIndex = slugs.indexOf(currentSlug);
-    const nextIndex = (currentIndex + delta + slugs.length) % slugs.length;
-    const nextSlug = slugs[nextIndex];
-
-    if (nextSlug) focusExistingPanel(nextSlug);
-  };
-
-  const closeActivePanel = () => {
-    const slug = slugs.includes(activeSlugRef.current) ? activeSlugRef.current : slugs[slugs.length - 1];
-
-    if (!slug) return;
-
-    const nextSlug = getNextActiveAfterClose(slug);
-
-    if (nextSlug) activatePanel(nextSlug);
-
-    closePanel(slug, nextSlug);
-  };
-
-  const scrollActivePanel = (direction: number) => {
-    const slug = slugs.includes(activeSlugRef.current) ? activeSlugRef.current : slugs[slugs.length - 1];
-    const panel = Array.from(containerRef.current?.querySelectorAll<HTMLElement>('[data-panel-slug]') ?? []).find(
-      (el) => el.dataset.panelSlug === slug,
-    );
-
-    if (!panel) return;
-
-    const scroller = panel.querySelector<HTMLElement>('[data-note-scroll]');
-
-    if (!scroller) return;
-
-    scroller.scrollBy({ top: direction * Math.max(64, scroller.clientHeight * 0.18), behavior: 'auto' });
-  };
-
-  const toggleActiveFold = () => {
-    const slug = slugs.includes(activeSlugRef.current) ? activeSlugRef.current : slugs[slugs.length - 1];
-
-    if (!slug) return;
-
-    activatePanel(slug);
-
-    if (manualFoldedSlugs.includes(slug) || autoSpineSlugs.includes(slug)) {
-      focusExistingPanel(slug);
-
-      return;
-    }
-
-    setManualFoldedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
-  };
+  const { autoSpineSlugs, getPanelMetrics, updateAutoSpines } = useAutoSpines({
+    containerRef,
+    isMobile,
+    manualFoldedSlugs,
+    spineWidth,
+  });
+  const { focusPanel, scrollPanel } = useNoteStackFocus({
+    containerRef,
+    getPanelMetrics,
+    spineWidth,
+    updateAutoSpines,
+  });
+  const { activeSlug, activeSlugRef, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
+    focusPanel,
+    isMobile,
+    slugs,
+  });
+  const {
+    closeActivePanel,
+    closeAndActivatePanel,
+    closePanel,
+    focusExistingPanel,
+    foldPanel,
+    moveActivePanel,
+    pushToStack,
+    scrollActivePanel,
+    toggleActiveFold,
+  } = useNoteStackActions({
+    activatePanel,
+    activeSlugRef,
+    autoSpineSlugs,
+    focusPanel,
+    manualFoldedSlugs,
+    scrollPanel,
+    setManualFoldedSlugs,
+    setPendingActiveSlug,
+    slugs,
+  });
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -241,10 +107,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     if (foldBtn) {
       const slug = foldBtn.getAttribute('data-fold-slug');
 
-      if (slug) {
-        activatePanel(slug);
-        setManualFoldedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
-      }
+      if (slug) foldPanel(slug);
 
       return;
     }
@@ -264,13 +127,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     if (closeBtn) {
       const slug = closeBtn.getAttribute('data-close-slug');
 
-      if (slug) {
-        const nextSlug = getNextActiveAfterClose(slug);
-
-        if (nextSlug) activatePanel(nextSlug);
-
-        closePanel(slug, nextSlug);
-      }
+      if (slug) closeAndActivatePanel(slug);
     }
   };
 
@@ -288,72 +145,33 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     if (targetSlug) router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug })));
   };
 
-  useShortcuts([
-    { key: 'j', onTrigger: () => scrollActivePanel(1) },
-    { key: 'k', onTrigger: () => scrollActivePanel(-1) },
-    { key: 'h', onTrigger: () => moveActivePanel(-1) },
-    { key: 'ArrowLeft', onTrigger: () => moveActivePanel(-1) },
-    { key: 'l', onTrigger: () => moveActivePanel(1) },
-    { key: 'ArrowRight', onTrigger: () => moveActivePanel(1) },
-    { key: 'f', onTrigger: toggleActiveFold },
-    { key: 'x', onTrigger: closeActivePanel },
-    {
-      key: 'Escape',
-      onTrigger: () => {
-        if (slugs.length > 1) {
-          closePanel(slugs[slugs.length - 1]);
-        }
+  useShortcuts(
+    [
+      { key: 'j', onTrigger: () => scrollActivePanel(1) },
+      { key: 'k', onTrigger: () => scrollActivePanel(-1) },
+      { key: 'h', onTrigger: () => moveActivePanel(-1) },
+      { key: 'ArrowLeft', onTrigger: () => moveActivePanel(-1) },
+      { key: 'l', onTrigger: () => moveActivePanel(1) },
+      { key: 'ArrowRight', onTrigger: () => moveActivePanel(1) },
+      { key: 'f', onTrigger: toggleActiveFold },
+      { key: 'x', onTrigger: closeActivePanel },
+      {
+        key: 'Escape',
+        onTrigger: () => {
+          if (slugs.length > 1) {
+            closePanel(slugs[slugs.length - 1]);
+          }
+        },
       },
-    },
-  ], { enabled: !modalOpen && !isMobile });
+    ],
+    { enabled: !modalOpen && !isMobile },
+  );
 
   useEffect(() => {
     const stackSlugs = slugsKey ? slugsKey.split('\0') : [];
-    const pendingActiveSlug = pendingActiveSlugRef.current;
-    const nextSlug = stackSlugs.includes(pendingActiveSlug)
-      ? pendingActiveSlug
-      : stackSlugs.includes(activeSlugRef.current)
-        ? activeSlugRef.current
-        : stackSlugs[stackSlugs.length - 1] ?? '';
 
-    pendingActiveSlugRef.current = '';
-    activeSlugRef.current = nextSlug;
-    setActiveSlug((current) => (current === nextSlug ? current : nextSlug));
-    setManualFoldedSlugs((current) => {
-      const next = current.filter((slug) => stackSlugs.includes(slug));
-
-      return sameSlugs(current, next) ? current : next;
-    });
-
-    if (!isMobile && nextSlug) {
-      window.requestAnimationFrame(() => focusPanelRef.current(nextSlug));
-    }
-  }, [isMobile, slugsKey]);
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    const container = containerRef.current;
-
-    if (!container) return;
-
-    const observer = new ResizeObserver(updateAutoSpines);
-
-    updateAutoSpines();
-    container.addEventListener('scroll', updateAutoSpines, { passive: true });
-    observer.observe(container);
-
-    return () => {
-      container.removeEventListener('scroll', updateAutoSpines);
-      observer.disconnect();
-    };
-  }, [isMobile, updateAutoSpines]);
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    updateAutoSpines();
-  }, [isMobile, manualFoldedSlugs, updateAutoSpines]);
+    setManualFoldedSlugs((current) => pruneFoldedSlugs(current, stackSlugs));
+  }, [slugsKey]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -367,22 +185,13 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     prevLength.current = slugs.length;
     const container = containerRef.current;
 
-    if (container) {
-      container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
-      updateAutoSpines();
+    if (!container) return;
 
-      if (autoSpineTimer.current) clearTimeout(autoSpineTimer.current);
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    const timer = window.setTimeout(updateAutoSpines, 450);
 
-      autoSpineTimer.current = setTimeout(updateAutoSpines, 450);
-    }
+    return () => window.clearTimeout(timer);
   }, [isMobile, slugs.length, updateAutoSpines]);
-
-  useEffect(
-    () => () => {
-      if (autoSpineTimer.current) clearTimeout(autoSpineTimer.current);
-    },
-    [],
-  );
 
   if (isMobile) {
     return (
@@ -394,7 +203,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   return (
     <div className={cn('h-full border-t-1 border-vague-line overflow-hidden')} onClick={handleClick} style={noteStackStyle}>
-      <div ref={containerRef} onScroll={updateAutoSpines} className={cn('flex h-full overflow-x-auto tui-scroll')}>
+      <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
         {childArray.map((child, index) => {
           const slug = slugs[index];
 

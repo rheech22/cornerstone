@@ -1,4 +1,4 @@
-import type { DocEntry, DocType } from '@/shared/components/cabinet/types';
+import type { DocEntry, DocType } from '@/shared/lib/explorer-types';
 
 import { getExcerpt, getPostData, getPosts, getSlug } from './get-posts';
 

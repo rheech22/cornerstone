@@ -2,8 +2,7 @@ import type { RefObject } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 import { formatUpdatedAt } from '@/shared/lib/date';
-
-import type { DocEntry } from './types';
+import type { DocEntry } from '@/shared/lib/explorer-types';
 
 type PeekProps = {
   entry: DocEntry | null;

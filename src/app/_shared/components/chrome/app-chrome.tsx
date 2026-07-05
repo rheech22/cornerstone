@@ -1,15 +1,17 @@
 'use client';
 
 import { createContext, type ReactNode, useContext, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 
-import { Cabinet } from '@/shared/components/cabinet/cabinet';
 import { cn } from '@/shared/lib/cn';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { GlobalHelpPanel } from './global-help-panel';
 import { GlobalStatusBar } from './global-status-bar';
 import { getRouteChrome } from './route-chrome';
+
+const Cabinet = dynamic(() => import('@/shared/components/cabinet/cabinet').then((mod) => mod.Cabinet));
 
 type AppChromeActions = {
   cabinetOpen: boolean;
@@ -38,10 +40,14 @@ export const AppChrome = ({
   const pathname = usePathname();
   const route = getRouteChrome(pathname);
   const [cabinetOpen, setCabinetOpen] = useState(false);
+  const [cabinetMounted, setCabinetMounted] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const modalOpen = cabinetOpen || helpOpen;
 
-  const openCabinet = () => setCabinetOpen(true);
+  const openCabinet = () => {
+    setCabinetMounted(true);
+    setCabinetOpen(true);
+  };
   const openHelp = () => setHelpOpen(true);
   const toggleHelp = () => setHelpOpen((open) => !open);
 
@@ -60,7 +66,7 @@ export const AppChrome = ({
         {breadcrumbs}
         <div className={cn('flex min-h-0 flex-1 flex-col')}>{children}</div>
         <GlobalStatusBar helpOpen={helpOpen} route={route} onToggleHelp={toggleHelp} />
-        <Cabinet open={cabinetOpen} onClose={() => setCabinetOpen(false)} />
+        {cabinetMounted && <Cabinet open={cabinetOpen} onClose={() => setCabinetOpen(false)} />}
         <GlobalHelpPanel open={helpOpen} route={route} onClose={() => setHelpOpen(false)} />
       </div>
     </AppChromeContext.Provider>

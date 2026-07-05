@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { Overlay, Window } from '@/shared/components/tui';
 import { cn } from '@/shared/lib/cn';
+import type { DocEntry } from '@/shared/lib/explorer-types';
 import { keymap } from '@/shared/lib/use-shortcuts';
 
 import { CabinetStatusline } from './cabinet-statusline';
@@ -13,11 +14,11 @@ import { Cards } from './cards';
 import { type CompletionItem, CompletionPopup } from './completion';
 import { Peek } from './peek';
 import { countByType, filterDocs, tagIndex } from './search';
-import type { DocEntry } from './types';
 import { useCompletion } from './use-completion';
 import { usePreview } from './use-preview';
 
 export const CABINET_PANEL_ID = 'cabinet-panel';
+const CABINET_COMPLETION_ID = 'cabinet-completion-list';
 
 type CabinetProps = {
   open: boolean;
@@ -118,6 +119,7 @@ const CabinetContent = ({ docs, open, onClose }: CabinetProps & { docs: DocEntry
 
   const completion = useCompletion(query, updateQuery, scopeCounts, tagList);
   const preview = usePreview(open, selected);
+  const activeCompletionId = completion.isOpen ? `${CABINET_COMPLETION_ID}-${completion.index}` : undefined;
 
   useEffect(() => setCardIndex(0), [query]);
   useEffect(() => {
@@ -203,6 +205,12 @@ const CabinetContent = ({ docs, open, onClose }: CabinetProps & { docs: DocEntry
           value={query}
           onChange={(event) => updateQuery(event.target.value)}
           onKeyDown={inputKeymap}
+          role="combobox"
+          aria-label="cabinet search"
+          aria-autocomplete="list"
+          aria-expanded={completion.isOpen}
+          aria-controls={completion.isOpen ? CABINET_COMPLETION_ID : undefined}
+          aria-activedescendant={activeCompletionId}
           placeholder="검색…  @blog @note  #태그  키워드"
           spellCheck={false}
           autoComplete="off"
@@ -211,6 +219,7 @@ const CabinetContent = ({ docs, open, onClose }: CabinetProps & { docs: DocEntry
         <span className={cn('text-xs text-vague-muted')}>{`${filtered.length} / ${docs.length}`}</span>
         {completion.isOpen && (
           <CompletionPopup
+            id={CABINET_COMPLETION_ID}
             items={completion.items}
             activeIndex={completion.index}
             onActiveChange={completion.activate}

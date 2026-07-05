@@ -4,8 +4,7 @@ import { type KeyboardEvent, type RefObject, useEffect } from 'react';
 
 import { cn } from '@/shared/lib/cn';
 import { formatUpdatedAt } from '@/shared/lib/date';
-
-import type { DocEntry } from './types';
+import type { DocEntry } from '@/shared/lib/explorer-types';
 
 type CardsProps = {
   items: DocEntry[];
@@ -48,7 +47,7 @@ export const Cards = ({ items, activeIndex, interactionMode, listRef, onHover, o
             <button
               type="button"
               data-card
-              onMouseMove={() => onHover(index)}
+              onMouseEnter={() => onHover(index)}
               onFocus={() => onHover(index)}
               onClick={() => onOpen(index)}
               aria-current={isActive}

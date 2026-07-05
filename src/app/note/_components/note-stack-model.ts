@@ -103,6 +103,29 @@ export const getFocusScrollLeft = ({
 export const sameSlugs = (a: string[], b: string[]) =>
   a.length === b.length && a.every((slug, index) => slug === b[index]);
 
+export const getCurrentStackSlug = (slugs: string[], activeSlug: string) =>
+  slugs.includes(activeSlug) ? activeSlug : slugs[slugs.length - 1] ?? '';
+
+export const getNextActiveAfterClose = (slugs: string[], slug: string) => {
+  const remaining = slugs.filter((s) => s !== slug);
+
+  if (remaining.length === 0) return '';
+
+  const nextIndex = Math.min(Math.max(slugs.indexOf(slug), 0), remaining.length - 1);
+
+  return remaining[nextIndex] ?? '';
+};
+
+export const getWrappedStackSlug = (slugs: string[], activeSlug: string, delta: number) => {
+  if (slugs.length === 0) return '';
+
+  const currentSlug = getCurrentStackSlug(slugs, activeSlug);
+  const currentIndex = slugs.indexOf(currentSlug);
+  const nextIndex = (currentIndex + delta + slugs.length) % slugs.length;
+
+  return slugs[nextIndex] ?? '';
+};
+
 export const slugFromNoteHref = (href: string) => {
   const { pathname } = new URL(href, 'http://localhost');
 
