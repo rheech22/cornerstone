@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from '../_components/arrow-left';
 import { BackShortcut } from '../_components/back-shortcut';
 
 const Page = () => (
-  <header className={cn('flex justify-start p-3')}>
+  <header className={cn('flex justify-start bg-vague-bg p-3')}>
     <BackShortcut />
     <Link
       href="/"
