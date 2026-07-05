@@ -12,7 +12,7 @@ tags: [javascript, performance, runtime]
 - JS 코드에는 안 보이지만(hidden), 엔진은 내부적으로 히든 클래스를 생성
 - 객체는 언제든지 속성을 추가/제거할 수 있고, 순서도 런타임에 결정되며 타입도 제멋대로임
 - 이대로 구현하면 매번 "이 객체에 b 있나?"를 문자열 비교로 찾아야 함 -> 느려짐
-- 해시 테이블처럼 `O(1)`의 시간 복잡도를 갖지만, 히든 클래스는 상수가 거의 0에 근접하여 접근 비용이 매우 낮음
+- 해시 테이블처럼 `O(1)`의 [[why-time-complexity|시간 복잡도]]를 갖지만, 히든 클래스는 상수가 거의 0에 근접하여 접근 비용이 매우 낮음
 - 히든 클래스는 이런 정보를 담고 있음
 	- 어떤 프로퍼티가 있는지
 	- 어떤 순서로 추가되었는지
@@ -103,3 +103,6 @@ obj의 히든 클래스 === A ?
 - [V8 engine JSObject structure analysis and memory optimization ideas](https://medium.com/%40bpmxmqd/v8-engine-jsobject-structure-analysis-and-memory-optimization-ideas-be30cfcdcd16)
 - Collision: Quadratic Probing, Open Addressing, Separate Chaining
 - Inline Cache: Monomorphic, Polymorphic, Megamorphic
+
+## 관련 문서
+- [[hashtable-in-javascript|JavaScript Hash Table]]: 객체의 해시 기반 접근과 `Map` 선택 기준을 비교할 때 참고
