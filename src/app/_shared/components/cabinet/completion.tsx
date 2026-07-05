@@ -12,7 +12,7 @@ type CompletionPopupProps = {
 export const CompletionPopup = ({ items, activeIndex, onActiveChange, onSelect }: CompletionPopupProps) => (
   <ul
     className={cn(
-      'tui-scroll absolute left-7 top-full z-30 mt-1 max-h-64 w-56 overflow-y-auto rounded-md border border-vague-border bg-vague-surface py-1 shadow-xl',
+      'tui-scroll absolute top-full left-7 z-30 mt-1 max-h-64 w-56 overflow-y-auto rounded-md border border-vague-border bg-vague-surface py-1 shadow-xl',
     )}
   >
     {items.map((item, index) => (

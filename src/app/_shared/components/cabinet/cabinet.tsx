@@ -17,17 +17,84 @@ import type { DocEntry } from './types';
 import { useCompletion } from './use-completion';
 import { usePreview } from './use-preview';
 
-export const EXPLORER_PANEL_ID = 'explorer-panel';
+export const CABINET_PANEL_ID = 'cabinet-panel';
 
-type ExplorerProps = {
-  docs: DocEntry[];
+type CabinetProps = {
   open: boolean;
   onClose: () => void;
 };
 
 type InteractionMode = 'searching' | 'browsing';
 
-export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
+const useCabinetDocs = (open: boolean) => {
+  const [docs, setDocs] = useState<DocEntry[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!open || docs) return;
+
+    let cancelled = false;
+
+    setLoading(true);
+    setError(false);
+
+    void fetch('/api/cabinet')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load cabinet index');
+
+        return res.json() as Promise<DocEntry[]>;
+      })
+      .then((nextDocs) => {
+        if (!cancelled) setDocs(nextDocs);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [docs, open]);
+
+  return { docs, error, loading };
+};
+
+const CabinetFallback = ({ message }: { message: string }) => (
+  <Window className={cn('flex h-[40vh] w-full flex-col bg-vague-surface')}>
+    <Window.Title>cabinet</Window.Title>
+    <div className={cn('flex min-h-0 flex-1 items-center justify-center px-4 text-sm text-vague-muted')}>
+      {message}
+    </div>
+    <CabinetStatusline />
+  </Window>
+);
+
+export const Cabinet = ({ open, onClose }: CabinetProps) => {
+  const { docs, error, loading } = useCabinetDocs(open);
+
+  return (
+    <Overlay
+      open={open}
+      onClose={onClose}
+      label="cabinet"
+      id={CABINET_PANEL_ID}
+      className="max-w-5xl"
+      backdropClassName="bg-vague-bg/25"
+    >
+      {docs ? (
+        <CabinetContent docs={docs} open={open} onClose={onClose} />
+      ) : (
+        <CabinetFallback message={error ? 'cabinet을 불러오지 못했습니다' : loading ? 'loading cabinet…' : ''} />
+      )}
+    </Overlay>
+  );
+};
+
+const CabinetContent = ({ docs, open, onClose }: CabinetProps & { docs: DocEntry[] }) => {
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   const peekRef = useRef<HTMLDivElement>(null);
@@ -126,58 +193,49 @@ export const Explorer = ({ docs, open, onClose }: ExplorerProps) => {
   ]);
 
   return (
-    <Overlay
-      open={open}
-      onClose={onClose}
-      label="cabinet"
-      id={EXPLORER_PANEL_ID}
-      className="max-w-5xl"
-      backdropClassName="bg-vague-bg/25"
-    >
-      <Window className={cn('flex h-[85vh] w-full flex-col bg-vague-surface')}>
-        <Window.Title>cabinet</Window.Title>
+    <Window className={cn('flex h-[85vh] w-full flex-col bg-vague-surface')}>
+      <Window.Title>cabinet</Window.Title>
 
-        <div className={cn('relative flex items-center gap-2 border-b border-vague-line px-3 py-2')}>
-          <span className={cn('text-vague-amber')}>❯</span>
-          <input
-            ref={searchRef}
-            value={query}
-            onChange={(event) => updateQuery(event.target.value)}
-            onKeyDown={inputKeymap}
-            placeholder="검색…  @blog @note  #태그  키워드"
-            spellCheck={false}
-            autoComplete="off"
-            className={cn('flex-1 bg-transparent text-sm text-vague-fg outline-none placeholder:text-vague-muted')}
+      <div className={cn('relative flex items-center gap-2 border-b border-vague-line px-3 py-2')}>
+        <span className={cn('text-vague-amber')}>❯</span>
+        <input
+          ref={searchRef}
+          value={query}
+          onChange={(event) => updateQuery(event.target.value)}
+          onKeyDown={inputKeymap}
+          placeholder="검색…  @blog @note  #태그  키워드"
+          spellCheck={false}
+          autoComplete="off"
+          className={cn('flex-1 bg-transparent text-sm text-vague-fg outline-none placeholder:text-vague-muted')}
+        />
+        <span className={cn('text-xs text-vague-muted')}>{`${filtered.length} / ${docs.length}`}</span>
+        {completion.isOpen && (
+          <CompletionPopup
+            items={completion.items}
+            activeIndex={completion.index}
+            onActiveChange={completion.activate}
+            onSelect={acceptCompletion}
           />
-          <span className={cn('text-xs text-vague-muted')}>{`${filtered.length} / ${docs.length}`}</span>
-          {completion.isOpen && (
-            <CompletionPopup
-              items={completion.items}
-              activeIndex={completion.index}
-              onActiveChange={completion.activate}
-              onSelect={acceptCompletion}
-            />
-          )}
+        )}
+      </div>
+
+      <div className={cn('grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]')}>
+        <div className={cn('flex min-h-0 flex-col')}>
+          <Cards
+            items={filtered}
+            activeIndex={clampedCard}
+            interactionMode={interactionMode}
+            listRef={cardsRef}
+            onHover={hoverCard}
+            onOpen={openIndex}
+            onKeyDown={listKeymap}
+          />
         </div>
 
-        <div className={cn('grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]')}>
-          <div className={cn('flex min-h-0 flex-col')}>
-            <Cards
-              items={filtered}
-              activeIndex={clampedCard}
-              interactionMode={interactionMode}
-              listRef={cardsRef}
-              onHover={hoverCard}
-              onOpen={openIndex}
-              onKeyDown={listKeymap}
-            />
-          </div>
+        <Peek entry={selected} html={preview.html} loading={preview.loading} scrollRef={peekRef} />
+      </div>
 
-          <Peek entry={selected} html={preview.html} loading={preview.loading} scrollRef={peekRef} />
-        </div>
-
-        <CabinetStatusline />
-      </Window>
-    </Overlay>
+      <CabinetStatusline />
+    </Window>
   );
 };

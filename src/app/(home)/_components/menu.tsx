@@ -1,27 +1,24 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useAppChrome } from '@/shared/components/chrome/app-chrome';
 import { cn } from '@/shared/lib/cn';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { MENU, type MenuEntry } from '../menu';
-import { Explorer,EXPLORER_PANEL_ID } from './explorer/explorer';
-import type { DocEntry } from './explorer/types';
-import { HelpPanel } from './help-panel';
 import { MenuButton } from './menu-button';
-import { StatusLine } from './status-line';
 
-export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.ReactNode }) => {
+export const Menu = ({ children }: { children?: React.ReactNode }) => {
   const router = useRouter();
+  const { cabinetOpen, modalOpen, openCabinet } = useAppChrome();
   const navRef = useRef<HTMLElement>(null);
   const activeIndexRef = useRef(0);
-  const [explorerOpen, setExplorerOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
 
-  const toggleExplorer = () => setExplorerOpen((open) => !open);
-  const toggleHelp = () => setHelpOpen((open) => !open);
+  const openMenuCabinet = () => {
+    openCabinet();
+  };
 
   const focusItem = (index: number) => {
     const items = navRef.current?.querySelectorAll<HTMLElement>('[data-menu-item]');
@@ -35,7 +32,7 @@ export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.Re
   };
   const move = (delta: number) => focusItem(activeIndexRef.current + delta);
   const activate = (item: MenuEntry) =>
-    'href' in item ? router.push(item.href) : toggleExplorer();
+    'href' in item ? router.push(item.href) : openMenuCabinet();
 
   useEffect(() => focusItem(0), []);
 
@@ -52,14 +49,12 @@ export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.Re
       { key: 'k', onTrigger: () => move(-1) },
       { key: 'ArrowDown', onTrigger: () => move(1) },
       { key: 'ArrowUp', onTrigger: () => move(-1) },
-      { key: '?', onTrigger: toggleHelp },
-      { key: '/', onTrigger: toggleHelp },
     ],
-    { enabled: !explorerOpen },
+    { enabled: !modalOpen },
   );
 
   return (
-    <main className={cn('vague-select flex min-h-dvh flex-col bg-vague-bg text-vague-fg')}>
+    <main className={cn('vague-select flex min-h-0 flex-1 flex-col bg-vague-bg text-vague-fg')}>
       <div className={cn('flex flex-1 items-center justify-center px-6')}>
         <div className={cn('flex w-full max-w-sm flex-col gap-10')}>
           {children}
@@ -80,9 +75,9 @@ export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.Re
                     <MenuButton
                       shortcut={item.shortcut}
                       label={item.label}
-                      onClick={toggleExplorer}
-                      expanded={explorerOpen}
-                      controls={EXPLORER_PANEL_ID}
+                      onClick={openMenuCabinet}
+                      expanded={cabinetOpen}
+                      controls="cabinet-panel"
                       onFocus={() => {
                         activeIndexRef.current = index;
                       }}
@@ -94,9 +89,6 @@ export const Menu = ({ docs, children }: { docs: DocEntry[]; children?: React.Re
           </nav>
         </div>
       </div>
-      <StatusLine helpOpen={helpOpen} onToggleHelp={toggleHelp} />
-      <Explorer docs={docs} open={explorerOpen} onClose={() => setExplorerOpen(false)} />
-      <HelpPanel open={helpOpen} onClose={() => setHelpOpen(false)} />
     </main>
   );
 };

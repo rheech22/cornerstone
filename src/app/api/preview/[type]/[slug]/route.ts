@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import type { DocType } from '@/app/(home)/_components/explorer/types';
+import type { DocType } from '@/shared/components/cabinet/types';
 import { getDocContent, preparePreviewMarkdown } from '@/shared/lib/explorer';
 import { getPosts, getSlug } from '@/shared/lib/get-posts';
 import { highlightMarkdown } from '@/shared/lib/highlight-code';

@@ -54,7 +54,6 @@ export const countByType = (entries: DocEntry[]) => ({
   note: entries.filter((e) => e.type === 'note').length,
 });
 
-/** Tags grouped case-insensitively (counts summed), displayed with the most common spelling. */
 export const tagIndex = (entries: DocEntry[]): Array<{ tag: string; count: number }> => {
   const groups = new Map<string, { count: number; spellings: Map<string, number> }>();
 

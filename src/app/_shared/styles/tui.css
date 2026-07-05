@@ -239,7 +239,9 @@
     --md-rule-subtle: var(--color-vague-line);
     --md-rule-faint: var(--color-vague-line);
     background: var(--color-vague-bg);
-    transition: width 180ms ease, outline-color 180ms ease;
+    outline: 1px solid transparent;
+    outline-offset: -1px;
+    transition: width 180ms ease;
   }
 
   .note-panel .markdown {
@@ -326,9 +328,22 @@
     color: var(--color-vague-fg);
   }
 
-  .note-panel[data-highlighted="true"] {
-    outline: 1px solid var(--color-vague-accent);
-    outline-offset: -1px;
+  [data-stack-panel][data-active-visible="true"] .note-panel {
+    outline-color: var(--color-vague-muted);
+  }
+
+  [data-stack-panel][data-active-visible="true"] .note-panel-body > header {
+    background: var(--color-vague-surface);
+    border-bottom-color: var(--color-vague-muted);
+  }
+
+  [data-stack-panel][data-active-visible="true"] .note-panel-body > header span:first-child,
+  [data-stack-panel][data-active-visible="true"] .note-panel-spine {
+    color: var(--color-vague-fg-bright) !important;
+  }
+
+  [data-stack-panel][data-active-visible="true"] .note-panel-spine {
+    background: var(--color-vague-surface);
   }
 
   [data-note-mobile-stack="true"] .note-panel {

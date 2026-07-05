@@ -6,7 +6,6 @@ import type { DocEntry } from './types';
 
 const DEBOUNCE_MS = 120;
 
-/** Lazily fetch the rendered preview for the selected doc, with debounce + per-slug cache. */
 export const usePreview = (open: boolean, selected: DocEntry | null) => {
   const [html, setHtml] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

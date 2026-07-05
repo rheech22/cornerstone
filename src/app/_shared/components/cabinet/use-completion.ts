@@ -9,7 +9,6 @@ const MAX_TAGS = 8;
 type ScopeCounts = { blog: number; note: number };
 type TagList = Array<{ tag: string; count: number }>;
 
-/** `@`/`#` token completion for the search query: derives candidates and owns its cursor/dismiss state. */
 export const useCompletion = (
   query: string,
   setQuery: (next: string) => void,

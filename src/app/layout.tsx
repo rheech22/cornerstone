@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
+import { AppChrome } from '@/shared/components/chrome/app-chrome';
 import { cn } from "@/shared/lib/cn";
 
 import "./globals.css";
@@ -27,12 +28,11 @@ export default function RootLayout({
   breadcrumbs: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body
         className={cn(sans.className, "antialiased relative flex flex-col text-base md:text-lg lg:text-xl h-dvh overflow-hidden")}
       >
-        {breadcrumbs}
-        {children}
+        <AppChrome breadcrumbs={breadcrumbs}>{children}</AppChrome>
         <Analytics />
       </body>
     </html>

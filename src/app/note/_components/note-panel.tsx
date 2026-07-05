@@ -15,8 +15,9 @@ type NotePanelProps = {
 export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
   <section
     data-panel-slug={slug}
+    tabIndex={-1}
     className={cn(
-      "note-panel flex h-full w-[560px] shrink-0 flex-col overflow-y-auto tui-scroll border-r border-vague-line",
+      "note-panel flex h-full w-[560px] shrink-0 flex-col overflow-hidden border-r border-vague-line",
     )}
   >
     <button
@@ -53,7 +54,7 @@ export const NotePanel = ({ slug, frontmatter, children }: NotePanelProps) => (
           </button>
         </div>
       </header>
-      <article className={cn("markdown px-4 py-4")}>{children}</article>
+      <article data-note-scroll="true" className={cn("markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}>{children}</article>
     </div>
   </section>
 );
