@@ -40,19 +40,8 @@ export const Backlinks = ({ backlinks, compact = false }: BacklinksProps) => {
 
   return (
     <section data-backlinks="true" className={cn('mt-12 border-t border-vague-line pt-4 text-left', compact && 'mt-8 pt-3')}>
-      {compact && backlinks.length > 2 ? (
-        <details className={cn('group/backlinks')}>
-          <summary className={cn('cursor-pointer list-none text-xs uppercase tracking-[0.22em] text-vague-muted')}>
-            Backlinks {backlinks.length}
-          </summary>
-          <div className={cn('mt-3')}>{content}</div>
-        </details>
-      ) : (
-        <>
-          <div className={cn('mb-3 text-xs uppercase tracking-[0.22em] text-vague-muted')}>Backlinks {backlinks.length}</div>
-          {content}
-        </>
-      )}
+      <div className={cn('mb-3 text-xs uppercase tracking-[0.22em] text-vague-muted')}>Backlinks {backlinks.length}</div>
+      {content}
     </section>
   );
 };

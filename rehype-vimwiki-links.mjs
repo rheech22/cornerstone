@@ -1,12 +1,19 @@
 import { visit } from "unist-util-visit";
 
 const parseWikiTarget = (value) => {
-  const trimmed = value.trim();
+  const trimmed = value.trim().replace(/\.(?:mdx?|html?)$/, "");
   const match = trimmed.match(/^(blog|note):(.*)$/);
 
   if (match) return { type: match[1], slug: match[2].trim() };
 
-  const normalized = trimmed.replace(/^\.\//, "");
+  const normalized = trimmed
+    .replace(/^\/+/, "")
+    .replace(/^(?:\.\.\/)+/, "")
+    .replace(/^\.\//, "");
+  const literatureMatch = normalized.match(/^zt\/literature\/(.*)$/);
+
+  if (literatureMatch) return { type: "note", slug: literatureMatch[1].trim() };
+
   const routeMatch = normalized.match(/^(?:\.\.\/)?(blog|note)\/(.*)$/);
 
   if (routeMatch) return { type: routeMatch[1], slug: routeMatch[2].trim() };
