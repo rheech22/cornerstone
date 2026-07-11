@@ -36,6 +36,7 @@ export const MenuButton = (props: MenuButtonProps) => {
     return (
       <Link
         href={props.href}
+        prefetch={true}
         className={menuButtonClass(props.active, props.browsing)}
         data-menu-item="true"
         onFocus={onFocus}
