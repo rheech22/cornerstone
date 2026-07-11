@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { fuzzyMatch } from '../src/app/(home)/_components/explorer/fuzzy';
+import { fuzzyMatch } from '../src/app/_shared/components/cabinet/fuzzy';
 
 describe('fuzzyMatch', () => {
   it('matches English characters in order', () => {

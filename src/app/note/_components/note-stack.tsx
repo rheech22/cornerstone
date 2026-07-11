@@ -43,8 +43,10 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const containerRef = useRef<HTMLDivElement>(null);
   const focusRequestId = useRef(0);
   const handledFocusRequestId = useRef(0);
+  const keyboardNavigationTimer = useRef<number | null>(null);
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ id: number; slug: string } | null>(null);
+  const [keyboardNavigating, setKeyboardNavigating] = useState(false);
   const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
   const {
     isNavigating,
@@ -109,6 +111,14 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const requestPanelFocus = (slug: string) => {
     focusRequestId.current += 1;
     setFocusRequest({ id: focusRequestId.current, slug });
+  };
+  const withKeyboardNavigation = (action: () => void) => () => {
+    setKeyboardNavigating(true);
+
+    if (keyboardNavigationTimer.current) window.clearTimeout(keyboardNavigationTimer.current);
+
+    keyboardNavigationTimer.current = window.setTimeout(() => setKeyboardNavigating(false), 120);
+    action();
   };
   const {
     closeActivePanel,
@@ -200,19 +210,19 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   useShortcuts(
     [
-      { key: 'j', onTrigger: () => scrollActivePanel(1) },
-      { key: 'k', onTrigger: () => scrollActivePanel(-1) },
-      { key: 'h', onTrigger: () => moveActivePanel(-1) },
-      { key: 'ArrowLeft', onTrigger: () => moveActivePanel(-1) },
-      { key: 'l', onTrigger: () => moveActivePanel(1) },
-      { key: 'ArrowRight', onTrigger: () => moveActivePanel(1) },
-      { key: 'f', onTrigger: toggleActiveFold },
-      { key: 'x', onTrigger: closeActivePanel },
+      { key: 'j', onTrigger: withKeyboardNavigation(() => scrollActivePanel(1)) },
+      { key: 'k', onTrigger: withKeyboardNavigation(() => scrollActivePanel(-1)) },
+      { key: 'h', onTrigger: withKeyboardNavigation(() => moveActivePanel(-1)) },
+      { key: 'ArrowLeft', onTrigger: withKeyboardNavigation(() => moveActivePanel(-1)) },
+      { key: 'l', onTrigger: withKeyboardNavigation(() => moveActivePanel(1)) },
+      { key: 'ArrowRight', onTrigger: withKeyboardNavigation(() => moveActivePanel(1)) },
+      { key: 'f', onTrigger: withKeyboardNavigation(toggleActiveFold) },
+      { key: 'x', onTrigger: withKeyboardNavigation(closeActivePanel) },
       {
         key: 'Escape',
-        onTrigger: () => {
+        onTrigger: withKeyboardNavigation(() => {
           if (visibleSlugs.length > 1) closePanel(visibleSlugs[visibleSlugs.length - 1]);
-        },
+        }),
       },
     ],
     { enabled: !modalOpen && !isMobile && !pendingLocked },
@@ -223,6 +233,13 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
     setManualFoldedSlugs((current) => pruneFoldedSlugs(current, stackSlugs));
   }, [slugsKey]);
+
+  useEffect(
+    () => () => {
+      if (keyboardNavigationTimer.current) window.clearTimeout(keyboardNavigationTimer.current);
+    },
+    [],
+  );
 
   if (isMobile) {
     return (
@@ -250,6 +267,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       <div
         className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
         aria-busy={pendingLocked}
+        data-keyboard-navigation={keyboardNavigating}
         onClick={handleClick}
         onFocusCapture={wikiLinkPrefetch.onFocus}
         onPointerOver={wikiLinkPrefetch.onPointerOver}

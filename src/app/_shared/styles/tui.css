@@ -304,6 +304,18 @@
     transition: width 180ms ease;
   }
 
+  .note-panel::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-vague-muted);
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .note-panel .markdown {
     font-size: 1rem;
     line-height: 1.65;
@@ -393,14 +405,7 @@
   }
 
   [data-stack-panel][data-active-visible="true"] .note-panel::after {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 1px;
-    background: var(--color-vague-muted);
-    content: "";
-    pointer-events: none;
+    opacity: 1;
   }
 
   [data-stack-panel][data-active-visible="true"] .note-panel:not(.note-panel-skeleton) .note-panel-body > header {
@@ -421,6 +426,40 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .note-panel {
+      transition:
+        width 180ms ease,
+        outline-color 120ms ease;
+    }
+
+    .note-panel::after,
+    .note-panel:not(.note-panel-skeleton) .note-panel-body > header,
+    .note-panel-body > header span:first-child,
+    .note-panel-spine {
+      transition:
+        color 120ms ease,
+        background-color 120ms ease,
+        border-color 120ms ease,
+        opacity 120ms ease;
+    }
+
+    [data-stack-panel][data-active-visible="true"] .note-panel,
+    [data-stack-panel][data-active-visible="true"] .note-panel::after,
+    [data-stack-panel][data-active-visible="true"] .note-panel:not(.note-panel-skeleton) .note-panel-body > header,
+    [data-stack-panel][data-active-visible="true"] .note-panel-body > header span:first-child,
+    [data-stack-panel][data-active-visible="true"] .note-panel-spine {
+      transition-delay: 100ms;
+    }
+
+    [data-keyboard-navigation="true"] [data-stack-panel][data-active-visible="true"] .note-panel,
+    [data-keyboard-navigation="true"] [data-stack-panel][data-active-visible="true"] .note-panel::after,
+    [data-keyboard-navigation="true"] [data-stack-panel][data-active-visible="true"] .note-panel-body > header,
+    [data-keyboard-navigation="true"] [data-stack-panel][data-active-visible="true"] .note-panel-body > header span:first-child,
+    [data-keyboard-navigation="true"] [data-stack-panel][data-active-visible="true"] .note-panel-spine {
+      transition-delay: 0ms;
+      transition-duration: 0ms;
+    }
+
     .note-panel-content {
       animation: note-panel-content-enter 180ms ease-out both;
     }

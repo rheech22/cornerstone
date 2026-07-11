@@ -1,15 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterDocs, parseQuery } from '../src/app/(home)/_components/explorer/search';
-import type { DocEntry } from '../src/app/(home)/_components/explorer/types';
+import { filterDocs, parseQuery } from '../src/app/_shared/components/cabinet/search';
+import type { DocEntry } from '../src/app/_shared/lib/explorer-types';
 
 const make = (over: Partial<DocEntry> & Pick<DocEntry, 'slug'>): DocEntry => ({
   type: 'note',
   title: over.slug,
   tags: [],
-  created: '2026-01-01 00:00:00 +0900',
   updated: '2026-01-01 00:00:00 +0900',
-  excerpt: '',
   text: '',
   ...over,
 });
