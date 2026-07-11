@@ -142,6 +142,18 @@
   "note/react-data-fetching": [
     {
       "sourceType": "note",
+      "sourceSlug": "static-content-indexing",
+      "sourceTitle": "빌드 시점 콘텐츠 인덱스로 실행 시점 탐색 비용 줄이기",
+      "excerpt": "리액트에서 데이터는 어떻게 가져와야 할까"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "intent-driven-navigation",
+      "sourceTitle": "사용자 의도를 이용해 문서 탐색을 빠르게 만들기",
+      "excerpt": "리액트에서 데이터는 어떻게 가져와야 할까"
+    },
+    {
+      "sourceType": "note",
       "sourceSlug": "book-frameworkless-frontend-ch5",
       "sourceTitle": "프레임워크 없는 프론트엔드 개발 (5)",
       "excerpt": "리액트에서 데이터는 어떻게 가져와야 할까: 커스텀 훅과 API hook에서 데이터 요청 책임을 분리하는 맥락"
@@ -153,6 +165,18 @@
       "sourceSlug": "broswer-rendering",
       "sourceTitle": "브라우저 URL 입력 처리 과정",
       "excerpt": "대표적인 웹 브라우저 중 하나인 크롬 또한 그렇다. 크롬은 메인 프로세스 격인 브라우저 프로세스와 함께 렌더러 프로세스, GPU 프로세스, 플러그인 프로세스 등 협력하는 여러 프로세스를 포함한다."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "static-content-indexing",
+      "sourceTitle": "빌드 시점 콘텐츠 인덱스로 실행 시점 탐색 비용 줄이기",
+      "excerpt": "브라우저 렌더링 과정"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "intent-driven-navigation",
+      "sourceTitle": "사용자 의도를 이용해 문서 탐색을 빠르게 만들기",
+      "excerpt": "브라우저 렌더링 과정"
     },
     {
       "sourceType": "note",
@@ -225,6 +249,12 @@
       "sourceSlug": "xss",
       "sourceTitle": "XSS (Cross-Site Scripting)",
       "excerpt": "CSRF: 쿠키 자동 전송이 만들어내는 또 다른 웹 보안 공격과의 비교"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "static-content-indexing",
+      "sourceTitle": "빌드 시점 콘텐츠 인덱스로 실행 시점 탐색 비용 줄이기",
+      "excerpt": "csrf"
     },
     {
       "sourceType": "note",
@@ -347,6 +377,14 @@
       "sourceSlug": "protobuf",
       "sourceTitle": "Protobuf",
       "excerpt": "Protobuf는 데이터를 작고 빠르게 직렬화하기 위한 포맷이며, 일반적으로 HTTP, WebSocket 등 기존 통신 계층 위에서 사용되는 구조"
+    }
+  ],
+  "note/static-content-indexing": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "intent-driven-navigation",
+      "sourceTitle": "사용자 의도를 이용해 문서 탐색을 빠르게 만들기",
+      "excerpt": "빌드 시점 콘텐츠 인덱스로 실행 시점 탐색 비용 줄이기"
     }
   ],
   "note/hashtable-in-javascript": [
