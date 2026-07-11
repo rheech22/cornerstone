@@ -300,6 +300,7 @@
     color: var(--foreground);
     outline: 1px solid transparent;
     outline-offset: -1px;
+    position: relative;
     transition: width 180ms ease;
   }
 
@@ -389,6 +390,17 @@
 
   [data-stack-panel][data-active-visible="true"] .note-panel {
     outline-color: var(--color-vague-muted);
+  }
+
+  [data-stack-panel][data-active-visible="true"] .note-panel::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-vague-muted);
+    content: "";
+    pointer-events: none;
   }
 
   [data-stack-panel][data-active-visible="true"] .note-panel-body > header {
