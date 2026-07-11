@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-scope';
 import { cn } from '@/shared/lib/cn';
 
 const AboutPage = async () => {
@@ -10,9 +11,11 @@ const AboutPage = async () => {
     <main className={cn('min-h-0 flex-1 overflow-y-auto bg-vague-bg text-vague-fg tui-scroll')}>
       <div className={cn('mx-auto flex w-full max-w-3xl flex-col gap-16 px-6 py-16')}>
         <Section title="About">
-          <article className={cn('markdown vague-markdown mx-0 text-base')}>
-            <AboutContent />
-          </article>
+          <WikiPreviewScope>
+            <article className={cn('markdown blog-post-markdown mx-0 text-base')}>
+              <AboutContent />
+            </article>
+          </WikiPreviewScope>
         </Section>
       </div>
     </main>
