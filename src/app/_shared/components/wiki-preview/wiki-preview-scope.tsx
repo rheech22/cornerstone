@@ -133,7 +133,17 @@ export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
   useEffect(() => {
     if (!preview) return;
 
-    const close = () => closePreview();
+    const close = () => {
+      const link = describedByRef.current?.link;
+
+      if (link && document.activeElement === link) {
+        setPreview((current) => current ? { ...current, position: getPreviewPosition(link.getBoundingClientRect()) } : current);
+
+        return;
+      }
+
+      closePreview();
+    };
 
     window.addEventListener('scroll', close, true);
     window.addEventListener('resize', close);

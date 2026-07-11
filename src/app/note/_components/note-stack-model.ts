@@ -1,6 +1,9 @@
 import type { Route } from 'next';
 
+import { isNoteSlug, MAX_NOTE_STACK_SIZE, normalizeNoteSlugs } from '../../_shared/lib/note-slugs';
+
 export const NOTE_SPINE_WIDTH = 48;
+export { MAX_NOTE_STACK_SIZE };
 
 export type PanelMetric = {
   slug: string;
@@ -18,15 +21,35 @@ export type StackNavigation =
   | { kind: 'close'; closedSlug: string; slugs: string[]; targetSlug: string };
 
 export const buildNoteStackUrl = (slugs: string[]): Route => {
-  const [primary, ...stack] = slugs;
+  const [primary, ...stack] = normalizeNoteSlugs(slugs);
   const params = new URLSearchParams();
 
   stack.forEach((slug) => params.append('n', slug));
 
-  const path = !primary || primary === 'index' ? '/note' : `/note/${primary}`;
+  const path = !primary || primary === 'index' ? '/note' : `/note/${encodeURIComponent(primary)}`;
   const query = params.toString();
 
   return `${path}${query ? `?${query}` : ''}` as Route;
+};
+
+export const parseNoteStackUrl = (pathname: string, search: string): string[] => {
+  const params = new URLSearchParams(search);
+  const stacked = params.getAll('n');
+
+  if (pathname === '/note') return normalizeNoteSlugs(['index', ...stacked]);
+  if (!pathname.startsWith('/note/')) return [];
+
+  let slug = '';
+
+  try {
+    slug = decodeURIComponent(pathname.slice('/note/'.length));
+  } catch {
+    return [];
+  }
+
+  if (!isNoteSlug(slug)) return [];
+
+  return normalizeNoteSlugs([slug, ...stacked]);
 };
 
 export const getStackAction = ({
@@ -42,7 +65,9 @@ export const getStackAction = ({
 
   if (slugs.includes(targetSlug)) return { type: 'focus', slug: targetSlug };
 
-  return { type: 'navigate', slugs: [...slugs.slice(0, fromIndex + 1), targetSlug] };
+  const next = normalizeNoteSlugs([...slugs.slice(0, fromIndex + 1), targetSlug]);
+
+  return next.includes(targetSlug) ? { type: 'navigate', slugs: next } : { type: 'noop' };
 };
 
 export const getMobileStackSlugs = ({
@@ -56,7 +81,7 @@ export const getMobileStackSlugs = ({
 
   if (existingIndex !== -1) return slugs.slice(0, existingIndex + 1);
 
-  return [...slugs, targetSlug];
+  return normalizeNoteSlugs([...slugs, targetSlug]);
 };
 
 export const getAutoSpineSlugs = ({
@@ -131,9 +156,21 @@ export const getWrappedStackSlug = (slugs: string[], activeSlug: string, delta: 
 };
 
 export const slugFromNoteHref = (href: string) => {
-  const { pathname } = new URL(href, 'http://localhost');
+  let url: URL;
 
-  if (!pathname.startsWith('/note/')) return '';
+  try {
+    url = new URL(href, window.location.origin);
+  } catch {
+    return '';
+  }
 
-  return decodeURIComponent(pathname.slice('/note/'.length));
+  if (url.origin !== window.location.origin || !url.pathname.startsWith('/note/')) return '';
+
+  try {
+    const slug = decodeURIComponent(url.pathname.slice('/note/'.length));
+
+    return !slug.includes('/') && isNoteSlug(slug) ? slug : '';
+  } catch {
+    return '';
+  }
 };

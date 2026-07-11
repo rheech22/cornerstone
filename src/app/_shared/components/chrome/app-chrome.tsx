@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { CabinetStatusline } from '@/shared/components/cabinet/cabinet-statusline';
 import { Overlay, Window } from '@/shared/components/tui';
 import { cn } from '@/shared/lib/cn';
+import { useMdxCopy } from '@/shared/lib/use-mdx-copy';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { GlobalHelpPanel } from './global-help-panel';
@@ -77,6 +78,7 @@ export const AppChrome = ({
   const [cabinetMounted, setCabinetMounted] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const modalOpen = cabinetOpen || helpOpen;
+  const handleMdxCopy = useMdxCopy();
 
   const preloadCabinet = () => {
     void loadCabinet();
@@ -104,7 +106,7 @@ export const AppChrome = ({
     <AppChromeContext.Provider value={{ cabinetOpen, modalOpen, openCabinet, closeCabinet, openHelp, preloadCabinet }}>
       <div className={cn('flex min-h-0 flex-1 flex-col')}>
         {breadcrumbs}
-        <div className={cn('flex min-h-0 flex-1 flex-col')}>{children}</div>
+        <div onClick={handleMdxCopy} className={cn('flex min-h-0 flex-1 flex-col')}>{children}</div>
         <GlobalStatusBar helpOpen={helpOpen} route={route} onToggleHelp={toggleHelp} />
         {cabinetMounted && <Cabinet open={cabinetOpen} onClose={closeCabinet} />}
         <GlobalHelpPanel open={helpOpen} route={route} onClose={() => setHelpOpen(false)} />

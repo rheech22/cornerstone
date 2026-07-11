@@ -32,7 +32,7 @@ export const useNoteStackActions = ({
   stack: { activeSlug, autoSpineSlugs, manualFoldedSlugs, slugs },
 }: UseNoteStackActionsArgs) => {
   const unfoldPanel = (slug: string) => {
-    setManualFoldedSlugs((current) => current.filter((s) => s !== slug));
+    setManualFoldedSlugs((current) => (current.includes(slug) ? current.filter((s) => s !== slug) : current));
   };
 
   const focusExistingPanel = (slug: string) => {

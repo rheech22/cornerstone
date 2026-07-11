@@ -52,7 +52,7 @@ export const Code = async ({ children }: { children: PreElementWithProps }) => {
     <div className={cn("code-block group/code-block")}>
       {pre.title && <div className={cn("code-block__title")}>{pre.title}</div>}
       <div className={cn("code-block__content")}>
-        <CopyButton text={pre.code} singleLine={singleLine} />
+        <CopyButton singleLine={singleLine} />
         <code dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       {pre.caption && <div className={cn("code-block__caption")}>{pre.caption}</div>}

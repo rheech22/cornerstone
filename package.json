@@ -9,10 +9,12 @@
     "generate:backlinks": "node scripts/generate-backlinks.mjs",
     "drive:sync": "node scripts/drive-sync.mjs && pnpm generate:backlinks",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src tests playwright.config.ts",
     "lint:fix": "eslint --fix .",
-    "lint:check": "eslint .",
+    "lint:check": "eslint src tests playwright.config.ts",
+    "check:generated": "pnpm generate:backlinks && git diff --exit-code -- src/app/_shared/content/backlinks.json src/app/_shared/content/note-slugs.json && { test -z \"$CI\" || test -z \"$(git status --porcelain -- src/app/_shared/content/backlinks.json src/app/_shared/content/note-slugs.json)\"; }",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
     "sync": "bash sync_gdrive_local.sh && pnpm generate:backlinks",
     "sync:dev": "pnpm sync & pnpm dev"
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.61.1",
     "@shikijs/transformers": "^2.3.2",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/mdx": "^2.0.13",

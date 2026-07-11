@@ -1,4 +1,19 @@
 @layer components {
+  @keyframes drawCheck {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  [data-copy-code="true"][data-copied="true"] {
+    border-color: var(--color-vague-line);
+    background: var(--color-vague-surface);
+    color: var(--color-vague-success);
+  }
+
+  [data-copy-code="true"][data-copied="true"] .check-mark {
+    animation: drawCheck 0.5s ease forwards;
+  }
 	.markdown code:not(:has(> *)) {
 		display: inline;
 		padding: 0.1em 0.3em;

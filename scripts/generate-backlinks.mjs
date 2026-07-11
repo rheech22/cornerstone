@@ -3,6 +3,7 @@ import { join } from 'node:path';
 
 const CONTENT_DIR = join(process.cwd(), 'src/app/_shared/content');
 const OUTPUT_PATH = join(CONTENT_DIR, 'backlinks.json');
+const NOTE_SLUGS_PATH = join(CONTENT_DIR, 'note-slugs.json');
 const TYPES = ['blog', 'note'];
 const WIKI_LINK_RE = /\[\[(.*?)\]\]/g;
 const EXCERPT_LIMIT = 180;
@@ -83,3 +84,10 @@ for (const backlinks of Object.values(index)) {
 }
 
 writeFileSync(OUTPUT_PATH, `${JSON.stringify(index, null, 2)}\n`);
+
+const noteSlugs = readdirSync(join(CONTENT_DIR, 'note'))
+  .filter((fileName) => fileName.endsWith('.mdx'))
+  .map((fileName) => fileName.replace(/\.mdx$/, ''))
+  .sort();
+
+writeFileSync(NOTE_SLUGS_PATH, `${JSON.stringify(noteSlugs, null, 2)}\n`);

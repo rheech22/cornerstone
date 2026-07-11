@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { Backlinks } from "@/shared/components/backlinks";
 import { ChevronFirstIcon } from "@/shared/components/icons/chevron-first";
 import { XIcon } from "@/shared/components/icons/x";
-import { WikiPreviewScope } from "@/shared/components/wiki-preview/wiki-preview-scope";
 import { cn } from "@/shared/lib/cn";
 
 import type { StackPanel } from "./build-stack";
@@ -57,15 +56,13 @@ export const NotePanel = ({ backlinks, slug, frontmatter, children }: NotePanelP
           </button>
         </div>
       </header>
-      <WikiPreviewScope>
-        <article
-          data-note-scroll="true"
-          className={cn("note-panel-content markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}
-        >
-          {children}
-          <Backlinks backlinks={backlinks} compact />
-        </article>
-      </WikiPreviewScope>
+      <article
+        data-note-scroll="true"
+        className={cn("note-panel-content markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}
+      >
+        {children}
+        <Backlinks backlinks={backlinks} compact />
+      </article>
     </div>
   </section>
 );

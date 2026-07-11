@@ -1,26 +1,24 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { Children, useEffect, useRef, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { Children, memo, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAppChrome } from '@/shared/components/chrome/app-chrome';
+import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-scope';
 import { cn } from '@/shared/lib/cn';
 import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { NotePanelSkeleton } from './note-panel';
+import { NOTE_PANEL_ARTIFACT_VERSION } from './note-panel-artifact';
+import { useNotePanelCache } from './note-panel-cache-provider';
 import { getNotePanelCommand } from './note-stack-command';
-import {
-  getMobileStackSlugs,
-  NOTE_SPINE_WIDTH,
-  type StackNavigation,
-} from './note-stack-model';
+import { getMobileStackSlugs, NOTE_SPINE_WIDTH, type StackNavigation } from './note-stack-model';
 import { pruneFoldedSlugs, useActiveNotePanel } from './use-active-note-panel';
 import { useAutoSpines } from './use-auto-spines';
+import { type ClientNotePanel, useClientNoteNavigation } from './use-client-note-navigation';
 import { useNoteStackActions } from './use-note-stack-actions';
 import { useNoteStackFocus } from './use-note-stack-focus';
-import { usePendingNoteNavigation } from './use-pending-note-navigation';
 import { useWikiLinkPrefetch } from './use-wiki-link-prefetch';
 
 type NoteStackProps = {
@@ -29,17 +27,50 @@ type NoteStackProps = {
   spineWidth?: number;
 };
 
-type RenderedPanel = {
-  content: ReactNode;
-  slug: string;
-  status: 'pending' | 'resolved';
+const PanelContent = memo(function PanelContent({ panel }: { panel: ClientNotePanel }) {
+  if (panel.status === 'server') return panel.content;
+
+  if (panel.status === 'artifact') {
+    return <div className={cn('contents')} dangerouslySetInnerHTML={{ __html: panel.artifact.html }} />;
+  }
+
+  return <NotePanelSkeleton slug={panel.slug} state={panel.phase} />;
+});
+
+type PanelSlotProps = {
+  active: boolean;
+  autoSpine: boolean;
+  folded: boolean;
+  index: number;
+  panel: ClientNotePanel;
+  single: boolean;
+  spineWidth: number;
 };
 
+const PanelSlot = memo(function PanelSlot({ active, autoSpine, folded, index, panel, single, spineWidth }: PanelSlotProps) {
+  return (
+    <div
+      data-stack-panel
+      data-stack-slug={panel.slug}
+      data-panel-status={panel.status}
+      data-folded={folded}
+      data-auto-spine={autoSpine}
+      data-active={active}
+      data-single-panel={single}
+      data-active-visible={!single && active}
+      className={cn('sticky shrink-0')}
+      style={{ left: index * spineWidth, zIndex: index + 1 }}
+    >
+      <PanelContent panel={panel} />
+    </div>
+  );
+});
+
 export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: NoteStackProps) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { modalOpen } = useAppChrome();
+  const cache = useNotePanelCache();
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const stackRootRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const focusRequestId = useRef(0);
   const handledFocusRequestId = useRef(0);
@@ -47,41 +78,19 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
   const [focusRequest, setFocusRequest] = useState<{ id: number; slug: string } | null>(null);
   const [keyboardNavigating, setKeyboardNavigating] = useState(false);
-  const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
-  const {
-    isNavigating,
-    isNavigationActive,
-    navigate,
-    optimisticallyClosedSlugs,
-    pendingAppend,
-  } = usePendingNoteNavigation({ currentHref, serverSlugs: slugs });
-  const closedSlugs = new Set(optimisticallyClosedSlugs);
-  const childArray = Children.toArray(children);
-  const resolvedPanels: RenderedPanel[] = slugs
-    .map((slug, index) => ({ content: childArray[index], slug, status: 'resolved' as const }))
-    .filter((panel) => !closedSlugs.has(panel.slug));
-  const resolvedBySlug = new Map(resolvedPanels.map((panel) => [panel.slug, panel]));
-  const visibleSlugs = resolvedPanels.map((panel) => panel.slug);
-  const showSkeleton = Boolean(pendingAppend);
-  const renderedSlugs = showSkeleton && pendingAppend ? pendingAppend.slugs : visibleSlugs;
-  const renderedPanels = renderedSlugs.flatMap((slug): RenderedPanel[] => {
-    const resolved = resolvedBySlug.get(slug);
+  const initialPanels = useMemo<ClientNotePanel[]>(() => {
+    const childArray = Children.toArray(children);
 
-    if (resolved) return [resolved];
-
-    if (showSkeleton && pendingAppend?.targetSlug === slug) {
-      return [{
-        content: (
-          <NotePanelSkeleton key={slug} slug={slug} state={pendingAppend.phase === 'loading' ? 'loading' : 'blank'} />
-        ),
-        slug,
-        status: 'pending',
-      }];
-    }
-
-    return [];
-  });
-  const activeMobilePanel = renderedPanels[renderedPanels.length - 1];
+    return slugs.map((slug, index) => ({
+      content: childArray[index],
+      slug,
+      status: 'server',
+    }));
+  }, [children, slugs]);
+  const { isNavigating, isNavigationActive, navigate, panels } = useClientNoteNavigation({ cache, initialPanels });
+  const renderedSlugs = panels.map((panel) => panel.slug);
+  const activeMobilePanel = panels[panels.length - 1];
+  const pendingTargetSlug = panels.find((panel) => panel.status === 'pending')?.slug;
   const noteStackStyle = { '--note-spine-width': `${spineWidth}px` } as CSSProperties;
   const { autoSpineSlugs, getPanelMetrics, updateAutoSpines } = useAutoSpines({
     containerRef,
@@ -95,16 +104,9 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     spineWidth,
     updateAutoSpines,
   });
-  const { activeSlug, activatePanel, clearPendingActiveSlug, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
-    slugs: renderedSlugs,
-  });
+  const { activeSlug, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({ slugs: renderedSlugs });
   const handleNavigation = (navigation: StackNavigation) => {
-    const previousActiveSlug = activeSlug;
-    const started = navigate(navigation, () => {
-      clearPendingActiveSlug();
-
-      if (previousActiveSlug) activatePanel(previousActiveSlug);
-    });
+    const started = navigate(navigation);
 
     if (started && navigation.targetSlug) setPendingActiveSlug(navigation.targetSlug);
   };
@@ -142,14 +144,24 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     },
     stack: { activeSlug, autoSpineSlugs, manualFoldedSlugs, slugs: renderedSlugs },
   });
-  const wikiLinkPrefetch = useWikiLinkPrefetch({ isMobile, slugs: visibleSlugs });
-  const pendingLocked = isNavigating;
+  const wikiLinkPrefetch = useWikiLinkPrefetch({ isMobile });
   const foldedSlugsKey = manualFoldedSlugs.join('\0');
-  const loadingAnnouncement = pendingAppend?.phase === 'loading' ? (
-    <span role="status" className={cn('sr-only')}>
-      opening note…
-    </span>
-  ) : null;
+  const loadingAnnouncement = (
+    <span role="status" className={cn('sr-only')}>{isNavigating ? 'opening note…' : ''}</span>
+  );
+
+  useEffect(() => {
+    const root = stackRootRef.current;
+
+    if (!root) return;
+
+    root.querySelectorAll<HTMLElement>('.note-panel:not(.note-panel-skeleton)[data-panel-slug]').forEach((panel) => {
+      const slug = panel.dataset.panelSlug;
+
+      if (slug && !cache.has(slug)) cache.seed({ html: panel.outerHTML, slug, version: NOTE_PANEL_ARTIFACT_VERSION });
+    });
+    cache.pin(slugsKey ? slugsKey.split('\0') : []);
+  }, [cache, slugsKey]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -157,7 +169,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     const hasExplicitRequest = Boolean(focusRequest && focusRequest.id !== handledFocusRequestId.current);
     const targetSlug = hasExplicitRequest ? focusRequest?.slug : activeSlug;
 
-    if (!targetSlug || pendingAppend?.targetSlug === targetSlug) return;
+    if (!targetSlug || pendingTargetSlug === targetSlug) return;
 
     const frame = window.requestAnimationFrame(() => {
       focusPanel(targetSlug);
@@ -166,7 +178,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [activeSlug, focusPanel, focusRequest, foldedSlugsKey, isMobile, pendingAppend?.targetSlug, slugsKey]);
+  }, [activeSlug, focusPanel, focusRequest, foldedSlugsKey, isMobile, pendingTargetSlug, slugsKey]);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
@@ -185,7 +197,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
     if (command.type === 'open') {
       event.preventDefault();
-      pushToStack(visibleSlugs.indexOf(command.panelSlug), command.targetSlug);
+      pushToStack(renderedSlugs.indexOf(command.panelSlug), command.targetSlug);
     } else if (command.type === 'fold') {
       foldPanel(command.slug);
     } else if (command.type === 'unfold') {
@@ -208,7 +220,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
     handleNavigation({
       kind: 'append',
-      slugs: getMobileStackSlugs({ slugs: visibleSlugs, targetSlug: command.targetSlug }),
+      slugs: getMobileStackSlugs({ slugs: renderedSlugs, targetSlug: command.targetSlug }),
       targetSlug: command.targetSlug,
     });
   };
@@ -226,11 +238,11 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       {
         key: 'Escape',
         onTrigger: withKeyboardNavigation(() => {
-          if (visibleSlugs.length > 1) closePanel(visibleSlugs[visibleSlugs.length - 1]);
+          if (renderedSlugs.length > 1) closePanel(renderedSlugs[renderedSlugs.length - 1]);
         }),
       },
     ],
-    { enabled: !modalOpen && !isMobile && !pendingLocked },
+    { enabled: !modalOpen && !isMobile && !isNavigating },
   );
 
   useEffect(() => {
@@ -248,19 +260,22 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   if (isMobile) {
     return (
-      <>
+      <WikiPreviewScope>
         <div
+          ref={stackRootRef}
           data-note-mobile-stack="true"
-          aria-busy={pendingLocked}
+          data-panel-status={activeMobilePanel?.status}
+          data-stack-slug={activeMobilePanel?.slug}
+          aria-busy={isNavigating}
           onClick={handleMobileClick}
           onFocusCapture={wikiLinkPrefetch.onFocus}
           onPointerOver={wikiLinkPrefetch.onPointerOver}
           className={cn('h-full overflow-y-auto tui-scroll')}
         >
-          {activeMobilePanel?.content}
+          {activeMobilePanel && <PanelContent panel={activeMobilePanel} />}
         </div>
         {loadingAnnouncement}
-      </>
+      </WikiPreviewScope>
     );
   }
 
@@ -268,10 +283,11 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const spineSlugs = new Set(autoSpineSlugs);
 
   return (
-    <>
+    <WikiPreviewScope>
       <div
+        ref={stackRootRef}
         className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
-        aria-busy={pendingLocked}
+        aria-busy={isNavigating}
         data-keyboard-navigation={keyboardNavigating}
         onClick={handleClick}
         onFocusCapture={wikiLinkPrefetch.onFocus}
@@ -279,26 +295,21 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
         style={noteStackStyle}
       >
         <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
-          {renderedPanels.map((panel, index) => (
-            <div
+          {panels.map((panel, index) => (
+            <PanelSlot
               key={panel.slug}
-              data-stack-panel
-              data-stack-slug={panel.slug}
-              data-panel-status={panel.status}
-              data-folded={foldedSlugs.has(panel.slug)}
-              data-auto-spine={spineSlugs.has(panel.slug)}
-              data-active={panel.slug === activeSlug}
-              data-single-panel={renderedPanels.length === 1}
-              data-active-visible={renderedPanels.length > 1 && panel.slug === activeSlug}
-              className={cn('sticky shrink-0')}
-              style={{ left: index * spineWidth, zIndex: index + 1 }}
-            >
-              {panel.content}
-            </div>
+              active={panel.slug === activeSlug}
+              autoSpine={spineSlugs.has(panel.slug)}
+              folded={foldedSlugs.has(panel.slug)}
+              index={index}
+              panel={panel}
+              single={panels.length === 1}
+              spineWidth={spineWidth}
+            />
           ))}
         </div>
       </div>
       {loadingAnnouncement}
-    </>
+    </WikiPreviewScope>
   );
 };

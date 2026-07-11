@@ -1,7 +1,3 @@
-"use client";
-
-import { useCallback, useState } from "react";
-
 import { cn } from "@/shared/lib/cn";
 
 // Define Icon components within the same file
@@ -24,7 +20,6 @@ const CheckIcon = () => (
       style={{
         strokeDasharray: 30,
         strokeDashoffset: 30,
-        animation: "drawCheck 0.5s ease forwards",
       }}
     />
   </svg>
@@ -50,49 +45,26 @@ const CopyIcon = () => (
 
 type CopyButtonProps = {
   singleLine?: boolean;
-  text: string;
 };
 
-export const CopyButton = ({ singleLine = false, text }: CopyButtonProps) => {
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      setCopied(false); // Reset state on error
-      // Optionally, provide user feedback about the error here
-    }
-  }, [text]); // Add text dependency for useCallback
-
-  const title = copied ? "Copied!" : "Copy to clipboard";
+export const CopyButton = ({ singleLine = false }: CopyButtonProps) => {
+  const title = "Copy to clipboard";
 
   return (
     <button
+      type="button"
+      data-copy-code="true"
       className={cn(
         "absolute right-5 z-10 cursor-copy border p-2 opacity-0 transition-all duration-300 pointer-events-none group-hover/code-block:pointer-events-auto group-hover/code-block:opacity-100 group-focus-within/code-block:pointer-events-auto group-focus-within/code-block:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 hover:border-vague-line hover:bg-vague-surface hover:text-vague-amber",
         singleLine ? "top-1/2 -translate-y-1/2" : "top-5",
-        copied
-          ? "border-vague-line bg-vague-surface text-vague-success"
-          : "border-transparent",
+        "border-transparent",
       )}
-      onClick={copyToClipboard}
       title={title}
       aria-label={title}
     >
-      <span className={cn("sr-only")}>{title}</span>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {/* Keep the style jsx block for the checkmark animation */}
-      <style jsx>{`
-        @keyframes drawCheck {
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-      `}</style>
+      <span data-copy-label className={cn("sr-only")}>{title}</span>
+      <span data-copy-default><CopyIcon /></span>
+      <span data-copy-success hidden><CheckIcon /></span>
     </button>
   );
 };

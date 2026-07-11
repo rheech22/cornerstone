@@ -2,61 +2,46 @@
 
 import type { FocusEvent, PointerEvent } from 'react';
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
-import { buildNoteStackUrl, getMobileStackSlugs, getStackAction, slugFromNoteHref } from './note-stack-model';
+import { useNotePanelCache } from './note-panel-cache-provider';
 
 type UseWikiLinkPrefetchArgs = {
   isMobile: boolean;
-  slugs: string[];
 };
 
-export const useWikiLinkPrefetch = ({ isMobile, slugs }: UseWikiLinkPrefetchArgs) => {
-  const router = useRouter();
+const getNoteSlug = (target: HTMLElement): string => {
+  const link = target.closest<HTMLAnchorElement>('a.wiki-link');
+
+  return link?.dataset.wikiType === 'note' ? link.dataset.wikiSlug ?? '' : '';
+};
+
+export const useWikiLinkPrefetch = ({ isMobile }: UseWikiLinkPrefetchArgs) => {
+  const cache = useNotePanelCache();
   const timers = useRef(new Map<string, number>());
-  const prefetchedUrls = useRef(new Set<string>());
-  const slugsKey = slugs.join('\0');
 
   const prefetch = (target: HTMLElement, delay: number) => {
-    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
+    const slug = getNoteSlug(target);
 
-    if (!link) return;
-
-    const targetSlug = slugFromNoteHref(link.getAttribute('href') ?? '');
-
-    if (!targetSlug) return;
-
-    const href = isMobile
-      ? buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug }))
-      : (() => {
-        const panelSlug = link.closest('[data-panel-slug]')?.getAttribute('data-panel-slug') ?? '';
-        const action = getStackAction({ fromIndex: slugs.indexOf(panelSlug), slugs, targetSlug });
-
-        return action.type === 'navigate' ? buildNoteStackUrl(action.slugs) : null;
-      })();
-
-    if (!href || prefetchedUrls.current.has(href)) return;
+    if (!slug || cache.peek(slug)) return;
 
     if (delay === 0) {
-      const scheduled = timers.current.get(href);
+      const scheduled = timers.current.get(slug);
 
       if (scheduled !== undefined) {
         window.clearTimeout(scheduled);
-        timers.current.delete(href);
+        timers.current.delete(slug);
       }
 
-      prefetchedUrls.current.add(href);
-      router.prefetch(href);
+      cache.prefetch(slug);
 
       return;
     }
 
-    if (timers.current.has(href)) return;
+    if (timers.current.has(slug)) return;
 
-    timers.current.set(href, window.setTimeout(() => {
-      timers.current.delete(href);
-      prefetchedUrls.current.add(href);
-      router.prefetch(href);
+    timers.current.set(slug, window.setTimeout(() => {
+      timers.current.delete(slug);
+      cache.prefetch(slug);
     }, delay));
   };
 
@@ -75,17 +60,12 @@ export const useWikiLinkPrefetch = ({ isMobile, slugs }: UseWikiLinkPrefetchArgs
 
   useEffect(() => {
     const scheduled = timers.current;
-    const prefetched = prefetchedUrls.current;
 
     return () => {
-      scheduled.forEach((timer, href) => {
-        window.clearTimeout(timer);
-        prefetched.delete(href);
-      });
+      scheduled.forEach((timer) => window.clearTimeout(timer));
       scheduled.clear();
-      prefetched.clear();
     };
-  }, [isMobile, slugsKey]);
+  }, [isMobile]);
 
   return { onFocus, onPointerOver };
 };
