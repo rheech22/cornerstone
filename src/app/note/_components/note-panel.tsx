@@ -58,11 +58,30 @@ export const NotePanel = ({ backlinks, slug, frontmatter, children }: NotePanelP
         </div>
       </header>
       <WikiPreviewScope>
-        <article data-note-scroll="true" className={cn("markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}>
+        <article
+          data-note-scroll="true"
+          className={cn("note-panel-content markdown min-h-0 flex-1 overflow-y-auto px-4 py-4 tui-scroll")}
+        >
           {children}
           <Backlinks backlinks={backlinks} compact />
         </article>
       </WikiPreviewScope>
+    </div>
+  </section>
+);
+
+export const NotePanelSkeleton = ({ slug }: { slug: string }) => (
+  <section
+    data-panel-slug={slug}
+    role="status"
+    aria-label="opening note"
+    tabIndex={-1}
+    className={cn(
+      "note-panel note-panel-skeleton flex h-full w-[560px] shrink-0 flex-col overflow-hidden border-r border-vague-line",
+    )}
+  >
+    <div className={cn("note-panel-body flex min-h-0 flex-1 flex-col")}>
+      <header className={cn("h-[37px] shrink-0")} />
     </div>
   </section>
 );

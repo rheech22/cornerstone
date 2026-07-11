@@ -20,6 +20,7 @@ type UseNoteStackActionsArgs = {
   focusPanel: (slug: string) => void;
   manualFoldedSlugs: string[];
   onCloseStart: (slug: string) => void;
+  onNavigate: (slugs: string[], targetSlug: string) => void;
   scrollPanel: (slug: string, direction: number) => void;
   setManualFoldedSlugs: Dispatch<SetStateAction<string[]>>;
   setPendingActiveSlug: (slug: string) => void;
@@ -33,6 +34,7 @@ export const useNoteStackActions = ({
   focusPanel,
   manualFoldedSlugs,
   onCloseStart,
+  onNavigate,
   scrollPanel,
   setManualFoldedSlugs,
   setPendingActiveSlug,
@@ -62,8 +64,7 @@ export const useNoteStackActions = ({
     }
 
     if (action.type === 'navigate') {
-      setPendingActiveSlug(action.slugs[action.slugs.length - 1] ?? '');
-      startTransition(() => router.push(buildNoteStackUrl(action.slugs)));
+      onNavigate(action.slugs, targetSlug);
     }
   };
 

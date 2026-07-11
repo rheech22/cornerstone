@@ -1,19 +1,31 @@
+import { isValidElement, type ReactNode } from "react";
+
 import { cn } from "@/shared/lib/cn";
 import { highlightCode } from "@/shared/lib/highlight-code";
 
 import { CopyButton } from "./copy-button";
 
 type PreElementWithProps = React.ReactElement<{
-  children?: string;
+  children?: ReactNode;
   className?: string;
   "data-title"?: string;
   "data-caption"?: string;
 }>;
 
+const toCodeString = (value: ReactNode): string => {
+  if (typeof value === "string" || typeof value === "number") return String(value);
+
+  if (Array.isArray(value)) return value.map(toCodeString).join("");
+
+  if (isValidElement<{ children?: ReactNode }>(value)) return toCodeString(value.props.children);
+
+  return "";
+};
+
 const parsePre = (pre: PreElementWithProps) => {
   const title = pre.props["data-title"] ?? "";
   const caption = pre.props["data-caption"] ?? "";
-  const code = pre.props.children ?? "";
+  const code = toCodeString(pre.props.children);
   const className = pre.props.className ?? "";
   const match = className.match(/language-(\w+)/);
 

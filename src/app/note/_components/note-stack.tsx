@@ -1,14 +1,15 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { Children, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Children, useEffect, useRef, useState, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { useAppChrome } from '@/shared/components/chrome/app-chrome';
 import { cn } from '@/shared/lib/cn';
 import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
+import { NotePanelSkeleton } from './note-panel';
 import {
   buildNoteStackUrl,
   getMobileStackSlugs,
@@ -27,8 +28,17 @@ type NoteStackProps = {
   spineWidth?: number;
 };
 
+type PendingAppend = {
+  href: string;
+  sourceHref: string;
+  slugs: string[];
+  targetSlug: string;
+};
+
 export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: NoteStackProps) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { modalOpen } = useAppChrome();
   const isMobile = useMediaQuery('(max-width: 767px)');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,12 +46,28 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const prefetchedUrls = useRef(new Set<string>());
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
   const [optimisticallyClosedSlugs, setOptimisticallyClosedSlugs] = useState<string[]>([]);
+  const [pendingAppend, setPendingAppend] = useState<PendingAppend | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const childArray = Children.toArray(children);
   const sourceSlugsKey = slugs.join('\0');
   const visibleSlugs = slugs.filter((slug) => !optimisticallyClosedSlugs.includes(slug));
   const visibleChildren = childArray.filter((_, index) => !optimisticallyClosedSlugs.includes(slugs[index] ?? ''));
-  const activeMobileChild = visibleChildren[visibleChildren.length - 1];
+  const visiblePanels = visibleSlugs.map((slug, index) => ({ child: visibleChildren[index], slug }));
+  const renderedSlugs = pendingAppend?.slugs ?? visibleSlugs;
+  const renderedPanels = renderedSlugs.map((slug) => {
+    const panel = visiblePanels.find((candidate) => candidate.slug === slug);
+
+    if (panel) return panel;
+
+    if (pendingAppend?.targetSlug === slug) {
+      return { child: <NotePanelSkeleton key={slug} slug={slug} />, slug };
+    }
+
+    return null;
+  }).filter((panel): panel is NonNullable<typeof panel> => panel !== null);
+  const activeMobileChild = renderedPanels[renderedPanels.length - 1]?.child;
+  const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
   const noteStackStyle = {
     '--note-spine-width': `${spineWidth}px`,
   } as CSSProperties;
@@ -57,11 +83,28 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     spineWidth,
     updateAutoSpines,
   });
+  const focusActivePanel = (slug: string) => {
+    if (pendingAppend?.targetSlug === slug) return;
+
+    focusPanel(slug);
+  };
   const { activeSlug, activeSlugRef, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
-    focusPanel,
+    focusPanel: focusActivePanel,
     isMobile,
-    slugs: visibleSlugs,
+    slugs: renderedSlugs,
   });
+  const navigateToStack = (nextSlugs: string[], targetSlug: string) => {
+    if (pendingAppend) return;
+
+    const href = buildNoteStackUrl(nextSlugs);
+
+    if (!visibleSlugs.includes(targetSlug)) {
+      setPendingAppend({ href, sourceHref: currentHref, slugs: nextSlugs, targetSlug });
+    }
+
+    setPendingActiveSlug(targetSlug);
+    startTransition(() => router.push(href));
+  };
   const {
     closeActivePanel,
     closeAndActivatePanel,
@@ -81,14 +124,15 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     onCloseStart: (slug) => {
       setOptimisticallyClosedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
     },
+    onNavigate: navigateToStack,
     scrollPanel,
     setManualFoldedSlugs,
     setPendingActiveSlug,
-    slugs: visibleSlugs,
+    slugs: renderedSlugs,
   });
 
   const prefetchWikiLink = (target: HTMLElement) => {
-    const link = target.closest('a.wiki-link');
+    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
 
     if (!link) return;
 
@@ -113,7 +157,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   const handlePointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    const link = target.closest('a.wiki-link');
+    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
 
     if (!link) return;
 
@@ -128,12 +172,21 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
+
+    if (pendingAppend) {
+      const pendingAction = target.closest('a.wiki-link, [data-fold-slug], [data-unfold-slug], [data-close-slug]');
+
+      if (pendingAction) e.preventDefault();
+
+      return;
+    }
+
     const panel = target.closest('[data-panel-slug]') as HTMLElement | null;
     const panelSlug = panel?.getAttribute('data-panel-slug') ?? '';
 
     if (panelSlug) activatePanel(panelSlug);
 
-    const link = target.closest('a.wiki-link');
+    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
 
     if (link) {
       const href = link.getAttribute('href') ?? '';
@@ -181,7 +234,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
   const handleMobileClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    const link = target.closest('a.wiki-link');
+    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
 
     if (!link) return;
 
@@ -191,7 +244,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     if (!targetSlug) return;
 
     e.preventDefault();
-    router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug })));
+    navigateToStack(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug }), targetSlug);
   };
 
   useShortcuts(
@@ -213,7 +266,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
         },
       },
     ],
-    { enabled: !modalOpen && !isMobile },
+    { enabled: !modalOpen && !isMobile && !pendingAppend },
   );
 
   useEffect(() => {
@@ -232,6 +285,22 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     });
   }, [sourceSlugsKey]);
 
+  useEffect(() => {
+    if (!pendingAppend) return;
+
+    if (slugs.includes(pendingAppend.targetSlug)) {
+      setPendingAppend(null);
+
+      window.requestAnimationFrame(() => focusPanel(pendingAppend.targetSlug));
+
+      return;
+    }
+
+    if ((!isPending && currentHref === pendingAppend.href) || currentHref !== pendingAppend.sourceHref) {
+      setPendingAppend(null);
+    }
+  }, [currentHref, focusPanel, isPending, pendingAppend, sourceSlugsKey, slugs]);
+
   useEffect(
     () => () => {
       prefetchTimers.current.forEach((timer) => window.clearTimeout(timer));
@@ -243,6 +312,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     return (
       <div
         data-note-mobile-stack="true"
+        aria-busy={Boolean(pendingAppend)}
         onClick={handleMobileClick}
         onFocusCapture={handleFocus}
         onPointerOver={handlePointerOver}
@@ -256,25 +326,25 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   return (
     <div
       className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
+      aria-busy={Boolean(pendingAppend)}
       onClick={handleClick}
       onFocusCapture={handleFocus}
       onPointerOver={handlePointerOver}
       style={noteStackStyle}
     >
       <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
-        {visibleChildren.map((child, index) => {
-          const slug = visibleSlugs[index];
+        {renderedPanels.map(({ child, slug }, index) => {
 
           return (
             <div
               key={slug ?? index}
               data-stack-panel
               data-stack-slug={slug}
-              data-folded={slug ? manualFoldedSlugs.includes(slug) : false}
-              data-auto-spine={slug ? autoSpineSlugs.includes(slug) : false}
+              data-folded={manualFoldedSlugs.includes(slug)}
+              data-auto-spine={autoSpineSlugs.includes(slug)}
               data-active={slug === activeSlug}
-              data-single-panel={visibleSlugs.length === 1}
-              data-active-visible={visibleSlugs.length > 1 && slug === activeSlug}
+              data-single-panel={renderedSlugs.length === 1}
+              data-active-visible={renderedSlugs.length > 1 && slug === activeSlug}
               className={cn('sticky shrink-0')}
               style={{ left: index * spineWidth, zIndex: index + 1 }}
             >

@@ -26,7 +26,7 @@ export default function rehypeVimwikiLinks() {
     visit(tree, "text", (node, index, parent) => {
       if (!parent) return;
 
-      if (parent.tagName === "a") return;
+      if (parent.tagName === "a" || parent.tagName === "code" || parent.tagName === "pre") return;
 
       const matches = node.value.match(/\[\[(.*?)\]\]/g);
 

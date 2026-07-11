@@ -403,8 +403,7 @@
     pointer-events: none;
   }
 
-  [data-stack-panel][data-active-visible="true"] .note-panel-body > header {
-    background: var(--color-vague-surface);
+  [data-stack-panel][data-active-visible="true"] .note-panel:not(.note-panel-skeleton) .note-panel-body > header {
     border-bottom-color: var(--color-vague-muted);
   }
 
@@ -419,6 +418,24 @@
 
   [data-stack-panel][data-active-visible="true"] .note-panel-spine {
     background: var(--color-vague-surface);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .note-panel-content {
+      animation: note-panel-content-enter 180ms ease-out both;
+    }
+  }
+
+  @keyframes note-panel-content-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   [data-note-mobile-stack="true"] .note-panel {
