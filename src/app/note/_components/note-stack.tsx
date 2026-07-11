@@ -1,8 +1,8 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { Children, useEffect, useRef, useState, useTransition } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Children, useEffect, useRef, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { useAppChrome } from '@/shared/components/chrome/app-chrome';
 import { cn } from '@/shared/lib/cn';
@@ -10,17 +10,18 @@ import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { NotePanelSkeleton } from './note-panel';
+import { getNotePanelCommand } from './note-stack-command';
 import {
-  buildNoteStackUrl,
   getMobileStackSlugs,
-  getStackAction,
   NOTE_SPINE_WIDTH,
-  slugFromNoteHref,
+  type StackNavigation,
 } from './note-stack-model';
 import { pruneFoldedSlugs, useActiveNotePanel } from './use-active-note-panel';
 import { useAutoSpines } from './use-auto-spines';
 import { useNoteStackActions } from './use-note-stack-actions';
 import { useNoteStackFocus } from './use-note-stack-focus';
+import { usePendingNoteNavigation } from './use-pending-note-navigation';
+import { useWikiLinkPrefetch } from './use-wiki-link-prefetch';
 
 type NoteStackProps = {
   slugs: string[];
@@ -28,49 +29,57 @@ type NoteStackProps = {
   spineWidth?: number;
 };
 
-type PendingAppend = {
-  href: string;
-  sourceHref: string;
-  slugs: string[];
-  targetSlug: string;
+type RenderedPanel = {
+  content: ReactNode;
+  slug: string;
+  status: 'pending' | 'resolved';
 };
 
 export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: NoteStackProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { modalOpen } = useAppChrome();
   const isMobile = useMediaQuery('(max-width: 767px)');
   const containerRef = useRef<HTMLDivElement>(null);
-  const prefetchTimers = useRef<number[]>([]);
-  const prefetchedUrls = useRef(new Set<string>());
+  const focusRequestId = useRef(0);
+  const handledFocusRequestId = useRef(0);
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
-  const [optimisticallyClosedSlugs, setOptimisticallyClosedSlugs] = useState<string[]>([]);
-  const [pendingAppend, setPendingAppend] = useState<PendingAppend | null>(null);
-  const [isPending, startTransition] = useTransition();
-
+  const [focusRequest, setFocusRequest] = useState<{ id: number; slug: string } | null>(null);
+  const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
+  const {
+    isNavigating,
+    navigate,
+    optimisticallyClosedSlugs,
+    pendingAppend,
+  } = usePendingNoteNavigation({ currentHref, serverSlugs: slugs });
+  const closedSlugs = new Set(optimisticallyClosedSlugs);
   const childArray = Children.toArray(children);
-  const sourceSlugsKey = slugs.join('\0');
-  const visibleSlugs = slugs.filter((slug) => !optimisticallyClosedSlugs.includes(slug));
-  const visibleChildren = childArray.filter((_, index) => !optimisticallyClosedSlugs.includes(slugs[index] ?? ''));
-  const visiblePanels = visibleSlugs.map((slug, index) => ({ child: visibleChildren[index], slug }));
-  const renderedSlugs = pendingAppend?.slugs ?? visibleSlugs;
-  const renderedPanels = renderedSlugs.map((slug) => {
-    const panel = visiblePanels.find((candidate) => candidate.slug === slug);
+  const resolvedPanels: RenderedPanel[] = slugs
+    .map((slug, index) => ({ content: childArray[index], slug, status: 'resolved' as const }))
+    .filter((panel) => !closedSlugs.has(panel.slug));
+  const resolvedBySlug = new Map(resolvedPanels.map((panel) => [panel.slug, panel]));
+  const visibleSlugs = resolvedPanels.map((panel) => panel.slug);
+  const showSkeleton = Boolean(pendingAppend && pendingAppend.phase !== 'delaying');
+  const renderedSlugs = showSkeleton && pendingAppend ? pendingAppend.slugs : visibleSlugs;
+  const renderedPanels = renderedSlugs.flatMap((slug): RenderedPanel[] => {
+    const resolved = resolvedBySlug.get(slug);
 
-    if (panel) return panel;
+    if (resolved) return [resolved];
 
-    if (pendingAppend?.targetSlug === slug) {
-      return { child: <NotePanelSkeleton key={slug} slug={slug} />, slug };
+    if (showSkeleton && pendingAppend?.targetSlug === slug) {
+      return [{
+        content: (
+          <NotePanelSkeleton key={slug} slug={slug} state={pendingAppend.phase === 'loading' ? 'loading' : 'blank'} />
+        ),
+        slug,
+        status: 'pending',
+      }];
     }
 
-    return null;
-  }).filter((panel): panel is NonNullable<typeof panel> => panel !== null);
-  const activeMobileChild = renderedPanels[renderedPanels.length - 1]?.child;
-  const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
-  const noteStackStyle = {
-    '--note-spine-width': `${spineWidth}px`,
-  } as CSSProperties;
+    return [];
+  });
+  const activeMobilePanel = renderedPanels[renderedPanels.length - 1];
+  const noteStackStyle = { '--note-spine-width': `${spineWidth}px` } as CSSProperties;
   const { autoSpineSlugs, getPanelMetrics, updateAutoSpines } = useAutoSpines({
     containerRef,
     isMobile,
@@ -83,27 +92,23 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     spineWidth,
     updateAutoSpines,
   });
-  const focusActivePanel = (slug: string) => {
-    if (pendingAppend?.targetSlug === slug) return;
-
-    focusPanel(slug);
-  };
-  const { activeSlug, activeSlugRef, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
-    focusPanel: focusActivePanel,
-    isMobile,
+  const { activeSlug, activatePanel, clearPendingActiveSlug, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
     slugs: renderedSlugs,
   });
-  const navigateToStack = (nextSlugs: string[], targetSlug: string) => {
-    if (pendingAppend) return;
+  const handleNavigation = (navigation: StackNavigation) => {
+    const previousActiveSlug = activeSlug;
 
-    const href = buildNoteStackUrl(nextSlugs);
+    if (navigation.targetSlug) setPendingActiveSlug(navigation.targetSlug);
 
-    if (!visibleSlugs.includes(targetSlug)) {
-      setPendingAppend({ href, sourceHref: currentHref, slugs: nextSlugs, targetSlug });
-    }
+    navigate(navigation, () => {
+      clearPendingActiveSlug();
 
-    setPendingActiveSlug(targetSlug);
-    startTransition(() => router.push(href));
+      if (previousActiveSlug) activatePanel(previousActiveSlug);
+    });
+  };
+  const requestPanelFocus = (slug: string) => {
+    focusRequestId.current += 1;
+    setFocusRequest({ id: focusRequestId.current, slug });
   };
   const {
     closeActivePanel,
@@ -116,135 +121,81 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     scrollActivePanel,
     toggleActiveFold,
   } = useNoteStackActions({
-    activatePanel,
-    activeSlugRef,
-    autoSpineSlugs,
-    focusPanel,
-    manualFoldedSlugs,
-    onCloseStart: (slug) => {
-      setOptimisticallyClosedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
+    onNavigate: handleNavigation,
+    panel: {
+      activate: activatePanel,
+      requestFocus: requestPanelFocus,
+      scroll: scrollPanel,
+      setManualFoldedSlugs,
     },
-    onNavigate: navigateToStack,
-    scrollPanel,
-    setManualFoldedSlugs,
-    setPendingActiveSlug,
-    slugs: renderedSlugs,
+    stack: { activeSlug, autoSpineSlugs, manualFoldedSlugs, slugs: renderedSlugs },
   });
+  const wikiLinkPrefetch = useWikiLinkPrefetch({ isMobile, slugs: visibleSlugs });
+  const pendingLocked = isNavigating;
+  const foldedSlugsKey = manualFoldedSlugs.join('\0');
+  const loadingAnnouncement = pendingAppend?.phase === 'loading' ? (
+    <span role="status" className={cn('sr-only')}>
+      opening note…
+    </span>
+  ) : null;
 
-  const prefetchWikiLink = (target: HTMLElement) => {
-    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
+  useEffect(() => {
+    if (isMobile) return;
 
-    if (!link) return;
+    const hasExplicitRequest = Boolean(focusRequest && focusRequest.id !== handledFocusRequestId.current);
+    const targetSlug = hasExplicitRequest ? focusRequest?.slug : activeSlug;
 
-    const targetSlug = slugFromNoteHref(link.getAttribute('href') ?? '');
+    if (!targetSlug || pendingAppend?.targetSlug === targetSlug) return;
 
-    if (!targetSlug) return;
+    const frame = window.requestAnimationFrame(() => {
+      focusPanel(targetSlug);
 
-    const href = isMobile
-      ? buildNoteStackUrl(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug }))
-      : (() => {
-        const panelSlug = link.closest('[data-panel-slug]')?.getAttribute('data-panel-slug') ?? '';
-        const action = getStackAction({ fromIndex: visibleSlugs.indexOf(panelSlug), slugs: visibleSlugs, targetSlug });
+      if (hasExplicitRequest && focusRequest) handledFocusRequestId.current = focusRequest.id;
+    });
 
-        return action.type === 'navigate' ? buildNoteStackUrl(action.slugs) : null;
-      })();
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeSlug, focusPanel, focusRequest, foldedSlugsKey, isMobile, pendingAppend?.targetSlug, slugsKey]);
 
-    if (!href || prefetchedUrls.current.has(href)) return;
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
 
-    prefetchedUrls.current.add(href);
-    prefetchTimers.current.push(window.setTimeout(() => router.prefetch(href), 120));
-  };
-
-  const handlePointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
-
-    if (!link) return;
-
-    const relatedLink = e.relatedTarget instanceof Element ? e.relatedTarget.closest('a.wiki-link') : null;
-
-    if (link === relatedLink) return;
-
-    prefetchWikiLink(target);
-  };
-
-  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => prefetchWikiLink(e.target as HTMLElement);
-
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (pendingAppend) {
+    if (pendingLocked) {
       const pendingAction = target.closest('a.wiki-link, [data-fold-slug], [data-unfold-slug], [data-close-slug]');
 
-      if (pendingAction) e.preventDefault();
+      if (pendingAction) event.preventDefault();
 
       return;
     }
 
-    const panel = target.closest('[data-panel-slug]') as HTMLElement | null;
-    const panelSlug = panel?.getAttribute('data-panel-slug') ?? '';
+    const command = getNotePanelCommand(target);
 
-    if (panelSlug) activatePanel(panelSlug);
+    if ('panelSlug' in command && command.panelSlug) activatePanel(command.panelSlug);
 
-    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
-
-    if (link) {
-      const href = link.getAttribute('href') ?? '';
-      const targetSlug = slugFromNoteHref(href);
-
-      if (!targetSlug) return;
-
-      e.preventDefault();
-
-      const fromIndex = visibleSlugs.indexOf(panelSlug);
-
-      pushToStack(fromIndex, targetSlug);
-
-      return;
-    }
-
-    const foldBtn = target.closest('[data-fold-slug]');
-
-    if (foldBtn) {
-      const slug = foldBtn.getAttribute('data-fold-slug');
-
-      if (slug) foldPanel(slug);
-
-      return;
-    }
-
-    const unfoldBtn = target.closest('[data-unfold-slug]');
-
-    if (unfoldBtn) {
-      const slug = unfoldBtn.getAttribute('data-unfold-slug');
-
-      if (slug) focusExistingPanel(slug);
-
-      return;
-    }
-
-    const closeBtn = target.closest('[data-close-slug]');
-
-    if (closeBtn) {
-      const slug = closeBtn.getAttribute('data-close-slug');
-
-      if (slug) closeAndActivatePanel(slug);
+    if (command.type === 'open') {
+      event.preventDefault();
+      pushToStack(visibleSlugs.indexOf(command.panelSlug), command.targetSlug);
+    } else if (command.type === 'fold') {
+      foldPanel(command.slug);
+    } else if (command.type === 'unfold') {
+      focusExistingPanel(command.slug);
+    } else if (command.type === 'close') {
+      closeAndActivatePanel(command.slug);
+    } else if (command.type === 'activate') {
+      activatePanel(command.slug);
     }
   };
 
-  const handleMobileClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    const link = target.closest<HTMLAnchorElement>('a.wiki-link');
+  const handleMobileClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const command = getNotePanelCommand(event.target as HTMLElement);
 
-    if (!link) return;
+    if (command.type !== 'open' || pendingLocked) return;
 
-    const href = link.getAttribute('href') ?? '';
-    const targetSlug = slugFromNoteHref(href);
-
-    if (!targetSlug) return;
-
-    e.preventDefault();
-    navigateToStack(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug }), targetSlug);
+    event.preventDefault();
+    handleNavigation({
+      kind: 'append',
+      slugs: getMobileStackSlugs({ slugs: visibleSlugs, targetSlug: command.targetSlug }),
+      targetSlug: command.targetSlug,
+    });
   };
 
   useShortcuts(
@@ -260,13 +211,11 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       {
         key: 'Escape',
         onTrigger: () => {
-          if (visibleSlugs.length > 1) {
-            closePanel(visibleSlugs[visibleSlugs.length - 1]);
-          }
+          if (visibleSlugs.length > 1) closePanel(visibleSlugs[visibleSlugs.length - 1]);
         },
       },
     ],
-    { enabled: !modalOpen && !isMobile && !pendingAppend },
+    { enabled: !modalOpen && !isMobile && !pendingLocked },
   );
 
   useEffect(() => {
@@ -275,84 +224,58 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     setManualFoldedSlugs((current) => pruneFoldedSlugs(current, stackSlugs));
   }, [slugsKey]);
 
-  useEffect(() => {
-    const sourceSlugs = new Set(sourceSlugsKey ? sourceSlugsKey.split('\0') : []);
-
-    setOptimisticallyClosedSlugs((current) => {
-      const next = current.filter((slug) => sourceSlugs.has(slug));
-
-      return next.length === current.length ? current : next;
-    });
-  }, [sourceSlugsKey]);
-
-  useEffect(() => {
-    if (!pendingAppend) return;
-
-    if (slugs.includes(pendingAppend.targetSlug)) {
-      setPendingAppend(null);
-
-      window.requestAnimationFrame(() => focusPanel(pendingAppend.targetSlug));
-
-      return;
-    }
-
-    if ((!isPending && currentHref === pendingAppend.href) || currentHref !== pendingAppend.sourceHref) {
-      setPendingAppend(null);
-    }
-  }, [currentHref, focusPanel, isPending, pendingAppend, sourceSlugsKey, slugs]);
-
-  useEffect(
-    () => () => {
-      prefetchTimers.current.forEach((timer) => window.clearTimeout(timer));
-    },
-    [],
-  );
-
   if (isMobile) {
     return (
-      <div
-        data-note-mobile-stack="true"
-        aria-busy={Boolean(pendingAppend)}
-        onClick={handleMobileClick}
-        onFocusCapture={handleFocus}
-        onPointerOver={handlePointerOver}
-        className={cn('h-full overflow-y-auto tui-scroll')}
-      >
-        {activeMobileChild}
-      </div>
+      <>
+        <div
+          data-note-mobile-stack="true"
+          aria-busy={pendingLocked}
+          onClick={handleMobileClick}
+          onFocusCapture={wikiLinkPrefetch.onFocus}
+          onPointerOver={wikiLinkPrefetch.onPointerOver}
+          className={cn('h-full overflow-y-auto tui-scroll')}
+        >
+          {activeMobilePanel?.content}
+        </div>
+        {loadingAnnouncement}
+      </>
     );
   }
 
-  return (
-    <div
-      className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
-      aria-busy={Boolean(pendingAppend)}
-      onClick={handleClick}
-      onFocusCapture={handleFocus}
-      onPointerOver={handlePointerOver}
-      style={noteStackStyle}
-    >
-      <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
-        {renderedPanels.map(({ child, slug }, index) => {
+  const foldedSlugs = new Set(manualFoldedSlugs);
+  const spineSlugs = new Set(autoSpineSlugs);
 
-          return (
+  return (
+    <>
+      <div
+        className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
+        aria-busy={pendingLocked}
+        onClick={handleClick}
+        onFocusCapture={wikiLinkPrefetch.onFocus}
+        onPointerOver={wikiLinkPrefetch.onPointerOver}
+        style={noteStackStyle}
+      >
+        <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
+          {renderedPanels.map((panel, index) => (
             <div
-              key={slug ?? index}
+              key={panel.slug}
               data-stack-panel
-              data-stack-slug={slug}
-              data-folded={manualFoldedSlugs.includes(slug)}
-              data-auto-spine={autoSpineSlugs.includes(slug)}
-              data-active={slug === activeSlug}
-              data-single-panel={renderedSlugs.length === 1}
-              data-active-visible={renderedSlugs.length > 1 && slug === activeSlug}
+              data-stack-slug={panel.slug}
+              data-panel-status={panel.status}
+              data-folded={foldedSlugs.has(panel.slug)}
+              data-auto-spine={spineSlugs.has(panel.slug)}
+              data-active={panel.slug === activeSlug}
+              data-single-panel={renderedPanels.length === 1}
+              data-active-visible={renderedPanels.length > 1 && panel.slug === activeSlug}
               className={cn('sticky shrink-0')}
               style={{ left: index * spineWidth, zIndex: index + 1 }}
             >
-              {child}
+              {panel.content}
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
-    </div>
+      {loadingAnnouncement}
+    </>
   );
 };

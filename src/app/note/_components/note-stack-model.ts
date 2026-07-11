@@ -13,6 +13,10 @@ export type StackAction =
   | { type: 'navigate'; slugs: string[] }
   | { type: 'noop' };
 
+export type StackNavigation =
+  | { kind: 'append'; slugs: string[]; targetSlug: string }
+  | { kind: 'close'; closedSlug: string; slugs: string[]; targetSlug: string };
+
 export const buildNoteStackUrl = (slugs: string[]): Route => {
   const [primary, ...stack] = slugs;
   const params = new URLSearchParams();

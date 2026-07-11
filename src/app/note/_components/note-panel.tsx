@@ -70,11 +70,9 @@ export const NotePanel = ({ backlinks, slug, frontmatter, children }: NotePanelP
   </section>
 );
 
-export const NotePanelSkeleton = ({ slug }: { slug: string }) => (
+export const NotePanelSkeleton = ({ slug, state }: { slug: string; state: 'blank' | 'loading' }) => (
   <section
     data-panel-slug={slug}
-    role="status"
-    aria-label="opening note"
     tabIndex={-1}
     className={cn(
       "note-panel note-panel-skeleton flex h-full w-[560px] shrink-0 flex-col overflow-hidden border-r border-vague-line",
@@ -82,6 +80,11 @@ export const NotePanelSkeleton = ({ slug }: { slug: string }) => (
   >
     <div className={cn("note-panel-body flex min-h-0 flex-1 flex-col")}>
       <header className={cn("h-[37px] shrink-0")} />
+      {state === 'loading' && (
+        <div className={cn("px-4 py-4 text-sm text-vague-muted")}>
+          opening note…
+        </div>
+      )}
     </div>
   </section>
 );

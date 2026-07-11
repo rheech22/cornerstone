@@ -1,57 +1,44 @@
 'use client';
 
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
-import { startTransition } from 'react';
-import type { Route } from 'next';
-import { useRouter } from 'next/navigation';
+import type { Dispatch, SetStateAction } from 'react';
 
 import {
-  buildNoteStackUrl,
   getCurrentStackSlug,
   getNextActiveAfterClose,
   getStackAction,
   getWrappedStackSlug,
+  type StackNavigation,
 } from './note-stack-model';
 
 type UseNoteStackActionsArgs = {
-  activatePanel: (slug: string) => void;
-  activeSlugRef: MutableRefObject<string>;
-  autoSpineSlugs: string[];
-  focusPanel: (slug: string) => void;
-  manualFoldedSlugs: string[];
-  onCloseStart: (slug: string) => void;
-  onNavigate: (slugs: string[], targetSlug: string) => void;
-  scrollPanel: (slug: string, direction: number) => void;
-  setManualFoldedSlugs: Dispatch<SetStateAction<string[]>>;
-  setPendingActiveSlug: (slug: string) => void;
-  slugs: string[];
+  onNavigate: (navigation: StackNavigation) => void;
+  panel: {
+    activate: (slug: string) => void;
+    requestFocus: (slug: string) => void;
+    scroll: (slug: string, direction: number) => void;
+    setManualFoldedSlugs: Dispatch<SetStateAction<string[]>>;
+  };
+  stack: {
+    activeSlug: string;
+    autoSpineSlugs: string[];
+    manualFoldedSlugs: string[];
+    slugs: string[];
+  };
 };
 
 export const useNoteStackActions = ({
-  activatePanel,
-  activeSlugRef,
-  autoSpineSlugs,
-  focusPanel,
-  manualFoldedSlugs,
-  onCloseStart,
   onNavigate,
-  scrollPanel,
-  setManualFoldedSlugs,
-  setPendingActiveSlug,
-  slugs,
+  panel: { activate, requestFocus, scroll, setManualFoldedSlugs },
+  stack: { activeSlug, autoSpineSlugs, manualFoldedSlugs, slugs },
 }: UseNoteStackActionsArgs) => {
-  const router = useRouter();
-
   const unfoldPanel = (slug: string) => {
     setManualFoldedSlugs((current) => current.filter((s) => s !== slug));
   };
 
   const focusExistingPanel = (slug: string) => {
-    activatePanel(slug);
+    activate(slug);
     unfoldPanel(slug);
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => focusPanel(slug));
-    });
+    requestFocus(slug);
   };
 
   const pushToStack = (fromIndex: number, targetSlug: string) => {
@@ -64,7 +51,7 @@ export const useNoteStackActions = ({
     }
 
     if (action.type === 'navigate') {
-      onNavigate(action.slugs, targetSlug);
+      onNavigate({ kind: 'append', slugs: action.slugs, targetSlug });
     }
   };
 
@@ -72,54 +59,51 @@ export const useNoteStackActions = ({
     const remaining = slugs.filter((s) => s !== slug);
 
     if (remaining.length === 0) {
-      onCloseStart(slug);
-      startTransition(() => router.push('/note' as Route));
+      onNavigate({ closedSlug: slug, kind: 'close', slugs: [], targetSlug: '' });
 
       return;
     }
 
-    setPendingActiveSlug(nextActiveSlug);
-    onCloseStart(slug);
-    startTransition(() => router.push(buildNoteStackUrl(remaining)));
+    onNavigate({ closedSlug: slug, kind: 'close', slugs: remaining, targetSlug: nextActiveSlug });
   };
 
   const closeAndActivatePanel = (slug: string) => {
     const nextSlug = getNextActiveAfterClose(slugs, slug);
 
-    if (nextSlug) activatePanel(nextSlug);
+    if (nextSlug) activate(nextSlug);
 
     closePanel(slug, nextSlug);
   };
 
   const moveActivePanel = (delta: number) => {
-    const nextSlug = getWrappedStackSlug(slugs, activeSlugRef.current, delta);
+    const nextSlug = getWrappedStackSlug(slugs, activeSlug, delta);
 
     if (nextSlug) focusExistingPanel(nextSlug);
   };
 
   const closeActivePanel = () => {
-    const slug = getCurrentStackSlug(slugs, activeSlugRef.current);
+    const slug = getCurrentStackSlug(slugs, activeSlug);
 
     if (slug) closeAndActivatePanel(slug);
   };
 
   const scrollActivePanel = (direction: number) => {
-    const slug = getCurrentStackSlug(slugs, activeSlugRef.current);
+    const slug = getCurrentStackSlug(slugs, activeSlug);
 
-    if (slug) scrollPanel(slug, direction);
+    if (slug) scroll(slug, direction);
   };
 
   const foldPanel = (slug: string) => {
-    activatePanel(slug);
+    activate(slug);
     setManualFoldedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
   };
 
   const toggleActiveFold = () => {
-    const slug = getCurrentStackSlug(slugs, activeSlugRef.current);
+    const slug = getCurrentStackSlug(slugs, activeSlug);
 
     if (!slug) return;
 
-    activatePanel(slug);
+    activate(slug);
 
     if (manualFoldedSlugs.includes(slug) || autoSpineSlugs.includes(slug)) {
       focusExistingPanel(slug);
