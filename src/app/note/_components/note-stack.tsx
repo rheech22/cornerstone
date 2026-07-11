@@ -50,6 +50,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const currentHref = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ''}`;
   const {
     isNavigating,
+    isNavigationActive,
     navigate,
     optimisticallyClosedSlugs,
     pendingAppend,
@@ -61,7 +62,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     .filter((panel) => !closedSlugs.has(panel.slug));
   const resolvedBySlug = new Map(resolvedPanels.map((panel) => [panel.slug, panel]));
   const visibleSlugs = resolvedPanels.map((panel) => panel.slug);
-  const showSkeleton = Boolean(pendingAppend && pendingAppend.phase !== 'delaying');
+  const showSkeleton = Boolean(pendingAppend);
   const renderedSlugs = showSkeleton && pendingAppend ? pendingAppend.slugs : visibleSlugs;
   const renderedPanels = renderedSlugs.flatMap((slug): RenderedPanel[] => {
     const resolved = resolvedBySlug.get(slug);
@@ -99,20 +100,21 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   });
   const handleNavigation = (navigation: StackNavigation) => {
     const previousActiveSlug = activeSlug;
-
-    if (navigation.targetSlug) setPendingActiveSlug(navigation.targetSlug);
-
-    navigate(navigation, () => {
+    const started = navigate(navigation, () => {
       clearPendingActiveSlug();
 
       if (previousActiveSlug) activatePanel(previousActiveSlug);
     });
+
+    if (started && navigation.targetSlug) setPendingActiveSlug(navigation.targetSlug);
   };
   const requestPanelFocus = (slug: string) => {
     focusRequestId.current += 1;
     setFocusRequest({ id: focusRequestId.current, slug });
   };
   const withKeyboardNavigation = (action: () => void) => () => {
+    if (isNavigationActive()) return;
+
     setKeyboardNavigating(true);
 
     if (keyboardNavigationTimer.current) window.clearTimeout(keyboardNavigationTimer.current);
@@ -169,7 +171,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
 
-    if (pendingLocked) {
+    if (isNavigationActive()) {
       const pendingAction = target.closest('a.wiki-link, [data-fold-slug], [data-unfold-slug], [data-close-slug]');
 
       if (pendingAction) event.preventDefault();
@@ -198,9 +200,12 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const handleMobileClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const command = getNotePanelCommand(event.target as HTMLElement);
 
-    if (command.type !== 'open' || pendingLocked) return;
+    if (command.type !== 'open') return;
 
     event.preventDefault();
+
+    if (isNavigationActive()) return;
+
     handleNavigation({
       kind: 'append',
       slugs: getMobileStackSlugs({ slugs: visibleSlugs, targetSlug: command.targetSlug }),

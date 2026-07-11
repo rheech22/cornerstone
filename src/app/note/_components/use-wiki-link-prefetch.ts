@@ -17,7 +17,7 @@ export const useWikiLinkPrefetch = ({ isMobile, slugs }: UseWikiLinkPrefetchArgs
   const prefetchedUrls = useRef(new Set<string>());
   const slugsKey = slugs.join('\0');
 
-  const prefetch = (target: HTMLElement) => {
+  const prefetch = (target: HTMLElement, delay: number) => {
     const link = target.closest<HTMLAnchorElement>('a.wiki-link');
 
     if (!link) return;
@@ -37,11 +37,27 @@ export const useWikiLinkPrefetch = ({ isMobile, slugs }: UseWikiLinkPrefetchArgs
 
     if (!href || prefetchedUrls.current.has(href)) return;
 
-    prefetchedUrls.current.add(href);
+    if (delay === 0) {
+      const scheduled = timers.current.get(href);
+
+      if (scheduled !== undefined) {
+        window.clearTimeout(scheduled);
+        timers.current.delete(href);
+      }
+
+      prefetchedUrls.current.add(href);
+      router.prefetch(href);
+
+      return;
+    }
+
+    if (timers.current.has(href)) return;
+
     timers.current.set(href, window.setTimeout(() => {
       timers.current.delete(href);
+      prefetchedUrls.current.add(href);
       router.prefetch(href);
-    }, 120));
+    }, delay));
   };
 
   const onPointerOver = (event: PointerEvent<HTMLDivElement>) => {
@@ -52,10 +68,10 @@ export const useWikiLinkPrefetch = ({ isMobile, slugs }: UseWikiLinkPrefetchArgs
 
     const relatedLink = event.relatedTarget instanceof Element ? event.relatedTarget.closest('a.wiki-link') : null;
 
-    if (link !== relatedLink) prefetch(target);
+    if (link !== relatedLink) prefetch(target, 60);
   };
 
-  const onFocus = (event: FocusEvent<HTMLDivElement>) => prefetch(event.target as HTMLElement);
+  const onFocus = (event: FocusEvent<HTMLDivElement>) => prefetch(event.target as HTMLElement, 0);
 
   useEffect(() => {
     const scheduled = timers.current;

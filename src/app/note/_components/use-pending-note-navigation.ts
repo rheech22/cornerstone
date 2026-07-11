@@ -1,128 +1,171 @@
 'use client';
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { buildNoteStackUrl, type StackNavigation } from './note-stack-model';
 
 export type PendingAppend = {
   href: string;
-  phase: 'delaying' | 'skeleton' | 'loading';
-  startedAt: number;
+  phase: 'skeleton' | 'loading';
   slugs: string[];
   targetSlug: string;
 };
 
-type PendingClose = {
-  closedSlug: string;
-};
-
-type ActiveNavigation = {
+type NavigationAttempt = {
   href: string;
+  id: number;
+  loadingTimer: number | null;
+  onRollback: () => void;
+  shellTimer: number | null;
   sourceHref: string;
-};
+  timeoutTimer: number;
+} & (
+  | { kind: 'append'; slugs: string[]; targetSlug: string }
+  | { closedSlug: string; kind: 'close' }
+);
 
 type UsePendingNoteNavigationArgs = {
   currentHref: string;
   serverSlugs: string[];
 };
 
-const SKELETON_DELAY = 80;
+const SKELETON_DELAY = 100;
 const LOADING_DELAY = 200;
+const NAVIGATION_TIMEOUT = 15_000;
 
-export const usePendingNoteNavigation = ({
-  currentHref,
-  serverSlugs,
-}: UsePendingNoteNavigationArgs) => {
+export const usePendingNoteNavigation = ({ currentHref, serverSlugs }: UsePendingNoteNavigationArgs) => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [activeNavigation, setActiveNavigation] = useState<ActiveNavigation | null>(null);
+  const attemptId = useRef(0);
+  const attemptRef = useRef<NavigationAttempt | null>(null);
+  const currentHrefRef = useRef(currentHref);
+  const popStateTimer = useRef<number | null>(null);
   const [pendingAppend, setPendingAppend] = useState<PendingAppend | null>(null);
-  const [pendingClose, setPendingClose] = useState<PendingClose | null>(null);
-  const activeNavigationRef = useRef(activeNavigation);
-  const rollbackRef = useRef<(() => void) | null>(null);
-  const pendingRef = useRef(pendingAppend);
+  const [pendingCloseSlug, setPendingCloseSlug] = useState('');
 
-  activeNavigationRef.current = activeNavigation;
-  pendingRef.current = pendingAppend;
+  currentHrefRef.current = currentHref;
 
-  const navigate = (navigation: StackNavigation, onRollback: () => void) => {
-    if (activeNavigationRef.current) return;
+  const clearAttemptTimers = useCallback((attempt: NavigationAttempt) => {
+    if (attempt.shellTimer !== null) window.clearTimeout(attempt.shellTimer);
+    if (attempt.loadingTimer !== null) window.clearTimeout(attempt.loadingTimer);
+    window.clearTimeout(attempt.timeoutTimer);
+  }, []);
+
+  const finishAttempt = useCallback((id: number, rollback: boolean) => {
+    const attempt = attemptRef.current;
+
+    if (!attempt || attempt.id !== id) return;
+
+    clearAttemptTimers(attempt);
+    attemptRef.current = null;
+
+    if (attempt.kind === 'append') setPendingAppend(null);
+    else setPendingCloseSlug('');
+
+    if (rollback) attempt.onRollback();
+  }, [clearAttemptTimers]);
+
+  const navigate = (navigation: StackNavigation, onRollback: () => void): boolean => {
+    if (attemptRef.current) return false;
 
     const href = buildNoteStackUrl(navigation.slugs);
 
-    rollbackRef.current = onRollback;
-    setActiveNavigation({ href, sourceHref: currentHref });
+    if (href === currentHrefRef.current) return false;
 
-    if (navigation.kind === 'append' && !serverSlugs.includes(navigation.targetSlug)) {
-      setPendingAppend({
-        href,
-        phase: 'delaying',
-        startedAt: performance.now(),
-        slugs: navigation.slugs,
-        targetSlug: navigation.targetSlug,
-      });
+    attemptId.current += 1;
+    const id = attemptId.current;
+    const baseAttempt = {
+      href,
+      id,
+      loadingTimer: null,
+      onRollback,
+      shellTimer: null,
+      sourceHref: currentHrefRef.current,
+      timeoutTimer: window.setTimeout(() => finishAttempt(id, true), NAVIGATION_TIMEOUT),
+    };
+    const attempt: NavigationAttempt = navigation.kind === 'append'
+      ? { ...baseAttempt, kind: 'append', slugs: navigation.slugs, targetSlug: navigation.targetSlug }
+      : { ...baseAttempt, closedSlug: navigation.closedSlug, kind: 'close' };
+
+    attemptRef.current = attempt;
+
+    if (attempt.kind === 'append' && !serverSlugs.includes(attempt.targetSlug)) {
+      attempt.shellTimer = window.setTimeout(() => {
+        const current = attemptRef.current;
+
+        if (!current || current.id !== id || current.kind !== 'append') return;
+
+        setPendingAppend({ href: current.href, phase: 'skeleton', slugs: current.slugs, targetSlug: current.targetSlug });
+      }, SKELETON_DELAY);
+      attempt.loadingTimer = window.setTimeout(() => {
+        const current = attemptRef.current;
+
+        if (!current || current.id !== id || current.kind !== 'append') return;
+
+        setPendingAppend({ href: current.href, phase: 'loading', slugs: current.slugs, targetSlug: current.targetSlug });
+      }, LOADING_DELAY);
     }
 
-    if (navigation.kind === 'close') {
-      setPendingClose({ closedSlug: navigation.closedSlug });
-    }
+    if (attempt.kind === 'close') setPendingCloseSlug(attempt.closedSlug);
 
     startTransition(() => router.push(href));
+
+    return true;
   };
 
-  useEffect(() => {
-    if (!activeNavigation) return;
-
-    const completed = !isPending && currentHref === activeNavigation.href;
-    const cancelled = !isPending && currentHref === activeNavigation.sourceHref;
-    const superseded = currentHref !== activeNavigation.sourceHref && currentHref !== activeNavigation.href;
-
-    if (!completed && !cancelled && !superseded) return;
-
-    setActiveNavigation(null);
-    setPendingAppend(null);
-    setPendingClose(null);
-
-    if (!completed && (cancelled || superseded)) rollbackRef.current?.();
-
-    rollbackRef.current = null;
-  }, [activeNavigation, currentHref, isPending]);
+  const isNavigationActive = () => attemptRef.current !== null;
 
   useEffect(() => {
-    if (!pendingAppend || pendingAppend.phase !== 'delaying') return;
+    const attempt = attemptRef.current;
 
-    const remaining = Math.max(0, SKELETON_DELAY - (performance.now() - pendingAppend.startedAt));
-    const timer = window.setTimeout(() => {
-      const current = pendingRef.current;
+    if (!attempt) return;
 
-      if (!current || current.href !== pendingAppend.href || current.phase !== 'delaying') return;
+    if (currentHref === attempt.href) {
+      finishAttempt(attempt.id, false);
 
-      setPendingAppend({ ...current, phase: 'skeleton' });
-    }, remaining);
+      return;
+    }
 
-    return () => window.clearTimeout(timer);
-  }, [pendingAppend]);
+    if (currentHref !== attempt.sourceHref) finishAttempt(attempt.id, true);
+  }, [currentHref, finishAttempt]);
 
   useEffect(() => {
-    if (!pendingAppend || pendingAppend.phase !== 'skeleton') return;
+    const onPopState = () => {
+      const attempt = attemptRef.current;
 
-    const remaining = Math.max(0, LOADING_DELAY - (performance.now() - pendingAppend.startedAt));
-    const timer = window.setTimeout(() => {
-      const current = pendingRef.current;
+      if (!attempt) return;
 
-      if (!current || current.href !== pendingAppend.href || current.phase !== 'skeleton') return;
+      popStateTimer.current = window.setTimeout(() => {
+        const current = attemptRef.current;
 
-      setPendingAppend({ ...current, phase: 'loading' });
-    }, remaining);
+        if (!current || current.id !== attempt.id) return;
 
-    return () => window.clearTimeout(timer);
-  }, [pendingAppend]);
+        const href = `${window.location.pathname}${window.location.search}`;
+
+        if (href !== current.href) finishAttempt(current.id, true);
+      }, 0);
+    };
+
+    window.addEventListener('popstate', onPopState);
+
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+
+      if (popStateTimer.current !== null) window.clearTimeout(popStateTimer.current);
+
+      const attempt = attemptRef.current;
+
+      if (attempt) clearAttemptTimers(attempt);
+
+      attemptRef.current = null;
+    };
+  }, [clearAttemptTimers, finishAttempt]);
 
   return {
-    isNavigating: Boolean(activeNavigation),
+    isNavigating: Boolean(pendingAppend || pendingCloseSlug),
+    isNavigationActive,
     navigate,
-    optimisticallyClosedSlugs: pendingClose ? [pendingClose.closedSlug] : [],
+    optimisticallyClosedSlugs: pendingCloseSlug ? [pendingCloseSlug] : [],
     pendingAppend,
   };
 };
