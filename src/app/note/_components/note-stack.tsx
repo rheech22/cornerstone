@@ -12,6 +12,7 @@ import { useShortcuts } from '@/shared/lib/use-shortcuts';
 import {
   buildNoteStackUrl,
   getMobileStackSlugs,
+  getStackAction,
   NOTE_SPINE_WIDTH,
   slugFromNoteHref,
 } from './note-stack-model';
@@ -31,11 +32,16 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const { modalOpen } = useAppChrome();
   const isMobile = useMediaQuery('(max-width: 767px)');
   const containerRef = useRef<HTMLDivElement>(null);
-  const prevLength = useRef(0);
+  const prefetchTimers = useRef<number[]>([]);
+  const prefetchedUrls = useRef(new Set<string>());
   const [manualFoldedSlugs, setManualFoldedSlugs] = useState<string[]>([]);
+  const [optimisticallyClosedSlugs, setOptimisticallyClosedSlugs] = useState<string[]>([]);
 
   const childArray = Children.toArray(children);
-  const activeMobileChild = childArray[childArray.length - 1];
+  const sourceSlugsKey = slugs.join('\0');
+  const visibleSlugs = slugs.filter((slug) => !optimisticallyClosedSlugs.includes(slug));
+  const visibleChildren = childArray.filter((_, index) => !optimisticallyClosedSlugs.includes(slugs[index] ?? ''));
+  const activeMobileChild = visibleChildren[visibleChildren.length - 1];
   const noteStackStyle = {
     '--note-spine-width': `${spineWidth}px`,
   } as CSSProperties;
@@ -54,7 +60,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   const { activeSlug, activeSlugRef, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({
     focusPanel,
     isMobile,
-    slugs,
+    slugs: visibleSlugs,
   });
   const {
     closeActivePanel,
@@ -72,11 +78,53 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     autoSpineSlugs,
     focusPanel,
     manualFoldedSlugs,
+    onCloseStart: (slug) => {
+      setOptimisticallyClosedSlugs((current) => (current.includes(slug) ? current : [...current, slug]));
+    },
     scrollPanel,
     setManualFoldedSlugs,
     setPendingActiveSlug,
-    slugs,
+    slugs: visibleSlugs,
   });
+
+  const prefetchWikiLink = (target: HTMLElement) => {
+    const link = target.closest('a.wiki-link');
+
+    if (!link) return;
+
+    const targetSlug = slugFromNoteHref(link.getAttribute('href') ?? '');
+
+    if (!targetSlug) return;
+
+    const href = isMobile
+      ? buildNoteStackUrl(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug }))
+      : (() => {
+        const panelSlug = link.closest('[data-panel-slug]')?.getAttribute('data-panel-slug') ?? '';
+        const action = getStackAction({ fromIndex: visibleSlugs.indexOf(panelSlug), slugs: visibleSlugs, targetSlug });
+
+        return action.type === 'navigate' ? buildNoteStackUrl(action.slugs) : null;
+      })();
+
+    if (!href || prefetchedUrls.current.has(href)) return;
+
+    prefetchedUrls.current.add(href);
+    prefetchTimers.current.push(window.setTimeout(() => router.prefetch(href), 120));
+  };
+
+  const handlePointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const link = target.closest('a.wiki-link');
+
+    if (!link) return;
+
+    const relatedLink = e.relatedTarget instanceof Element ? e.relatedTarget.closest('a.wiki-link') : null;
+
+    if (link === relatedLink) return;
+
+    prefetchWikiLink(target);
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => prefetchWikiLink(e.target as HTMLElement);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -95,7 +143,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
 
       e.preventDefault();
 
-      const fromIndex = slugs.indexOf(panelSlug);
+      const fromIndex = visibleSlugs.indexOf(panelSlug);
 
       pushToStack(fromIndex, targetSlug);
 
@@ -143,7 +191,7 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     if (!targetSlug) return;
 
     e.preventDefault();
-    router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs, targetSlug })));
+    router.push(buildNoteStackUrl(getMobileStackSlugs({ slugs: visibleSlugs, targetSlug })));
   };
 
   useShortcuts(
@@ -159,8 +207,8 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       {
         key: 'Escape',
         onTrigger: () => {
-          if (slugs.length > 1) {
-            closePanel(slugs[slugs.length - 1]);
+          if (visibleSlugs.length > 1) {
+            closePanel(visibleSlugs[visibleSlugs.length - 1]);
           }
         },
       },
@@ -175,38 +223,47 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
   }, [slugsKey]);
 
   useEffect(() => {
-    if (isMobile) return;
+    const sourceSlugs = new Set(sourceSlugsKey ? sourceSlugsKey.split('\0') : []);
 
-    if (slugs.length <= prevLength.current) {
-      prevLength.current = slugs.length;
+    setOptimisticallyClosedSlugs((current) => {
+      const next = current.filter((slug) => sourceSlugs.has(slug));
 
-      return;
-    }
+      return next.length === current.length ? current : next;
+    });
+  }, [sourceSlugsKey]);
 
-    prevLength.current = slugs.length;
-    const container = containerRef.current;
-
-    if (!container) return;
-
-    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
-    const timer = window.setTimeout(updateAutoSpines, 450);
-
-    return () => window.clearTimeout(timer);
-  }, [isMobile, slugs.length, updateAutoSpines]);
+  useEffect(
+    () => () => {
+      prefetchTimers.current.forEach((timer) => window.clearTimeout(timer));
+    },
+    [],
+  );
 
   if (isMobile) {
     return (
-      <div data-note-mobile-stack="true" onClick={handleMobileClick} className={cn('h-full overflow-y-auto tui-scroll')}>
+      <div
+        data-note-mobile-stack="true"
+        onClick={handleMobileClick}
+        onFocusCapture={handleFocus}
+        onPointerOver={handlePointerOver}
+        className={cn('h-full overflow-y-auto tui-scroll')}
+      >
         {activeMobileChild}
       </div>
     );
   }
 
   return (
-    <div className={cn('h-full border-t-1 border-vague-line overflow-hidden')} onClick={handleClick} style={noteStackStyle}>
+    <div
+      className={cn('h-full border-t-1 border-vague-line overflow-hidden')}
+      onClick={handleClick}
+      onFocusCapture={handleFocus}
+      onPointerOver={handlePointerOver}
+      style={noteStackStyle}
+    >
       <div ref={containerRef} className={cn('flex h-full overflow-x-auto tui-scroll')}>
-        {childArray.map((child, index) => {
-          const slug = slugs[index];
+        {visibleChildren.map((child, index) => {
+          const slug = visibleSlugs[index];
 
           return (
             <div
@@ -216,7 +273,8 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
               data-folded={slug ? manualFoldedSlugs.includes(slug) : false}
               data-auto-spine={slug ? autoSpineSlugs.includes(slug) : false}
               data-active={slug === activeSlug}
-              data-active-visible={slugs.length > 1 && slug === activeSlug}
+              data-single-panel={visibleSlugs.length === 1}
+              data-active-visible={visibleSlugs.length > 1 && slug === activeSlug}
               className={cn('sticky shrink-0')}
               style={{ left: index * spineWidth, zIndex: index + 1 }}
             >

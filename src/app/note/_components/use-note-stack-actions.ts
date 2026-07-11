@@ -1,6 +1,7 @@
 'use client';
 
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import { startTransition } from 'react';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 
@@ -18,6 +19,7 @@ type UseNoteStackActionsArgs = {
   autoSpineSlugs: string[];
   focusPanel: (slug: string) => void;
   manualFoldedSlugs: string[];
+  onCloseStart: (slug: string) => void;
   scrollPanel: (slug: string, direction: number) => void;
   setManualFoldedSlugs: Dispatch<SetStateAction<string[]>>;
   setPendingActiveSlug: (slug: string) => void;
@@ -30,6 +32,7 @@ export const useNoteStackActions = ({
   autoSpineSlugs,
   focusPanel,
   manualFoldedSlugs,
+  onCloseStart,
   scrollPanel,
   setManualFoldedSlugs,
   setPendingActiveSlug,
@@ -60,7 +63,7 @@ export const useNoteStackActions = ({
 
     if (action.type === 'navigate') {
       setPendingActiveSlug(action.slugs[action.slugs.length - 1] ?? '');
-      router.push(buildNoteStackUrl(action.slugs));
+      startTransition(() => router.push(buildNoteStackUrl(action.slugs)));
     }
   };
 
@@ -68,13 +71,15 @@ export const useNoteStackActions = ({
     const remaining = slugs.filter((s) => s !== slug);
 
     if (remaining.length === 0) {
-      router.push('/note' as Route);
+      onCloseStart(slug);
+      startTransition(() => router.push('/note' as Route));
 
       return;
     }
 
     setPendingActiveSlug(nextActiveSlug);
-    router.push(buildNoteStackUrl(remaining));
+    onCloseStart(slug);
+    startTransition(() => router.push(buildNoteStackUrl(remaining)));
   };
 
   const closeAndActivatePanel = (slug: string) => {

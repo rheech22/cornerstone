@@ -90,7 +90,13 @@ export const PostsSection = ({ groups }: { groups: PostGroup[] }) => (
           <ul className={cn('min-w-0')}>
             {group.posts.map((post) => (
               <li key={post.slug} className={cn(ROW_CLASS_NAME, 'grid-cols-1')}>
-                <Link href={`/blog/${post.slug}`} className={cn(PRIMARY_CLASS_NAME)}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  data-wiki-type="blog"
+                  data-wiki-slug={post.slug}
+                  data-wiki-label={post.metadata.title}
+                  className={cn(PRIMARY_CLASS_NAME, 'wiki-link')}
+                >
                   {post.metadata.title}
                 </Link>
               </li>
@@ -107,7 +113,13 @@ export const NotesIndexSection = ({ notes }: { notes: ContentItem[] }) => (
     <ul className={cn('group/list')}>
       {notes.map((note) => (
         <li key={note.slug} className={cn(ROW_CLASS_NAME, 'gap-2 sm:grid-cols-[minmax(0,1fr)_auto]')}>
-          <Link href={`/note/${note.slug}`} className={cn(PRIMARY_CLASS_NAME)}>
+          <Link
+            href={`/note/${note.slug}`}
+            data-wiki-type="note"
+            data-wiki-slug={note.slug}
+            data-wiki-label={note.metadata.title}
+            className={cn(PRIMARY_CLASS_NAME, 'wiki-link')}
+          >
             {note.metadata.title}
           </Link>
           <span className={cn('flex flex-wrap gap-1 sm:justify-end')}>

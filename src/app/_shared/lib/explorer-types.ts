@@ -7,8 +7,6 @@ export type DocEntry = {
   type: DocType;
   title: string;
   tags: string[];
-  created: string;
   updated: string;
-  excerpt: string;
   text: string;
 };

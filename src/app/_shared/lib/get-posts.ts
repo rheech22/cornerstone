@@ -42,6 +42,14 @@ export const getPostData = (noteType: "blog" | "note") => {
     });
 };
 
+export const getPostContent = (noteType: "blog" | "note", slug: string) => {
+  const fileName = `${slug}.mdx`;
+
+  if (!getPosts(noteType).includes(fileName)) return null;
+
+  return parseFrontmatter(readFileSync(join(getPostDir(noteType), fileName), "utf8")).content;
+};
+
 const parseFrontmatter = (
   fileContent: string,
 ): { metadata: Metadata; content: string } => {

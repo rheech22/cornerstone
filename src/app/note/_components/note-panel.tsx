@@ -27,7 +27,7 @@ export const NotePanel = ({ backlinks, slug, frontmatter, children }: NotePanelP
       type="button"
       data-unfold-slug={slug}
       aria-label={`expand ${frontmatter?.title ?? slug}`}
-      className={cn("note-panel-spine hidden h-full w-full items-center justify-center px-2 py-3 text-vague-muted")}
+      className={cn("note-panel-spine hidden h-full w-full items-center justify-center px-2 py-3 text-vague-amber/60")}
     >
       <span className={cn("text-xs leading-none")}>{frontmatter?.title ?? slug}</span>
     </button>
@@ -37,7 +37,7 @@ export const NotePanel = ({ backlinks, slug, frontmatter, children }: NotePanelP
           "flex shrink-0 items-center justify-between border-b border-vague-line px-4 py-2",
         )}
       >
-        <span className={cn("truncate text-xs font-medium text-vague-fg")}>{frontmatter?.title ?? slug}</span>
+        <span className={cn("truncate text-xs font-medium text-vague-amber/60")}>{frontmatter?.title ?? slug}</span>
         <div className={cn("flex items-center gap-1")}>
           <button
             type="button"

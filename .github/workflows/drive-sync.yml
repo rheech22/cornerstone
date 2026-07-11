@@ -47,7 +47,7 @@ jobs:
           GIT_COMMITTER_NAME: github-actions[bot]
           GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
         run: |
-          git add src/app/_shared/content/blog src/app/_shared/content/note
+          git add src/app/_shared/content/blog src/app/_shared/content/note src/app/_shared/content/backlinks.json
           if git diff --cached --quiet; then
             exit 0
           fi

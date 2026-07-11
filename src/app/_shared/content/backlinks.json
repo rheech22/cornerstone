@@ -1,0 +1,474 @@
+{
+  "note/zettelkasten": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "about",
+      "sourceTitle": "사이트 소개",
+      "excerpt": "제텔카스텐에 관심을 갖고 실천에 옮겨 보았습니다. 메모하는 습관이 조금씩 형성되기 시작했어요. 가령 예전에는 코딩 중에 모르는 것을 찾아보며 새로운 것을 알게 됐을 때 그대로 코드에 적용하고 난 후 머지않아 대부분의 내용을 잊어버렸습니다. 지금은 짧은 내용이라도 흔적을 남겨보려고 합니다. 자주 접하지 못하는 내용은 쉽게..."
+    }
+  ],
+  "note/the-extended-mind": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "about",
+      "sourceTitle": "사이트 소개",
+      "excerpt": "제텔카스텐에는 노트를 분류하는 여러 방식이 있지만 저는 나누지 않는 것이 더 좋았습니다. 분류보다는 연결과 통합에 초점을 더 맞추려고 합니다. 앞으로 어떻게 바뀔지는 모르겠지만, [Second Brain](https://www.buildingasecondbrain.com/)이라는 개념, 그리고 같은 이름의 [블로그](ht..."
+    }
+  ],
+  "note/note_flow": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "about",
+      "sourceTitle": "사이트 소개",
+      "excerpt": "제텔카스텐에는 노트를 분류하는 여러 방식이 있지만 저는 나누지 않는 것이 더 좋았습니다. 분류보다는 연결과 통합에 초점을 더 맞추려고 합니다. 앞으로 어떻게 바뀔지는 모르겠지만, [Second Brain](https://www.buildingasecondbrain.com/)이라는 개념, 그리고 같은 이름의 [블로그](ht..."
+    }
+  ],
+  "note/codecompanion-basic": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "agent-client-protocol",
+      "sourceTitle": "ACP를 이용한 Neovim-Gemini CLI 통합",
+      "excerpt": "제가 사용하는 Neovim에서도 CodeCompanion 플러그인(v17.18.0 이상)을 통해 ACP를 지원합니다."
+    },
+    {
+      "sourceType": "blog",
+      "sourceSlug": "vibe-coding",
+      "sourceTitle": "Stretch Remindly (1) - 바이브코딩",
+      "excerpt": "제가 최근 주로 사용하는건 NeoVim과 CodeCompanion의 조합입니다. 모델은 Claude Sonnet 3.7을 사용하다가 요즘 아주 저렴하게 나온 Gemini 2.0 Pro를 붙여서 쓰고 있어요."
+    }
+  ],
+  "note/claudecode-seoul-meetup-2025": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "agent-client-protocol",
+      "sourceTitle": "ACP를 이용한 Neovim-Gemini CLI 통합",
+      "excerpt": "Claude Code 서울 밋업 후기: Claude Code 워크플로우와 IDE 통합에 대한 후속 맥락"
+    }
+  ],
+  "note/git-worktree": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "claudecode-seoul-meetup-summary",
+      "sourceTitle": "Claude Code 서울 밋업 요약 (2025)",
+      "excerpt": "[Tmux](https://github.com/tmux/tmux) + Git Worktree 조합 병렬 작업 처리"
+    },
+    {
+      "sourceType": "blog",
+      "sourceSlug": "claudecode-seoul-meetup-2025",
+      "sourceTitle": "Claude Code 서울 밋업 후기 (2025)",
+      "excerpt": "첫 세션은 Claude Code 팀의 개발자 [Dickson Tsai](https://x.com/dicksontsai)님이 원격으로 참여한 Q&A 시간이었습니다. 그는 Human to LLM에서 Agent to LLM 방식으로의 전환, [Hook](https://docs.claude.com/en/docs/claudecod..."
+    }
+  ],
+  "note/claudecode-seoul-meetup-summary": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "claudecode-seoul-meetup-2025",
+      "sourceTitle": "Claude Code 서울 밋업 후기 (2025)",
+      "excerpt": "Claude Code 서울 밋업 요약: 같은 행사의 핵심 내용을 압축한 literature note"
+    }
+  ],
+  "note/agent-client-protocol": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "codecompanion-basic",
+      "sourceTitle": "Neovim에서 AI 활용하기 - CodeCompanion 기본편",
+      "excerpt": "ACP를 이용한 NeovimGemini CLI 통합: Neovim AI 도구 생태계의 후속 통합 사례"
+    }
+  ],
+  "note/vibe-coding": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "stretch-remindly-260103",
+      "sourceTitle": "Stretch Remindly (2) - AppStore 출시",
+      "excerpt": "한편, 코드는 꽤나 많이 건드려야 했어요. 이전에 바이브코딩한 것을 바꾸고 유지보수하려다 보니 어려운 점이 많았습니다. 불필요한 코드를 걷어내고, 대대적인 리팩토링을 했어요. 바이브코딩의 부채를 실감했습니다. 그럼에도 요즘의 코딩 에이전트에게 작업을 위임할 때, 어느 정도 갖춰진 구조가 있다면 꽤나 잘 작동한다는 사실도..."
+    }
+  ],
+  "note/image-generation-model": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "stretch-remindly-260103",
+      "sourceTitle": "Stretch Remindly (2) - AppStore 출시",
+      "excerpt": "하지만 앱 출시를 위해 해야 할 것들이 너무 많다고 느꼈어요. 아이콘도 만들어야 하고, 앱스토어에는 정말 많은 절차와 관문이 있었어요. 앱 아이콘도 처음에는 AI로 만들어 보았습니다. 나노 바나나를 써보기도 하고, ComfyUI에서 Flux 등을 사용한 워크플로우도 만들어 보았지만 제 마음에 드는 결과는 얻지 못했습니다."
+    }
+  ],
+  "note/vercel-domain": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "vibe-coding",
+      "sourceTitle": "Stretch Remindly (1) - 바이브코딩",
+      "excerpt": "앱 출시까지 고려했기 때문에 랜딩 페이지도 제작하고 싶었어요. 이번에는 다시 v0에게 만회할 기회를 주었습니다. 간단하게 vercel로 배포할 계획이었기 때문에 vercel 배포가 편리한 v0을 택했어요."
+    }
+  ],
+  "note/stretch-remindly-260103": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "vibe-coding",
+      "sourceTitle": "Stretch Remindly (1) - 바이브코딩",
+      "excerpt": "Stretch Remindly (2) AppStore 출시: 이 글 이후 앱스토어 출시까지 이어진 후속 작업"
+    }
+  ],
+  "note/apple-notarization-history": [
+    {
+      "sourceType": "blog",
+      "sourceSlug": "vibe-coding",
+      "sourceTitle": "Stretch Remindly (1) - 바이브코딩",
+      "excerpt": "애플 공증 기록: Electron 앱 출시 전 macOS 코드 서명과 공증을 이해할 때 참고"
+    }
+  ],
+  "note/aws-cdk-project-setup": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "aws-lambda-static-ip",
+      "sourceTitle": "서버리스를 위한 AWS Lambda 정적 IP 할당",
+      "excerpt": "구현 및 유지보수 편의를 위해 CDK를 활용할건데 이를 위해 지난 CDK 프로젝트 만들기에서 CDK 사용법을 익혔다."
+    }
+  ],
+  "note/brute_force": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "backtracking",
+      "sourceTitle": "백트래킹",
+      "excerpt": "백트래킹은 완전 탐색의 한 형태지만, 조건에 따라 불필요한 부분을 미리 배제함으로써 실제로는 훨씬 빠른 탐색이 가능해집니다. 이러한 특성 덕분에 조합, 순열, 퍼즐 문제 등 다양한 문제에서 자주 활용됩니다."
+    }
+  ],
+  "note/event-loop": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "book-frameworkless-frontend-ch2",
+      "sourceTitle": "프레임워크 없는 프론트엔드 개발 (2)",
+      "excerpt": "[requestAnimationFrame()](https://developer.mozilla.org/ko/docs/Web/API/Window/requestAnimationFrame): requestAnimationFrame()는 다음 리페인트가 이벤트 루프에 스케쥴링되기 직전에 실행될 콜백을 브라우저에게 알린다. 이 메서..."
+    }
+  ],
+  "note/react-data-fetching": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "book-frameworkless-frontend-ch5",
+      "sourceTitle": "프레임워크 없는 프론트엔드 개발 (5)",
+      "excerpt": "리액트에서 데이터는 어떻게 가져와야 할까: 커스텀 훅과 API hook에서 데이터 요청 책임을 분리하는 맥락"
+    }
+  ],
+  "note/browswer-renderer-process": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "broswer-rendering",
+      "sourceTitle": "브라우저 URL 입력 처리 과정",
+      "excerpt": "대표적인 웹 브라우저 중 하나인 크롬 또한 그렇다. 크롬은 메인 프로세스 격인 브라우저 프로세스와 함께 렌더러 프로세스, GPU 프로세스, 플러그인 프로세스 등 협력하는 여러 프로세스를 포함한다."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "server-side-rendering",
+      "sourceTitle": "서버 사이드 렌더링",
+      "excerpt": "렌더링이라는 용어는 문맥에 따라 의미를 다르게 해석할 수 있다. 브라우저에서 렌더링이란 HTML, CSS 및 자바스크립트를 파싱하는 것부터 페이지를 화면에 보여주기까지의 전 과정을 의미한다. 그렇다면 서버 사이드 렌더링은 서버에서 브라우저의 화면을 그리는걸까? 화면을 그리는 건 브라우저가 하는 일이다. 따라서 브라우저에서..."
+    }
+  ],
+  "note/broswer-rendering": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "domain-nameserver",
+      "sourceTitle": "DNS 네임서버",
+      "excerpt": "도메인 네임서버는 도메인 이름과 IP 주소 간의 매핑을 관리하는 서버로, 사용자가 브라우저에서 주소를 입력하면 해당 도메인 이름을 IP 주소로 변환하는 역할을 한다. 브라우저는 일련의 과정을 통해 DNS 서버를 찾아 IP 주소를 받아온 후 웹 서버에 클라이언트의 요청을 보낼 수 있다."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "browswer-renderer-process",
+      "sourceTitle": "브라우저 렌더링 과정",
+      "excerpt": "렌더러 프로세스도 브라우저 프로세스와 마찬가지로 여러 스레드를 가짐"
+    }
+  ],
+  "note/backtracking": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "brute_force",
+      "sourceTitle": "완전 탐색",
+      "excerpt": "비효율성: 입력의 크기가 크거나 경우의 수가 많을 때는 실행 시간이 급격하게 증가하므로 다른 효율적인 알고리즘(예: 백트래킹, 동적 계획법 등)이 필요할 수 있다."
+    }
+  ],
+  "note/combinatorics": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "brute_force",
+      "sourceTitle": "완전 탐색",
+      "excerpt": "예를 들어, “1부터 10까지의 숫자 중 5개를 고르는 조합 중 특정 조건을 만족하는 조합의 개수를 찾는 문제”에서는:"
+    }
+  ],
+  "blog/claudecode-seoul-meetup-2025": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "claudecode-seoul-meetup-summary",
+      "sourceTitle": "Claude Code 서울 밋업 요약 (2025)",
+      "excerpt": "Claude Code 서울 밋업 후기: 같은 행사에 대한 개인 후기와 현장 맥락"
+    }
+  ],
+  "note/xss": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "csrf",
+      "sourceTitle": "CSRF (Cross-Site Request Forgery)",
+      "excerpt": "XSS와의 차이"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "note_flow",
+      "sourceTitle": "노트 작성 흐름",
+      "excerpt": "영문 용어: 원문 우선, 필요시 한글 병기 (예: XSS (CrossSite Scripting))"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "cookie-storage",
+      "sourceTitle": "쿠키 vs 로컬 스토리지 보안",
+      "excerpt": "XSS(교차 사이트 스크립팅) 취약성"
+    }
+  ],
+  "note/csrf": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "xss",
+      "sourceTitle": "XSS (Cross-Site Scripting)",
+      "excerpt": "CSRF: 쿠키 자동 전송이 만들어내는 또 다른 웹 보안 공격과의 비교"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "cookie-storage",
+      "sourceTitle": "쿠키 vs 로컬 스토리지 보안",
+      "excerpt": "CSRF(교차 사이트 요청 위조) 취약성"
+    }
+  ],
+  "note/great-purge-from-soviet": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "soviet-five-years-plan",
+      "sourceTitle": "소련의 5개년 계획",
+      "excerpt": "대숙청과의 연관성"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "why-hitler-attack-soviet",
+      "sourceTitle": "왜 히틀러는 소련을 침공했는가",
+      "excerpt": "단기간 승부: 히틀러는 소련이 대숙청으로 약해진 상태에서 6개월 안에 끝낼 수 있다고 확신, \"문을 차면 썩은 건물이 무너진다\"는 그의 유명한 말이 이를 보여줌"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "dog-never-bark",
+      "sourceTitle": "짖지 않는 개",
+      "excerpt": "소련 대숙청 시기 짖지 않는 개의 의미"
+    }
+  ],
+  "note/dns-records": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "domain-nameserver",
+      "sourceTitle": "DNS 네임서버",
+      "excerpt": "도메인을 등록하면 기본적으로 제공되는 네임서버를 사용할 수 있다. spaceship에서 도메인을 구입했을 때에도 그랬다. 또한 도메인 등록기관의 콘솔에서 네임서버를 바꿀 수도 있는데, 가령 AWS의 Route53으로 네임서버를 바꾸고 AWS에서 도메인 레코드를 관리하는 것도 가능하다. 네임서버를 바꾸는 것은 등록기관을 바..."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "vercel-domain",
+      "sourceTitle": "Vercel 도메인 등록",
+      "excerpt": "여기까지 진행했다면 A 타입의 도메인 레코드를 등록해야 한다는 메세지를 확인할 수 있다."
+    }
+  ],
+  "note/domain-name-register": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "domain-nameserver",
+      "sourceTitle": "DNS 네임서버",
+      "excerpt": "도메인을 등록하면 기본적으로 제공되는 네임서버를 사용할 수 있다. spaceship에서 도메인을 구입했을 때에도 그랬다. 또한 도메인 등록기관의 콘솔에서 네임서버를 바꿀 수도 있는데, 가령 AWS의 Route53으로 네임서버를 바꾸고 AWS에서 도메인 레코드를 관리하는 것도 가능하다. 네임서버를 바꾸는 것은 등록기관을 바..."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "vercel-domain",
+      "sourceTitle": "Vercel 도메인 등록",
+      "excerpt": "Vercel에서 직접 구입해도 되지만 조금 더 비싼 느낌이다. 나는 [spaceship](https://www.spaceship.com)이라는 도메인 레지스터를 통해 도메인을 구입했다. 다른 곳도 마찬가지인지는 모르겠지만 네임서버와 DNS 관리 콘솔을 제공한다."
+    }
+  ],
+  "note/why-hitler-attack-soviet": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "great-purge-from-soviet",
+      "sourceTitle": "소련의 대숙청",
+      "excerpt": "왜 히틀러는 소련을 침공했는가: 대숙청이 소련군 전력 평가에 미친 영향을 같이 볼 때 참고"
+    }
+  ],
+  "note/dog-never-bark": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "great-purge-from-soviet",
+      "sourceTitle": "소련의 대숙청",
+      "excerpt": "짖지 않는 개: 대숙청 시기 공포와 침묵의 사회적 분위기를 보여주는 사례"
+    }
+  ],
+  "note/why-time-complexity": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "hashtable-in-javascript",
+      "sourceTitle": "Javascript Hash Table",
+      "excerpt": "일반 배열을 통해 값을 찾으려면 처음부터 끝까지 순회하는 O(n)의 시간 복잡도"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "javascript-v8-hidden-class",
+      "sourceTitle": "V8 Hidden Class와 Inline Cache",
+      "excerpt": "해시 테이블처럼 O(1)의 시간 복잡도를 갖지만, 히든 클래스는 상수가 거의 0에 근접하여 접근 비용이 매우 낮음"
+    }
+  ],
+  "note/modulo": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "hashtable-in-javascript",
+      "sourceTitle": "Javascript Hash Table",
+      "excerpt": "modulo 연산은 Key 값을 테이블 크기로 나누어 나머지를 인덱스로 변환하는 기법"
+    }
+  ],
+  "note/javascript-v8-hidden-class": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "hashtable-in-javascript",
+      "sourceTitle": "Javascript Hash Table",
+      "excerpt": "V8 엔진의 경우 Hidden Class 지원으로 해시 기반 접근보다 빠를 수 있음"
+    }
+  ],
+  "note/fascism": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "how-to-be-fascist",
+      "sourceTitle": "파시스트 되는 법",
+      "excerpt": "이 책은 풍자를 통해 파시스트가 되는 법을 소개한다. 저자 소개를 미리 읽지 않았다면, 책의 마지막 부분을 읽기 전까지는 파시스트가 되는 법을 가르치는 것으로 오해할 수도 있다. 얇은 책이고 목차는 다음과 같다."
+    }
+  ],
+  "note/http-basic": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "https-basic",
+      "sourceTitle": "HTTPS",
+      "excerpt": "HTTPS(HyperText Protocol Secure)는 HTTP의 보안이 강화된 버전"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "protobuf",
+      "sourceTitle": "Protobuf",
+      "excerpt": "Protobuf는 데이터를 작고 빠르게 직렬화하기 위한 포맷이며, 일반적으로 HTTP, WebSocket 등 기존 통신 계층 위에서 사용되는 구조"
+    }
+  ],
+  "note/hashtable-in-javascript": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "javascript-v8-hidden-class",
+      "sourceTitle": "V8 Hidden Class와 Inline Cache",
+      "excerpt": "JavaScript Hash Table: 객체의 해시 기반 접근과 Map 선택 기준을 비교할 때 참고"
+    }
+  ],
+  "blog/vibe-coding": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "langchain-meetup-2025",
+      "sourceTitle": "LangChain 밋업 정리 (2025 Q2)",
+      "excerpt": "바이브 코딩과 비즈니스 도입에 관한 실무진 간 경험 교류"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "new-transition-2025",
+      "sourceTitle": "공백기 회고 (2025)",
+      "excerpt": "취업 성공에 주요했던 것을 돌이켜본다. 사실 취업을 위한 촘촘한 계획은 없었다. 계획보다는 이 시간을 최대한 활용하고자 했다. 하고 싶은 일, 경험해보지 못한 일을 하는 방향으로 공백기를 채웠다. 만약 취업이라는 목표에 초점을 맞추었다면, 알고리즘과 웹 프론트엔드에 특화된 경험과 지식을 쌓는데 집중했을 가능성이 높다. 공..."
+    }
+  ],
+  "blog/codecompanion-basic": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "new-transition-2025",
+      "sourceTitle": "공백기 회고 (2025)",
+      "excerpt": "Neovim에서 AI 활용하기: Neovim과 LLM 활용 경험의 구체적인 도구 맥락"
+    }
+  ],
+  "note/tagging-guide": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "note_flow",
+      "sourceTitle": "노트 작성 흐름",
+      "excerpt": "태깅 가이드 참고"
+    }
+  ],
+  "note/tag-index": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "tagging-guide",
+      "sourceTitle": "Tagging Guide",
+      "excerpt": "1순위: 기존 태그 재사용 (tagindex.md 우선 참조)"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "note_flow",
+      "sourceTitle": "노트 작성 흐름",
+      "excerpt": "인덱스 및 관계도 정리"
+    }
+  ],
+  "note/tag-relationships": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "tagging-guide",
+      "sourceTitle": "Tagging Guide",
+      "excerpt": "새 태그를 만들면 tagindex.md와 tagrelationships.md를 함께 갱신한다."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "note_flow",
+      "sourceTitle": "노트 작성 흐름",
+      "excerpt": "인덱스 및 관계도 정리"
+    }
+  ],
+  "note/new-transition-2025": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "note_flow",
+      "sourceTitle": "노트 작성 흐름",
+      "excerpt": "에세이/회고: 설명형 + 시점 명시 (예: 공백기 회고 (2025))"
+    }
+  ],
+  "note/https-basic": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "protobuf",
+      "sourceTitle": "Protobuf",
+      "excerpt": "통신 계층은 여전히 TCP / HTTP / HTTPS 등이며, Protobuf는 그 위에서 payload 최적화 역할을 수행함"
+    }
+  ],
+  "note/react-hooks-rules": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "react-data-fetching",
+      "sourceTitle": "리액트에서 데이터는 어떻게 가져와야 할까",
+      "excerpt": "리액트에서 널리 사용되는 HTTP 클라이언트 라이브러리에서 제공하는 hook을 사용하는 것이 더 일반적인 것 같지만, fetch나 axios를 사용한다면 useEffect를 활용해서 데이터를 가져올 수 있다. 초기 렌더링 후 시점에만 데이터를 요청하도록 의존성 배열을 비워둔다."
+    }
+  ],
+  "note/soviet-great-famine": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "soviet-five-years-plan",
+      "sourceTitle": "소련의 5개년 계획",
+      "excerpt": "농업 집단화의 비극: 부농(쿨라크) 계층을 \"계급의 적\"으로 규정하고 강제로 재산을 몰수, 이 과정에서 19321933년 대기근(홀로도모르)이 발생해 우크라이나를 중심으로 수백만 명이 아사"
+    }
+  ],
+  "note/soviet-five-years-plan": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "soviet-great-famine",
+      "sourceTitle": "소련 - 농업 집단화에 따른 대기근",
+      "excerpt": "정책 변화: 스탈린이 권력을 잡으면서 NEP를 폐지하고 급속한 공업화와 농업 집단화를 추진, 이는 기존의 약속을 뒤엎는 것"
+    }
+  ],
+  "note/cookie-storage": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "xss",
+      "sourceTitle": "XSS (Cross-Site Scripting)",
+      "excerpt": "쿠키 vs 로컬 스토리지 보안: HttpOnly, Secure, SameSite 같은 쿠키 보안 속성을 함께 이해할 때 참고"
+    }
+  ],
+  "note/compass-of-zettelkasten": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "zettelkasten",
+      "sourceTitle": "퍼블릭 제텔카스텐",
+      "excerpt": "노트를 쌓아두는 것에 그치지 않고, 플리팅 노트와 참조 노트를 주기적으로 검토한다. 이를 위해 랜덤하게 노트를 볼 수 있는 기능을 개발할 수도 있겠다. 괜찮은 내용은 영구노트로 빠르게 전환하고 삭제한다. 이때 제텔카스템의 나침반이라는 아이디어를 활용해볼 수 있다."
+    }
+  ]
+}

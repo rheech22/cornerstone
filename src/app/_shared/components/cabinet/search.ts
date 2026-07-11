@@ -78,6 +78,8 @@ export const tagIndex = (entries: DocEntry[]): Array<{ tag: string; count: numbe
 };
 
 export const filterDocs = (entries: DocEntry[], query: string): DocEntry[] => {
+  if (!query.trim()) return entries;
+
   const { scopes, tags, terms } = parseQuery(query);
   const scored: Array<{ entry: DocEntry; score: number }> = [];
 

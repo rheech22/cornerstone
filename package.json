@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm generate:backlinks",
     "build": "next build",
-    "drive:sync": "node scripts/drive-sync.mjs",
+    "generate:backlinks": "node scripts/generate-backlinks.mjs",
+    "drive:sync": "node scripts/drive-sync.mjs && pnpm generate:backlinks",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint --fix .",
     "lint:check": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "sync": "bash sync_gdrive_local.sh",
+    "sync": "bash sync_gdrive_local.sh && pnpm generate:backlinks",
     "sync:dev": "pnpm sync & pnpm dev"
   },
   "dependencies": {

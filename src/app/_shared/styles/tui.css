@@ -410,7 +410,11 @@
 
   [data-stack-panel][data-active-visible="true"] .note-panel-body > header span:first-child,
   [data-stack-panel][data-active-visible="true"] .note-panel-spine {
-    color: var(--color-vague-fg-bright) !important;
+    color: var(--color-vague-amber) !important;
+  }
+
+  [data-stack-panel][data-single-panel="true"] .note-panel-body > header span:first-child {
+    color: var(--color-vague-amber) !important;
   }
 
   [data-stack-panel][data-active-visible="true"] .note-panel-spine {

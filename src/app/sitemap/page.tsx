@@ -1,3 +1,4 @@
+import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-scope';
 import { cn } from '@/shared/lib/cn';
 import { getPostData } from '@/shared/lib/get-posts';
 
@@ -40,13 +41,15 @@ const SitemapPage = () => {
 
         <OverviewSection edgeCount={edges.length} notesCount={notes.length} postsCount={posts.length} tagCount={tagGroups.length} />
 
-        <div className={cn('grid gap-8 lg:grid-cols-[0.8fr_1.4fr]')}>
-          <PagesSection />
-          <ConstellationsSection groups={getTopConstellations(tagGroups)} />
-          <PostsSection groups={postGroups} />
-          <NotesIndexSection notes={sortByTitle(notes)} />
-          <LinksSection links={externalLinks.slice(0, EXTERNAL_LINK_LIMIT)} totalCount={externalLinks.length} />
-        </div>
+        <WikiPreviewScope>
+          <div className={cn('grid gap-8 lg:grid-cols-[0.8fr_1.4fr]')}>
+            <PagesSection />
+            <ConstellationsSection groups={getTopConstellations(tagGroups)} />
+            <PostsSection groups={postGroups} />
+            <NotesIndexSection notes={sortByTitle(notes)} />
+            <LinksSection links={externalLinks.slice(0, EXTERNAL_LINK_LIMIT)} totalCount={externalLinks.length} />
+          </div>
+        </WikiPreviewScope>
       </div>
     </main>
   );

@@ -64,18 +64,23 @@ const useCabinetDocs = (open: boolean) => {
   return { docs, error, loading };
 };
 
-const CabinetFallback = ({ message }: { message: string }) => (
-  <Window className={cn('flex h-[40vh] w-full flex-col bg-vague-surface')}>
+const CabinetFallback = ({ error }: { error: boolean }) => (
+  <Window className={cn('flex h-[85vh] w-full flex-col bg-vague-surface')}>
     <Window.Title>cabinet</Window.Title>
-    <div className={cn('flex min-h-0 flex-1 items-center justify-center px-4 text-sm text-vague-muted')}>
-      {message}
+    <div
+      role="status"
+      aria-live="polite"
+      aria-busy={error ? undefined : true}
+      className={cn('flex min-h-0 flex-1 items-center justify-center px-4 text-sm text-vague-muted')}
+    >
+      {error ? 'cabinet을 불러오지 못했습니다' : 'indexing the archive…'}
     </div>
     <CabinetStatusline />
   </Window>
 );
 
 export const Cabinet = ({ open, onClose }: CabinetProps) => {
-  const { docs, error, loading } = useCabinetDocs(open);
+  const { docs, error } = useCabinetDocs(open);
 
   return (
     <Overlay
@@ -89,7 +94,7 @@ export const Cabinet = ({ open, onClose }: CabinetProps) => {
       {docs ? (
         <CabinetContent docs={docs} open={open} onClose={onClose} />
       ) : (
-        <CabinetFallback message={error ? 'cabinet을 불러오지 못했습니다' : loading ? 'loading cabinet…' : ''} />
+        <CabinetFallback error={error} />
       )}
     </Overlay>
   );

@@ -11,6 +11,7 @@ type MenuButtonProps = {
   shortcut: string;
   label: string;
   onFocus?: () => void;
+  onPointerEnter?: () => void;
 } & (
   | { href: Route }
   | { href?: undefined; onClick: () => void; expanded?: boolean; controls?: string }
@@ -39,7 +40,10 @@ export const MenuButton = (props: MenuButtonProps) => {
         data-menu-item="true"
         onFocus={onFocus}
         onBlur={() => setFocused(false)}
-        onPointerEnter={() => setHovered(true)}
+        onPointerEnter={() => {
+          setHovered(true);
+          props.onPointerEnter?.();
+        }}
         onPointerLeave={() => setHovered(false)}
       >
         {body}
@@ -55,7 +59,10 @@ export const MenuButton = (props: MenuButtonProps) => {
       onClick={props.onClick}
       onFocus={onFocus}
       onBlur={() => setFocused(false)}
-      onPointerEnter={() => setHovered(true)}
+      onPointerEnter={() => {
+        setHovered(true);
+        props.onPointerEnter?.();
+      }}
       onPointerLeave={() => setHovered(false)}
       aria-expanded={props.expanded}
       aria-controls={props.controls}

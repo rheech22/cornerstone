@@ -12,7 +12,7 @@ import { MenuButton } from './menu-button';
 
 export const Menu = ({ children }: { children?: React.ReactNode }) => {
   const router = useRouter();
-  const { cabinetOpen, modalOpen, openCabinet } = useAppChrome();
+  const { cabinetOpen, modalOpen, openCabinet, preloadCabinet } = useAppChrome();
   const navRef = useRef<HTMLElement>(null);
   const activeIndexRef = useRef(0);
 
@@ -80,7 +80,9 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
                       controls="cabinet-panel"
                       onFocus={() => {
                         activeIndexRef.current = index;
+                        preloadCabinet();
                       }}
+                      onPointerEnter={preloadCabinet}
                     />
                   )}
                 </li>

@@ -1,8 +1,9 @@
 'use client';
 
-import { type FocusEvent, type KeyboardEvent, type PointerEvent, type ReactNode, useEffect, useState } from 'react';
+import { type FocusEvent, type KeyboardEvent, type PointerEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { cn } from '@/shared/lib/cn';
+import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { type PreviewTarget, usePreview } from '@/shared/lib/use-preview';
 
 type WikiPreviewScopeProps = {
@@ -46,13 +47,30 @@ const getPreviewTarget = (link: HTMLAnchorElement): PreviewTarget | null => {
 };
 
 export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const tooltipId = useId();
+  const describedByRef = useRef<{ link: HTMLAnchorElement; value: string | null } | null>(null);
   const [preview, setPreview] = useState<PreviewState | null>(null);
-  const { html, loading } = usePreview(Boolean(preview), preview?.target ?? null);
+  const { html, loading } = usePreview(!isMobile && Boolean(preview), preview?.target ?? null);
 
   const openPreview = (link: HTMLAnchorElement) => {
     const target = getPreviewTarget(link);
 
     if (!target) return;
+
+    if (describedByRef.current?.link !== link) {
+      const previous = describedByRef.current;
+
+      if (previous) {
+        if (previous.value === null) previous.link.removeAttribute('aria-describedby');
+        else previous.link.setAttribute('aria-describedby', previous.value);
+      }
+
+      const value = link.getAttribute('aria-describedby');
+
+      link.setAttribute('aria-describedby', value ? `${value} ${tooltipId}` : tooltipId);
+      describedByRef.current = { link, value };
+    }
 
     setPreview({
       label: link.dataset.wikiLabel || link.textContent?.trim() || target.slug,
@@ -61,7 +79,18 @@ export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
     });
   };
 
-  const closePreview = () => setPreview(null);
+  const closePreview = () => {
+    const previous = describedByRef.current;
+
+    if (previous) {
+      if (previous.value === null) previous.link.removeAttribute('aria-describedby');
+      else previous.link.setAttribute('aria-describedby', previous.value);
+
+      describedByRef.current = null;
+    }
+
+    setPreview(null);
+  };
 
   const handlePointerOver = (event: PointerEvent<HTMLDivElement>) => {
     const link = getWikiLink(event.target);
@@ -98,9 +127,13 @@ export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
   };
 
   useEffect(() => {
+    if (isMobile) closePreview();
+  }, [isMobile]);
+
+  useEffect(() => {
     if (!preview) return;
 
-    const close = () => setPreview(null);
+    const close = () => closePreview();
 
     window.addEventListener('scroll', close, true);
     window.addEventListener('resize', close);
@@ -113,16 +146,17 @@ export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
 
   return (
     <div
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-      onFocusCapture={handleFocus}
-      onBlurCapture={handleBlur}
-      onKeyDownCapture={handleKeyDown}
+      onPointerOver={isMobile ? undefined : handlePointerOver}
+      onPointerOut={isMobile ? undefined : handlePointerOut}
+      onFocusCapture={isMobile ? undefined : handleFocus}
+      onBlurCapture={isMobile ? undefined : handleBlur}
+      onKeyDownCapture={isMobile ? undefined : handleKeyDown}
       className={cn('contents')}
     >
       {children}
-      {preview && (
+      {!isMobile && preview && (
         <div
+          id={tooltipId}
           role="tooltip"
           className={cn(
             'pointer-events-none fixed z-50 w-[min(22.5rem,calc(100vw-1.5rem))] overflow-hidden rounded-md border border-vague-border bg-vague-surface/95 shadow-2xl backdrop-blur-sm',
@@ -131,7 +165,7 @@ export const WikiPreviewScope = ({ children }: WikiPreviewScopeProps) => {
         >
           <div className={cn('border-b border-vague-line px-3 py-2')}>
             <p className={cn('text-[0.65rem] uppercase tracking-wider text-vague-muted')}>{preview.target.type}</p>
-            <p className={cn('mt-0.5 truncate text-sm text-vague-fg-bright')}>{preview.label}</p>
+            <p className={cn('mt-0.5 truncate text-sm text-vague-amber')}>{preview.label}</p>
           </div>
           <div className={cn('tui-scroll max-h-72 overflow-y-auto px-3 py-2')}>
             {loading || html === null ? (

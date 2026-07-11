@@ -37,6 +37,7 @@ export const usePreview = (open: boolean, selected: PreviewTarget | null) => {
       return;
     }
 
+    const controller = new AbortController();
     let cancelled = false;
     const requestId = requestRef.current + 1;
 
@@ -47,13 +48,20 @@ export const usePreview = (open: boolean, selected: PreviewTarget | null) => {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/preview/${selectedType}/${encodeURIComponent(selectedSlug)}`);
+        const res = await fetch(`/api/preview/${selectedType}/${encodeURIComponent(selectedSlug)}`, {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) throw new Error('Failed to load preview');
+
         const data = (await res.json()) as { html?: string };
         const value = data.html ?? '';
 
         previewCache.set(cacheKey, value);
         if (!cancelled && requestRef.current === requestId) setHtml(value);
       } catch {
+        if (controller.signal.aborted) return;
+
         if (!cancelled && requestRef.current === requestId) setHtml('');
       } finally {
         if (!cancelled && requestRef.current === requestId) setLoading(false);
@@ -62,6 +70,7 @@ export const usePreview = (open: boolean, selected: PreviewTarget | null) => {
 
     return () => {
       cancelled = true;
+      controller.abort();
       clearTimeout(timer);
     };
   }, [open, selectedSlug, selectedType]);
