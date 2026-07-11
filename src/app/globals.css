@@ -75,6 +75,14 @@
 
 html {
   scroll-behavior: smooth;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable="true"],
+.markdown {
+  user-select: text;
 }
 
 html:has(.reading) {
@@ -150,4 +158,3 @@ body {
     --border-angle: 1.5turn;
   }
 }
-

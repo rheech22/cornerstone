@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useAppChrome } from '@/shared/components/chrome/app-chrome';
@@ -15,9 +15,19 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
   const { cabinetOpen, modalOpen, openCabinet, preloadCabinet } = useAppChrome();
   const navRef = useRef<HTMLElement>(null);
   const activeIndexRef = useRef(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [browsing, setBrowsing] = useState(false);
 
   const openMenuCabinet = () => {
     openCabinet();
+  };
+
+  const activateItem = (index: number) => {
+    if (browsing && activeIndexRef.current === index) return;
+
+    activeIndexRef.current = index;
+    setActiveIndex(index);
+    setBrowsing(true);
   };
 
   const focusItem = (index: number) => {
@@ -27,14 +37,12 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
 
     const i = ((index % items.length) + items.length) % items.length;
 
-    activeIndexRef.current = i;
+    activateItem(i);
     items[i].focus({ preventScroll: true });
   };
   const move = (delta: number) => focusItem(activeIndexRef.current + delta);
   const activate = (item: MenuEntry) =>
     'href' in item ? router.push(item.href) : openMenuCabinet();
-
-  useEffect(() => focusItem(0), []);
 
   useShortcuts(
     [
@@ -54,7 +62,12 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
   );
 
   return (
-    <main className={cn('vague-select flex min-h-0 flex-1 flex-col bg-vague-bg text-vague-fg')}>
+    <main
+      onPointerDown={(event) => {
+        if (!navRef.current?.contains(event.target as Node)) setBrowsing(false);
+      }}
+      className={cn('vague-select flex min-h-0 flex-1 flex-col bg-vague-bg text-vague-fg')}
+    >
       <div className={cn('flex flex-1 items-center justify-center px-6')}>
         <div className={cn('flex w-full max-w-sm flex-col gap-10')}>
           {children}
@@ -67,9 +80,9 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
                       shortcut={item.shortcut}
                       label={item.label}
                       href={item.href}
-                      onFocus={() => {
-                        activeIndexRef.current = index;
-                      }}
+                      active={browsing && index === activeIndex}
+                      browsing={browsing}
+                      onActivate={() => activateItem(index)}
                     />
                   ) : (
                     <MenuButton
@@ -78,8 +91,11 @@ export const Menu = ({ children }: { children?: React.ReactNode }) => {
                       onClick={openMenuCabinet}
                       expanded={cabinetOpen}
                       controls="cabinet-panel"
+                      active={browsing && index === activeIndex}
+                      browsing={browsing}
+                      onActivate={() => activateItem(index)}
                       onFocus={() => {
-                        activeIndexRef.current = index;
+                        activateItem(index);
                         preloadCabinet();
                       }}
                       onPointerEnter={preloadCabinet}

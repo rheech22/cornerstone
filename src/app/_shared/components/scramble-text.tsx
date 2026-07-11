@@ -8,6 +8,7 @@ type ScrambleTextProps = {
   text: string;
   active: boolean;
   highlightIndex?: number;
+  highlightClassName?: string;
   playOnMount?: boolean;
 };
 
@@ -36,6 +37,7 @@ export const ScrambleText = ({
   text,
   active,
   highlightIndex = -1,
+  highlightClassName = 'text-vague-amber',
   playOnMount = false,
 }: ScrambleTextProps) => {
   const [displayText, setDisplayText] = useState(text);
@@ -100,7 +102,7 @@ export const ScrambleText = ({
   return (
     <span aria-label={text}>
       {Array.from(displayText).map((char, index) => (
-        <span key={index} aria-hidden="true" className={cn(index === highlightIndex && 'text-vague-amber')}>
+        <span key={index} aria-hidden="true" className={cn(index === highlightIndex && highlightClassName)}>
           {char}
         </span>
       ))}

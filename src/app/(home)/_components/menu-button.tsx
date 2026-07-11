@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import type { Route } from 'next';
 import Link from 'next/link';
 
@@ -10,6 +9,9 @@ import { cn } from '@/shared/lib/cn';
 type MenuButtonProps = {
   shortcut: string;
   label: string;
+  active: boolean;
+  browsing: boolean;
+  onActivate: () => void;
   onFocus?: () => void;
   onPointerEnter?: () => void;
 } & (
@@ -17,18 +19,16 @@ type MenuButtonProps = {
   | { href?: undefined; onClick: () => void; expanded?: boolean; controls?: string }
 );
 
-const menuButtonClass = cn(
-  'group flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-base text-vague-fg',
-  'hover:bg-vague-surface hover:text-vague-fg-bright',
-  'focus:bg-vague-surface focus:text-vague-fg-bright focus:outline-none',
-);
+const menuButtonClass = (active: boolean, browsing: boolean) =>
+  cn(
+    'group flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-base transition-colors duration-200 focus:outline-none',
+    active ? 'text-vague-fg-bright' : browsing ? 'text-vague-muted/35' : 'text-vague-fg',
+  );
 
 export const MenuButton = (props: MenuButtonProps) => {
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const body = <MenuButtonBody shortcut={props.shortcut} label={props.label} active={hovered || focused} />;
+  const body = <MenuButtonBody shortcut={props.shortcut} label={props.label} active={props.active} browsing={props.browsing} />;
   const onFocus = () => {
-    setFocused(true);
+    props.onActivate();
     props.onFocus?.();
   };
 
@@ -36,15 +36,13 @@ export const MenuButton = (props: MenuButtonProps) => {
     return (
       <Link
         href={props.href}
-        className={menuButtonClass}
+        className={menuButtonClass(props.active, props.browsing)}
         data-menu-item="true"
         onFocus={onFocus}
-        onBlur={() => setFocused(false)}
-        onPointerEnter={() => {
-          setHovered(true);
+        onMouseEnter={() => {
+          props.onActivate();
           props.onPointerEnter?.();
         }}
-        onPointerLeave={() => setHovered(false)}
       >
         {body}
       </Link>
@@ -54,16 +52,14 @@ export const MenuButton = (props: MenuButtonProps) => {
   return (
     <button
       type="button"
-      className={menuButtonClass}
+      className={menuButtonClass(props.active, props.browsing)}
       data-menu-item="true"
       onClick={props.onClick}
       onFocus={onFocus}
-      onBlur={() => setFocused(false)}
-      onPointerEnter={() => {
-        setHovered(true);
+      onMouseEnter={() => {
+        props.onActivate();
         props.onPointerEnter?.();
       }}
-      onPointerLeave={() => setHovered(false)}
       aria-expanded={props.expanded}
       aria-controls={props.controls}
     >
@@ -76,10 +72,11 @@ const MenuButtonBody = ({
   shortcut,
   label,
   active,
-}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean }) => (
+  browsing,
+}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean; browsing: boolean }) => (
   <>
     <span className={cn('flex-1')}>
-      <MenuLabel label={label} shortcut={shortcut} active={active} />
+      <MenuLabel label={label} shortcut={shortcut} active={active} browsing={browsing} />
     </span>
     <span
       className={cn(
@@ -94,8 +91,9 @@ const MenuLabel = ({
   label,
   shortcut,
   active,
-}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean }) => {
-  const hint = cn('text-vague-amber');
+  browsing,
+}: Pick<MenuButtonProps, 'shortcut' | 'label'> & { active: boolean; browsing: boolean }) => {
+  const hint = cn(active || !browsing ? 'text-vague-amber' : 'text-vague-amber/60');
   const index = label.toLowerCase().indexOf(shortcut.toLowerCase());
 
   if (index === -1) {
@@ -107,5 +105,5 @@ const MenuLabel = ({
     );
   }
 
-  return <ScrambleText text={label} active={active} highlightIndex={index} playOnMount />;
+  return <ScrambleText text={label} active={active} highlightIndex={index} highlightClassName={hint} playOnMount />;
 };
