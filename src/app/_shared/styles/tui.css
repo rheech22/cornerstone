@@ -260,6 +260,7 @@
     --color-surface-muted: var(--color-vague-surface);
     --md-blockquote-accent-color: var(--color-vague-sand);
     --md-blockquote-color: var(--color-vague-mist);
+    --md-blockquote-font-size: 1.25rem;
     --md-blockquote-source-color: var(--color-vague-muted);
     --md-callout-bg: var(--color-vague-surface);
     --md-callout-code-bg: var(--color-vague-bg);
@@ -358,7 +359,7 @@
   }
 
   .note-panel .code-block .shiki code {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 
   [data-stack-panel][data-folded="true"] .note-panel {

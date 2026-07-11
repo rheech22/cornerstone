@@ -43,6 +43,10 @@
       margin-bottom: 0;
     }
 
+    .mdx-blockquote-content {
+      font-size: var(--md-blockquote-font-size, 1.5em);
+    }
+
     span {
       color: var(--md-blockquote-source-color, var(--foreground));
       font-style: italic;

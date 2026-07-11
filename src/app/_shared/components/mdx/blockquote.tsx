@@ -9,7 +9,7 @@ export const Blockquote = async ({
 }) => {
   return (
     <blockquote>
-      <div className={cn("text-[1.5em] leading-none font-medium")}>{children}</div>
+      <div className={cn("mdx-blockquote-content leading-none font-medium")}>{children}</div>
       {from && <span className={cn("text-[1.25em] font-light")}>— {from}</span>}
     </blockquote>
   );
