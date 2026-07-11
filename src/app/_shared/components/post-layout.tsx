@@ -19,8 +19,8 @@ type Props = {
 
 export const PostLayout = ({ children, backlinks = [], frontmatter }: Props) => {
   return (
-    <div className={cn('mx-auto px-[1.125em] py-[.3em]')}>
-      <div className={cn('flex flex-col items-center gap-8')}>
+    <div className={cn('mx-auto w-full min-w-0 px-[1.125em] py-[.3em]')}>
+      <div className={cn('flex w-full min-w-0 flex-col items-center gap-8')}>
         {frontmatter && (
           <div className={cn('relative mt-10 flex w-full flex-col items-center pb-4')}>
             <h1 className={cn('mb-10 break-all break-words text-center text-[2.2em] text-vague-fg-bright')}>
@@ -39,7 +39,7 @@ export const PostLayout = ({ children, backlinks = [], frontmatter }: Props) => 
           </div>
         )}
         <WikiPreviewScope>
-          <article className={cn('markdown blog-post-markdown grow')}>
+          <article className={cn('markdown blog-post-markdown grow min-w-0')}>
             {children}
             <Backlinks backlinks={backlinks} />
           </article>
