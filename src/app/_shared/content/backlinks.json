@@ -357,6 +357,20 @@
       "excerpt": "V8 엔진의 경우 Hidden Class 지원으로 해시 기반 접근보다 빠를 수 있음"
     }
   ],
+  "note/herdr-overview": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "herdr-my-setup",
+      "sourceTitle": "내 환경 × Herdr — 도입 이득과 권장 세팅",
+      "excerpt": "함께 볼 문서: Herdr 개요 (일반 레퍼런스)"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "pty-and-agent-50-years",
+      "sourceTitle": "진짜 PTY — 텔레타이프에서 에이전트 오케스트레이션까지",
+      "excerpt": "함께 볼 문서: Herdr 개요 (레퍼런스) · 내 환경 × Herdr 도입 가이드 (실행 가이드)"
+    }
+  ],
   "note/fascism": [
     {
       "sourceType": "note",
@@ -467,6 +481,14 @@
       "sourceSlug": "protobuf",
       "sourceTitle": "Protobuf",
       "excerpt": "통신 계층은 여전히 TCP / HTTP / HTTPS 등이며, Protobuf는 그 위에서 payload 최적화 역할을 수행함"
+    }
+  ],
+  "note/herdr-my-setup": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "pty-and-agent-50-years",
+      "sourceTitle": "진짜 PTY — 텔레타이프에서 에이전트 오케스트레이션까지",
+      "excerpt": "함께 볼 문서: Herdr 개요 (레퍼런스) · 내 환경 × Herdr 도입 가이드 (실행 가이드)"
     }
   ],
   "note/react-hooks-rules": [
