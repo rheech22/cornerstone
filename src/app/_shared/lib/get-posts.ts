@@ -1,11 +1,12 @@
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
 
-type Metadata = {
+export type PostFrontmatter = {
   created: string;
   updated: string;
   title: string;
   tags: string[];
+  draft?: boolean;
 };
 
 const getPostDir = (noteType: "blog" | "note") => {
@@ -13,8 +14,17 @@ const getPostDir = (noteType: "blog" | "note") => {
 };
 
 export const getPosts = (noteType: "blog" | "note") => {
-  return readdirSync(getPostDir(noteType)).filter((fileName) =>
+  const fileNames = readdirSync(getPostDir(noteType)).filter((fileName) =>
     fileName.endsWith(".mdx"),
+  );
+
+  if (process.env.NODE_ENV !== "production") return fileNames;
+
+  return fileNames.filter((fileName) =>
+    shouldIncludePost(
+      readFileSync(join(getPostDir(noteType), fileName), "utf8"),
+      "production",
+    ),
   );
 };
 
@@ -50,18 +60,28 @@ export const getPostContent = (noteType: "blog" | "note", slug: string) => {
   return parseFrontmatter(readFileSync(join(getPostDir(noteType), fileName), "utf8")).content;
 };
 
-const parseFrontmatter = (
+export const parseFrontmatter = (
   fileContent: string,
-): { metadata: Metadata; content: string } => {
+): { metadata: PostFrontmatter; content: string } => {
   const frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
   const match = frontmatterRegex.exec(fileContent);
-  const frontMatterBlock = match![1];
+
+  if (!match) {
+    return { metadata: {} as PostFrontmatter, content: fileContent.trim() };
+  }
+
+  const frontMatterBlock = match[1];
   const content = fileContent.replace(frontmatterRegex, "").trim();
   const frontMatterLines = frontMatterBlock.trim().split("\n");
-  const metadata: Partial<Metadata> = {};
+  const metadata: Partial<PostFrontmatter> = {};
 
   frontMatterLines.forEach((line) => {
-    const [key, value] = line.split(": ");
+    const separator = line.indexOf(":");
+
+    if (separator === -1) return;
+
+    const key = line.slice(0, separator).trim();
+    const value = line.slice(separator + 1).trim();
 
     switch (key) {
       case "tags":
@@ -73,18 +93,33 @@ const parseFrontmatter = (
           .filter(Boolean);
 
         return;
+      case "draft":
+        const draftValue = trimQuotes(value);
+
+        if (draftValue !== "true" && draftValue !== "false") {
+          throw new Error(`Invalid draft frontmatter value: ${value}`);
+        }
+
+        metadata.draft = draftValue === "true";
+
+        return;
       default:
         const stringified = JSON.stringify(trimQuotes(value));
 
         if (!stringified) return;
-        metadata[key.trim() as keyof Metadata] = JSON.parse(stringified);
+        metadata[key as keyof PostFrontmatter] = JSON.parse(stringified);
 
         return;
     }
   });
 
-  return { metadata: metadata as Metadata, content };
+  return { metadata: metadata as PostFrontmatter, content };
 };
+
+export const shouldIncludePost = (
+  fileContent: string,
+  environment: string | undefined = process.env.NODE_ENV,
+): boolean => environment !== "production" || parseFrontmatter(fileContent).metadata.draft !== true;
 
 const trimQuotes = (str: string) => {
   return str.replace(/^['"](.*)['"]$/, "$1");

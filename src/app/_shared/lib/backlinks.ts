@@ -13,10 +13,20 @@ type BacklinkTarget = {
   slug: string;
 };
 
+type GeneratedBacklink = Backlink & {
+  draft?: boolean;
+};
+
 const backlinkKey = (target: BacklinkTarget): string => `${target.type}/${target.slug}`;
-const backlinksByTarget = backlinkIndex as Record<string, Backlink[]>;
+const backlinksByTarget = backlinkIndex as Record<string, GeneratedBacklink[]>;
 
 export const getBacklinks = (target: BacklinkTarget): Backlink[] =>
   (backlinksByTarget[backlinkKey(target)] ?? [])
+    .filter((backlink) => process.env.NODE_ENV !== 'production' || backlink.draft !== true)
     .filter((backlink) => backlink.sourceType !== target.type || backlink.sourceSlug !== target.slug)
-    .map((backlink) => ({ ...backlink }));
+    .map(({ excerpt, sourceSlug, sourceTitle, sourceType }) => ({
+      excerpt,
+      sourceSlug,
+      sourceTitle,
+      sourceType,
+    }));

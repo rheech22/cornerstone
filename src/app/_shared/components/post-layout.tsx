@@ -3,18 +3,12 @@ import { WikiPreviewScope } from '@/shared/components/wiki-preview/wiki-preview-
 import type { Backlink } from '@/shared/lib/backlinks';
 import { cn } from '@/shared/lib/cn';
 import { from } from '@/shared/lib/date';
-
-type Frontmatter = {
-  created: string;
-  updated: string;
-  title: string;
-  tags: string[];
-};
+import type { PostFrontmatter } from '@/shared/lib/get-posts';
 
 type Props = {
   children: React.ReactNode;
   backlinks?: Backlink[];
-  frontmatter?: Frontmatter;
+  frontmatter?: PostFrontmatter;
 };
 
 export const PostLayout = ({ children, backlinks = [], frontmatter }: Props) => {

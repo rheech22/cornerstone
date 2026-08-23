@@ -4,6 +4,7 @@ import { join } from 'node:path';
 const CONTENT_DIR = join(process.cwd(), 'src/app/_shared/content');
 const OUTPUT_PATH = join(CONTENT_DIR, 'backlinks.json');
 const NOTE_SLUGS_PATH = join(CONTENT_DIR, 'note-slugs.json');
+const DRAFT_NOTE_SLUGS_PATH = join(CONTENT_DIR, 'draft-note-slugs.json');
 const TYPES = ['blog', 'note'];
 const WIKI_LINK_RE = /\[\[(.*?)\]\]/g;
 const EXCERPT_LIMIT = 180;
@@ -31,10 +32,24 @@ const parseWikiTarget = (value) => {
 
 const getTitleAndContent = (fileContent, fallbackTitle) => {
   const frontmatter = /---\s*([\s\S]*?)\s*---/.exec(fileContent);
-  const titleLine = frontmatter?.[1].split('\n').find((line) => line.startsWith('title:'));
+  const lines = frontmatter?.[1].split('\n') ?? [];
+  const titleLine = lines.find((line) => line.trim().startsWith('title:'));
+  const draftLine = lines.find((line) => line.trim().startsWith('draft:'));
   const title = titleLine?.slice('title:'.length).trim().replace(/^['"](.*)['"]$/, '$1') || fallbackTitle;
+  const draftValue = draftLine
+    ?.slice(draftLine.indexOf(':') + 1)
+    .trim()
+    .replace(/^['"](.*)['"]$/, '$1');
 
-  return { content: fileContent.replace(/---\s*[\s\S]*?\s*---/, '').trim(), title };
+  if (draftValue !== undefined && draftValue !== 'true' && draftValue !== 'false') {
+    throw new Error(`Invalid draft frontmatter value: ${draftValue}`);
+  }
+
+  return {
+    content: fileContent.replace(/---\s*[\s\S]*?\s*---/, '').trim(),
+    draft: draftValue === 'true',
+    title,
+  };
 };
 
 const toExcerpt = (line) => {
@@ -59,7 +74,7 @@ for (const sourceType of TYPES) {
 
   for (const fileName of files) {
     const sourceSlug = fileName.replace(/\.mdx$/, '');
-    const { content, title: sourceTitle } = getTitleAndContent(readFileSync(join(directory, fileName), 'utf8'), sourceSlug);
+    const { content, draft, title: sourceTitle } = getTitleAndContent(readFileSync(join(directory, fileName), 'utf8'), sourceSlug);
     const targets = new Set();
 
     for (const line of content.split('\n')) {
@@ -73,7 +88,7 @@ for (const sourceType of TYPES) {
         if (targets.has(`${key}\0${sourceKey}`)) continue;
 
         targets.add(`${key}\0${sourceKey}`);
-        (index[key] ??= []).push({ sourceType, sourceSlug, sourceTitle, excerpt });
+        (index[key] ??= []).push({ sourceType, sourceSlug, sourceTitle, excerpt, ...(draft && { draft }) });
       }
     }
   }
@@ -91,3 +106,11 @@ const noteSlugs = readdirSync(join(CONTENT_DIR, 'note'))
   .sort();
 
 writeFileSync(NOTE_SLUGS_PATH, `${JSON.stringify(noteSlugs, null, 2)}\n`);
+
+const draftNoteSlugs = noteSlugs.filter((slug) => {
+  const fileContent = readFileSync(join(CONTENT_DIR, 'note', `${slug}.mdx`), 'utf8');
+
+  return getTitleAndContent(fileContent, slug).draft;
+});
+
+writeFileSync(DRAFT_NOTE_SLUGS_PATH, `${JSON.stringify(draftNoteSlugs, null, 2)}\n`);

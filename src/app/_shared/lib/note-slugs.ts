@@ -1,10 +1,15 @@
+import draftNoteSlugs from '../content/draft-note-slugs.json';
 import noteSlugs from '../content/note-slugs.json';
 
 export const MAX_NOTE_STACK_SIZE = 12;
 
 const validNoteSlugs = new Set(noteSlugs as string[]);
+const draftSlugs = new Set(draftNoteSlugs as string[]);
 
-export const isNoteSlug = (slug: string): boolean => slug.length <= 128 && validNoteSlugs.has(slug);
+export const isNoteSlug = (slug: string): boolean =>
+  slug.length <= 128 &&
+  validNoteSlugs.has(slug) &&
+  (process.env.NODE_ENV !== 'production' || !draftSlugs.has(slug));
 
 export const normalizeNoteSlugs = (slugs: string[]): string[] => {
   const seen = new Set<string>();

@@ -1,20 +1,13 @@
 import type { ComponentType } from 'react';
 
 import { type Backlink, getBacklinks } from '@/shared/lib/backlinks';
-import { getPosts, getSlug } from '@/shared/lib/get-posts';
+import { getPosts, getSlug, type PostFrontmatter } from '@/shared/lib/get-posts';
 import { isNoteSlug, normalizeNoteSlugs } from '@/shared/lib/note-slugs';
-
-export type NoteFrontmatter = {
-  created: string;
-  updated: string;
-  title: string;
-  tags: string[];
-};
 
 export type LoadedNotePanel = {
   backlinks: Backlink[];
   slug: string;
-  frontmatter: NoteFrontmatter | undefined;
+  frontmatter: PostFrontmatter | undefined;
   Post: ComponentType;
 };
 
@@ -30,7 +23,7 @@ export const loadNotePanel = async (slug: string): Promise<LoadedNotePanel | nul
   return {
     backlinks: getBacklinks({ type: 'note', slug }),
     slug,
-    frontmatter: mod.frontmatter as NoteFrontmatter | undefined,
+    frontmatter: mod.frontmatter as PostFrontmatter | undefined,
     Post: mod.default as ComponentType,
   };
 };
