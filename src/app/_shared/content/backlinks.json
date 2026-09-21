@@ -475,20 +475,42 @@
       "excerpt": "에세이/회고: 설명형 + 시점 명시 (예: 공백기 회고 (2025))"
     }
   ],
+  "note/herdr-my-setup": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "paneru-sketchybar-tiling-setup",
+      "sourceTitle": "paneru와 SketchyBar로 macOS 타일링 환경 구성하기",
+      "excerpt": "내 환경 × Herdr 도입 이득과 권장 세팅",
+      "draft": true
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "pty-and-agent-50-years",
+      "sourceTitle": "진짜 PTY — 텔레타이프에서 에이전트 오케스트레이션까지",
+      "excerpt": "함께 볼 문서: Herdr 개요 (레퍼런스) · 내 환경 × Herdr 도입 가이드 (실행 가이드)"
+    }
+  ],
+  "note/whisper-voice-hammerspoon-setup": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "paneru-sketchybar-tiling-setup",
+      "sourceTitle": "paneru와 SketchyBar로 macOS 타일링 환경 구성하기",
+      "excerpt": "Whisper Voice와 Hammerspoon으로 로컬 음성 제어하기 (현재)",
+      "draft": true
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "superwhisper-macrowhisper-hammerspoon-setup",
+      "sourceTitle": "Superwhisper, Macrowhisper와 Hammerspoon으로 macOS 음성 제어하기",
+      "excerpt": "역사 문서: 20260726에 사용했던 Superwhisper 2.16.6과 Macrowhisper 2.1.1 구성의 기록이다. 두 도구의 실행 구성과 데이터는 제거됐으며, 현재 구조는 Whisper Voice와 Hammerspoon으로 로컬 음성 제어하기를 참조한다."
+    }
+  ],
   "note/https-basic": [
     {
       "sourceType": "note",
       "sourceSlug": "protobuf",
       "sourceTitle": "Protobuf",
       "excerpt": "통신 계층은 여전히 TCP / HTTP / HTTPS 등이며, Protobuf는 그 위에서 payload 최적화 역할을 수행함"
-    }
-  ],
-  "note/herdr-my-setup": [
-    {
-      "sourceType": "note",
-      "sourceSlug": "pty-and-agent-50-years",
-      "sourceTitle": "진짜 PTY — 텔레타이프에서 에이전트 오케스트레이션까지",
-      "excerpt": "함께 볼 문서: Herdr 개요 (레퍼런스) · 내 환경 × Herdr 도입 가이드 (실행 가이드)"
     }
   ],
   "note/react-hooks-rules": [
@@ -513,14 +535,6 @@
       "sourceSlug": "soviet-great-famine",
       "sourceTitle": "소련 - 농업 집단화에 따른 대기근",
       "excerpt": "정책 변화: 스탈린이 권력을 잡으면서 NEP를 폐지하고 급속한 공업화와 농업 집단화를 추진, 이는 기존의 약속을 뒤엎는 것"
-    }
-  ],
-  "note/whisper-voice-hammerspoon-setup": [
-    {
-      "sourceType": "note",
-      "sourceSlug": "superwhisper-macrowhisper-hammerspoon-setup",
-      "sourceTitle": "Superwhisper, Macrowhisper와 Hammerspoon으로 macOS 음성 제어하기",
-      "excerpt": "역사 문서: 20260726에 사용했던 Superwhisper 2.16.6과 Macrowhisper 2.1.1 구성의 기록이다. 두 도구의 실행 구성과 데이터는 제거됐으며, 현재 구조는 Whisper Voice와 Hammerspoon으로 로컬 음성 제어하기를 참조한다."
     }
   ],
   "note/superwhisper-macrowhisper-hammerspoon-setup": [
