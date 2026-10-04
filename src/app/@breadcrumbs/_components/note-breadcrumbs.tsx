@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/shared/lib/cn';
+import { pushNoteStackHistory } from '@/shared/lib/note-stack-history';
 import { useMediaQuery } from '@/shared/lib/use-media-query';
 import { useShortcuts } from '@/shared/lib/use-shortcuts';
 
 import { ArrowLeftIcon } from './arrow-left';
 
-const getMobileNoteBackUrl = () => {
+const getMobileNoteBack = (): { stacked: boolean; url: string } => {
   const url = new URL(window.location.href);
   const stack = url.searchParams.getAll('n');
 
@@ -21,12 +22,12 @@ const getMobileNoteBackUrl = () => {
 
     const query = params.toString();
 
-    return `${url.pathname}${query ? `?${query}` : ''}`;
+    return { stacked: true, url: `${url.pathname}${query ? `?${query}` : ''}` };
   }
 
-  if (url.pathname !== '/note') return '/note';
+  if (url.pathname !== '/note') return { stacked: false, url: '/note' };
 
-  return '/';
+  return { stacked: false, url: '/' };
 };
 
 export const NoteBreadcrumbs = () => {
@@ -35,7 +36,11 @@ export const NoteBreadcrumbs = () => {
 
   const navigateBack = () => {
     if (isMobile) {
-      router.push(getMobileNoteBackUrl() as Route);
+      const back = getMobileNoteBack();
+
+      // Popping a stacked panel stays on the same static page, so the stack handles it client-side.
+      if (back.stacked) pushNoteStackHistory(back.url);
+      else router.push(back.url as Route);
 
       return;
     }

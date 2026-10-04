@@ -4,18 +4,10 @@ import { buildStack } from "../_components/build-stack";
 import { NotePanel } from "../_components/note-panel";
 import { NoteStack } from "../_components/note-stack";
 
-const Page = async ({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
+// Static on purpose: stacked `?n=` panels are restored on the client from panel artifacts.
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
-  const { n } = await searchParams;
-  const stackedSlugs = Array.isArray(n) ? n : n ? [n] : [];
-  const slugs = [slug, ...stackedSlugs];
-  const panels = await buildStack(slugs);
+  const panels = await buildStack([slug]);
 
   return (
     <NoteStack slugs={panels.map((p) => p.slug)}>

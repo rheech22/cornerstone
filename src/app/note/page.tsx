@@ -11,15 +11,9 @@ export const metadata: Metadata = {
   },
 };
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const { n } = await searchParams;
-  const stackedSlugs = Array.isArray(n) ? n : n ? [n] : [];
-  const slugs = ['index', ...stackedSlugs];
-  const panels = await buildStack(slugs);
+// Static on purpose: stacked `?n=` panels are restored on the client from panel artifacts.
+const Page = async () => {
+  const panels = await buildStack(['index']);
 
   return (
     <NoteStack slugs={panels.map((p) => p.slug)}>

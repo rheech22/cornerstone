@@ -68,6 +68,7 @@ App Router는 `app/` 폴더 트리에서 라우트를 해석합니다. 폴더 �
 1. 마크다운은 외부 wiki에서 작성하고, `pnpm sync`(로컬 Google Drive 마운트) 또는 `pnpm drive:sync`(Google Drive API)로 `src/app/_shared/content/{blog,note}/`에 동기화합니다.
 2. `_shared/lib/get-posts.ts`가 그 폴더를 읽습니다(경로가 하드코딩되어 있으니 동기화 스크립트와 함께 맞춰야 합니다).
 3. `blog/[slug]`와 `note/[slug]`가 `.mdx`를 동적 import 해서 `PostLayout` + `MdxLayout`으로 감쌉니다.
+   - `/note`·`/note/[slug]`는 주 노트 하나만 정적으로 렌더링합니다. `?n=` 스택 패널은 클라이언트가 `/note-panel-artifact/[slug]`의 정적 HTML을 받아 복원·추가합니다. 페이지에서 `searchParams`를 읽으면 라우트 전체가 동적으로 바뀌므로 읽지 않습니다. artifact 검증(`note-panel-artifact.ts`)이 모든 노트를 통과하는지는 e2e로 확인합니다.
 4. `src/mdx-components.tsx`가 마크다운 요소를(그리고 `Callout`, `Blockquote`, `ImageGrid`, `Fonts`를) `_shared/components/mdx/`의 렌더러에 매핑합니다.
 
 > 콘텐츠 `.mdx`는 외부 소스에서 동기화됩니다. 콘텐츠 안에 박힌 앱 경로(예: 컴포넌트 import)는 **소스 원본도 함께 고쳐야** 하며, 그렇지 않으면 다음 동기화 때 되살아납니다.

@@ -29,13 +29,15 @@ export const useActiveNotePanel = ({ slugs }: UseActiveNotePanelArgs) => {
   useEffect(() => {
     const stackSlugs = slugsKey ? slugsKey.split('\0') : [];
     const pendingActiveSlug = pendingActiveSlugRef.current;
-    const nextSlug = stackSlugs.includes(pendingActiveSlug)
+    const pendingArrived = stackSlugs.includes(pendingActiveSlug);
+    const nextSlug = pendingArrived
       ? pendingActiveSlug
       : stackSlugs.includes(activeSlugRef.current)
         ? activeSlugRef.current
         : stackSlugs[stackSlugs.length - 1] ?? '';
 
-    pendingActiveSlugRef.current = '';
+    // A pending target may still be loading; keep it until its panel joins the stack.
+    if (pendingArrived) pendingActiveSlugRef.current = '';
     activeSlugRef.current = nextSlug;
     setActiveSlug((current) => (current === nextSlug ? current : nextSlug));
 

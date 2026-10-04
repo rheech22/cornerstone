@@ -14,9 +14,11 @@ const hasControlCharacter = (value: string): boolean =>
   });
 
 const BLOCKED_STYLE_PROPERTIES = new Set(['bottom', 'inset', 'left', 'position', 'right', 'top', 'z-index']);
+// KaTeX positions glyphs with inline `top` offsets on relatively positioned spans.
+const KATEX_STYLE_PROPERTIES = new Set(['top']);
 const RESOURCE_ATTRIBUTES = new Set(['poster', 'src']);
 
-const assertSafeStyle = (value: string) => {
+const assertSafeStyle = (value: string, inKatex: boolean) => {
   if (/url\s*\(|expression\s*\(|@import/i.test(value)) throw new Error('unsafe note panel artifact style');
 
   value.split(';').forEach((declaration) => {
@@ -26,6 +28,7 @@ const assertSafeStyle = (value: string) => {
 
     const property = declaration.slice(0, separator).trim().toLowerCase();
 
+    if (inKatex && KATEX_STYLE_PROPERTIES.has(property)) return;
     if (BLOCKED_STYLE_PROPERTIES.has(property)) throw new Error('unsafe note panel artifact style');
   });
 };
@@ -103,9 +106,12 @@ const assertSafeArtifact = (artifact: HTMLElement) => {
         throw new Error('unsafe note panel artifact attribute');
       }
 
-      if (name === 'style') assertSafeStyle(value);
+      if (name === 'style') assertSafeStyle(value, Boolean(element.closest('.katex')));
       if (name === 'srcset') assertSafeSrcSet(value);
-      if (name === 'tabindex' && value !== '-1') throw new Error('unsafe note panel artifact tabindex');
+      // Shiki makes code blocks keyboard-scrollable with `<pre tabindex="0">`.
+      const safeTabIndex = value === '-1' || (value === '0' && element.tagName === 'PRE');
+
+      if (name === 'tabindex' && !safeTabIndex) throw new Error('unsafe note panel artifact tabindex');
 
       if (['href', 'poster', 'src'].includes(name)) {
         const urlType = name === 'href' && element.namespaceURI === 'http://www.w3.org/2000/svg' && element.tagName.toLowerCase() !== 'a'

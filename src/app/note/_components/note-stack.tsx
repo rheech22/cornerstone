@@ -87,7 +87,12 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
       status: 'server',
     }));
   }, [children, slugs]);
-  const { isNavigating, isNavigationActive, navigate, panels } = useClientNoteNavigation({ cache, initialPanels });
+  const restoreTargetRef = useRef<(slug: string) => void>(undefined);
+  const { isNavigating, isNavigationActive, navigate, panels } = useClientNoteNavigation({
+    cache,
+    initialPanels,
+    onRestore: (slug) => restoreTargetRef.current?.(slug),
+  });
   const renderedSlugs = panels.map((panel) => panel.slug);
   const activeMobilePanel = panels[panels.length - 1];
   const pendingTargetSlug = panels.find((panel) => panel.status === 'pending')?.slug;
@@ -105,6 +110,8 @@ export const NoteStack = ({ slugs, children, spineWidth = NOTE_SPINE_WIDTH }: No
     updateAutoSpines,
   });
   const { activeSlug, activatePanel, setPendingActiveSlug, slugsKey } = useActiveNotePanel({ slugs: renderedSlugs });
+
+  restoreTargetRef.current = setPendingActiveSlug;
   const handleNavigation = (navigation: StackNavigation) => {
     const started = navigate(navigation);
 

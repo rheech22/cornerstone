@@ -1,4 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const readSlugs = (file: string): string[] => JSON.parse(readFileSync(join(process.cwd(), 'src/app/_shared/content', file), 'utf8'));
 
 test('fetches a panel once and reopens it from the slug cache', async ({ page }, testInfo) => {
   let artifactRequests = 0;
@@ -83,7 +87,7 @@ test('keeps copy behavior on server-rendered blog code blocks', async ({ page, c
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(source);
 });
 
-test('rejects unsafe artifacts and falls back to RSC navigation', async ({ page }, testInfo) => {
+test('rejects unsafe artifacts and falls back to the server-rendered note', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'mobile-chromium', 'desktop fallback coverage is sufficient');
   await page.addInitScript(() => {
     (window as typeof window & { __artifactPwned?: boolean }).__artifactPwned = false;
@@ -92,7 +96,7 @@ test('rejects unsafe artifacts and falls back to RSC navigation', async ({ page 
     contentType: 'text/html',
     body: '<div data-note-panel-artifact="1" data-panel-slug="hashtable-in-javascript" data-artifact-version="1"><section class="note-panel" data-panel-slug="hashtable-in-javascript"><img src="x" onerror="window.__artifactPwned=true"></section></div>',
   }));
-  await page.route(/\/note\?n=hashtable-in-javascript/, async (route) => {
+  await page.route(/\/note\/hashtable-in-javascript/, async (route) => {
     if (route.request().headers().rsc === '1') await new Promise((resolve) => setTimeout(resolve, 300));
 
     await route.continue();
@@ -101,7 +105,7 @@ test('rejects unsafe artifacts and falls back to RSC navigation', async ({ page 
   await page.getByRole('link', { name: 'JavaScript Hash Table' }).click();
 
   await expect(page.locator('[data-keyboard-navigation]')).toHaveAttribute('aria-busy', 'true');
-  await expect(page).toHaveURL(/\/note\?n=hashtable-in-javascript$/);
+  await expect(page).toHaveURL(/\/note\/hashtable-in-javascript$/);
   await expect(page.locator('[data-panel-slug="hashtable-in-javascript"] header')).toContainText('Javascript Hash Table');
   await expect.poll(() => page.evaluate(() => (window as typeof window & { __artifactPwned?: boolean }).__artifactPwned)).toBe(false);
 });
@@ -131,4 +135,92 @@ test('rejects malformed artifact boundaries', async ({ page }, testInfo) => {
     await page.getByRole('link', { name: 'JavaScript Hash Table' }).click();
     await expect(page.locator('[data-panel-slug="hashtable-in-javascript"] header')).toContainText('Javascript Hash Table');
   }
+});
+
+test('opens every published note through the artifact path', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile-chromium', 'artifact validation is viewport independent');
+  test.setTimeout(120_000);
+
+  const drafts = new Set(readSlugs('draft-note-slugs.json'));
+  const slugs = readSlugs('note-slugs.json').filter((slug) => slug !== 'index' && !drafts.has(slug));
+  const failures: string[] = [];
+
+  await page.route(/\/note(\/|\?|$)/, (route) => (route.request().headers().rsc === '1' ? route.abort() : route.continue()));
+  await page.goto('/note', { waitUntil: 'networkidle' });
+
+  for (const slug of slugs) {
+    await page.evaluate((target) => {
+      const link = document.createElement('a');
+
+      link.className = 'wiki-link';
+      link.href = `/note/${target}`;
+      link.dataset.wikiType = 'note';
+      link.dataset.wikiSlug = target;
+      link.textContent = target;
+      document.querySelector('[data-stack-slug="index"] article')?.append(link);
+      link.click();
+      link.remove();
+    }, slug);
+
+    const panel = page.locator(`[data-stack-slug="${slug}"]`);
+
+    await expect(panel).toHaveAttribute('data-panel-status', /artifact|pending/);
+    await expect(panel).not.toHaveAttribute('data-panel-status', 'pending', { timeout: 3_000 }).catch(() => undefined);
+
+    if ((await panel.getAttribute('data-panel-status')) !== 'artifact') {
+      failures.push(slug);
+      break;
+    }
+
+    await page.getByRole('button', { name: `close ${slug}` }).click();
+    await expect(page).toHaveURL(/\/note$/);
+  }
+
+  expect(failures).toEqual([]);
+});
+
+test('restores stacked panels from a deep link', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile-chromium', 'mobile shows only the last panel');
+  await page.goto('/note?n=csrf&n=hashtable-in-javascript');
+
+  await expect(page.locator('[data-stack-slug="index"]')).toHaveAttribute('data-panel-status', 'server');
+  await expect(page.locator('[data-stack-slug="csrf"]')).toHaveAttribute('data-panel-status', 'artifact');
+  await expect(page.locator('[data-stack-slug="hashtable-in-javascript"]')).toHaveAttribute('data-panel-status', 'artifact');
+  await expect(page).toHaveURL(/\/note\?n=csrf&n=hashtable-in-javascript$/);
+  await expect(page.locator('[data-stack-slug="hashtable-in-javascript"]')).toHaveAttribute('data-active', 'true');
+});
+
+test('pops the stacked panel from the mobile back button', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chromium', 'mobile breadcrumb behavior');
+  await page.goto('/note');
+  await page.getByRole('link', { name: 'CSRF (Cross-Site Request Forgery)' }).click();
+  await expect(page.locator('[data-note-mobile-stack]')).toHaveAttribute('data-stack-slug', 'csrf');
+
+  await page.getByRole('button', { name: 'Go back' }).click();
+  await expect(page).toHaveURL(/\/note$/);
+  await expect(page.locator('[data-note-mobile-stack]')).toHaveAttribute('data-stack-slug', 'index');
+});
+
+test('keeps the stack steady while a panel loads', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'mobile-chromium', 'desktop stack behavior');
+  await page.route('**/note-panel-artifact/csrf', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await route.continue();
+  });
+  await page.goto('/note');
+  await page.evaluate(() => {
+    (window as typeof window & { __stackSizes?: number[] }).__stackSizes = [];
+    new MutationObserver(() => {
+      (window as typeof window & { __stackSizes?: number[] }).__stackSizes?.push(document.querySelectorAll('[data-stack-panel]').length);
+    }).observe(document.body, { childList: true, subtree: true });
+  });
+  await page.getByRole('link', { name: 'CSRF (Cross-Site Request Forgery)' }).click();
+
+  await expect(page.locator('[data-stack-slug="csrf"]')).toHaveAttribute('data-panel-status', 'artifact');
+  await expect(page.locator('[data-stack-slug="csrf"]')).toHaveAttribute('data-active', 'true');
+
+  const sizes = await page.evaluate(() => (window as typeof window & { __stackSizes?: number[] }).__stackSizes ?? []);
+  const grewThenShrank = sizes.some((size, index) => index > 0 && size < sizes[index - 1]);
+
+  expect(grewThenShrank).toBe(false);
 });
