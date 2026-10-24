@@ -37,6 +37,11 @@
 		}
 	}
 
+	.markdown a code:not(:has(> *)) {
+		font-weight: 400;
+		color: inherit;
+	}
+
 	.code-block {
 		left: calc(50% - var(--md-expanded-width) / 2);
 		overflow: hidden;
