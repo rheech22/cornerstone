@@ -1,18 +1,17 @@
 ---
 created: 2026-08-15 20:17:16 +0900
-updated: 2026-10-24 15:00:00 +0900
-title: 웹뷰와 소프트 키보드에 관한 문제 회고
+updated: 2026-10-24 16:30:00 +0900
+title: 웹뷰에서 SafeArea와 소프트 키보드 다루기
 tags:
   - WebView
   - Flutter
-draft: "true"
 ---
 
 ## 이 글에서는
 
-제가 현재 다니는 회사에서 웹뷰를 처음 다뤄본 이후로 만났던 문제를 공유해보려고 합니다. 먼저 웹뷰에 대해 적고 제가 겪은 문제와 그 해결 방법에 대해 정리합니다. 그리고 모바일 브라우저에서의 문제도 조금 다룹니다. 기술 스택은 Next.js와 Flutter입니다.
+회사에서 웹뷰로 채팅 화면을 만들면서, 키보드가 올라올 때마다 화면이 흔들리는 문제를 만났습니다. 원인을 쫓다 보니 SafeArea부터 웹뷰 바깥의 스크롤, 모바일 브라우저의 뷰포트까지 들여다보게 되었습니다. 이 글에서는 웹뷰를 처음 다루며 겪은 이 문제들과 해결 방법을 정리합니다. 기술 스택은 Next.js와 Flutter입니다.
 
-먼저 고백하자면 이 글에서 소개하는 문제 해결 방법은 최선이 아닐 가능성이 다분합니다. 저는 단순하면서도 더 좋은 방법이 있을 것이라고 기대하고 있습니다. 그럼에도 불구하고 적어도 제가 아는 사실과 경험을 되짚어 보고자 기록을 남깁니다.
+미리 고백하자면 이 글에서 소개하는 문제 해결 방법은 최선이 아닐 가능성이 다분합니다. 저는 단순하면서도 더 좋은 방법이 있을 것이라고 기대하고 있습니다. 그럼에도 불구하고 적어도 제가 아는 사실과 경험을 되짚어 보고자 기록을 남깁니다.
 
 ## 웹뷰란?
 
@@ -24,7 +23,7 @@ draft: "true"
 
 [Custom Tabs](https://developer.chrome.com/docs/android/custom-tabs)와 [`SFSafariViewController`](https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller)는 웹뷰가 아닙니다. 이 구성들은 앱 안에서 호출할 수 있지만, 실제로는 브라우저가 별도 프로세스에서 페이지를 그립니다. Custom Tabs는 크롬과 쿠키를 공유하고, `SFSafariViewController`는 iOS 11부터 사파리와 쿠키를 공유하지 않는다는 차이는 있습니다. 어느 쪽이든 앱이 페이지 내부에 개입할 수는 없습니다.
 
-앱 개발 환경에서 웹뷰를 제공하는 여러 수단이 존재합니다. 이 글에서 다루게 될 Flutter에서는 [`webview_flutter`](https://pub.dev/packages/webview_flutter)(공식)나 [`flutter_inappwebview`](https://pub.dev/packages/flutter_inappwebview)(서드파티) 패키지로 시스템 웹뷰를 사용할 수 있습니다. 토스, 당근 등 국내 서비스도 화면 단위로 네이티브와 웹뷰를 나눠 쓰고 있습니다.
+앱 개발 환경에서 웹뷰를 제공하는 여러 수단이 존재합니다. 이 글에서 다루게 될 Flutter에서는 [`webview_flutter`](https://pub.dev/packages/webview_flutter)(공식)나 [`flutter_inappwebview`](https://pub.dev/packages/flutter_inappwebview)(서드파티) 패키지로 시스템 웹뷰를 사용할 수 있습니다. 토스, 당근 등 국내 서비스도 화면 단위로 네이티브와 웹뷰를 나눠 쓰는 것으로 알고 있습니다.
 
 ## 웹뷰를 왜 쓸까?
 
@@ -62,6 +61,8 @@ padding = max(0, viewPadding - viewInsets)
 
 예를 들어 키보드가 열리기 전, 다시 말해 `viewInsets`가 0인 상황에서는 하단 시스템 네비게이션 바의 높이가 그대로 하단 `padding`이 됩니다. 반대로 키보드가 열려 `viewInsets`가 시스템 네비게이션 바의 높이를 넘으면 하단 `padding`은 0이 됩니다. `padding`을 통해 상하좌우의 여백을 모두 얻을 수 있는데, 보통 top과 bottom만으로 충분합니다.
 
+![safe-area-metrics | caption="키보드가 열리면 하단 padding은 0이 됩니다"](assets/2026-10-24-15-10-01.png)
+
 `FlutterView`에서 제공하는 값들은 기본적으로 물리적 픽셀 단위입니다. 따라서 이 값을 그대로 넘기기보다는 논리적 픽셀로 변환하여 보내는 것이 편합니다.
 
 ```dart
@@ -72,6 +73,17 @@ Flutter 위젯 안에서는 아래처럼 [`MediaQuery.paddingOf`](https://api.fl
 
 ```dart
 final padding = MediaQuery.paddingOf(context);
+```
+
+값이 흘러가는 경로를 그려보면 다음과 같습니다. 뒤에서 다룰 키보드 높이(`viewInsets`)도 같은 경로로 전달됩니다.
+
+```
+Flutter                          Bridge         Web (CSS variables)
+didChangeMetrics()
+  padding    / devicePixelRatio ──┐
+                                  ├──▶ state$ ──▶ --safe-area-top
+  viewInsets / devicePixelRatio ──┘               --safe-area-bottom
+                                                  --keyboard-aware-bottom-inset
 ```
 
 웹에서는 브릿지를 통해 이 값을 구독하고 CSS 변수로 등록합니다.
@@ -94,22 +106,21 @@ appBridge.state$.subscribe({
 
 ### 문제 현상과 원인
 
-채팅 UI를 개발하면서 이런 문제를 만났습니다. 키보드가 올라올 때 화면이 버벅이는 모습이 보이시나요? 저는 이것을 단순하게 키보드 문제라고 부르겠습니다.
+채팅 UI를 개발하면서 이런 문제를 만났습니다. 키보드가 나타나고 사라질 때마다 채팅 화면이 버벅이고, 특히 하단의 입력창이 위아래로 떨리는 현상이었습니다. 저는 이것을 단순하게 키보드 문제라고 부르겠습니다.
 
-[gif:chat log jitter]
-[caption:키보드가 나타나고 사라질 때, 화면이 버벅이는 모습이 보이시나요?]
-
-화면에 그려지는 DOM 요소가 많아질수록, 가령 [KaTeX](https://katex.org/)로 렌더링한 수식이 많거나 대화 내역이 길어질수록 이 현상이 두드러지게 나타났습니다. 메시지가 많은 것은 [`react-virtuoso`](https://virtuoso.dev/) 같은 DOM 가상화 라이브러리로 꽤나 해소할 수 있었지만, 하단에 배치된 Input이 떨리는 현상은 크게 개선되지 않았습니다.
+화면에 그려지는 DOM 요소가 많아질수록, 가령 [KaTeX](https://katex.org/)로 렌더링한 수식이 많거나 대화 내역이 길어질수록 이 현상이 두드러지게 나타났습니다. 메시지가 많은 것은 [`react-virtuoso`](https://virtuoso.dev/) 같은 DOM 가상화 라이브러리로 꽤나 해소할 수 있었지만, 하단에 배치된 입력창이 떨리는 현상은 크게 개선되지 않았습니다.
 
 이 현상을 겪었을 당시에는 화면이 상당히 무겁고 복잡한 구조를 갖고 있었습니다. 그래서 웹에서 이러한 부분들을 개선하면 문제가 해결될 것으로 기대했습니다. 그런데 의심되는 요소를 하나씩 걷어내며 실험해 보니, **키보드가 오르내리면서 웹뷰 자체의 크기가 바뀌는 것이 근본적인 원인**이라는 사실이 드러났습니다.
 
-대부분의 채팅 UI는 하단에 Input을 배치하고 있습니다. 사용자가 Input을 터치하고 키보드가 올라올 때 Input은 키보드 위에 배치됩니다. 웹뷰에서 이를 구현하는 가장 단순한 방법은 키보드가 올라올 때 웹뷰 크기 자체를 줄이는 것입니다. Flutter에서 화면의 뼈대가 되는 `Scaffold`는 [`resizeToAvoidBottomInset`](https://api.flutter.dev/flutter/material/Scaffold/resizeToAvoidBottomInset.html)이 기본으로 `true`입니다. 키보드가 올라온 만큼 body의 크기를 줄인다는 뜻입니다. 따라서 별도의 설정 없이도 웹뷰 크기를 줄이는 구현이 됩니다.
+대부분의 채팅 UI는 하단에 입력창을 배치합니다. 사용자가 입력창을 터치해 키보드가 올라오면 입력창은 키보드 바로 위에 놓여야 합니다. 웹뷰에서 이를 구현하는 가장 단순한 방법은 키보드가 올라올 때 웹뷰 크기 자체를 줄이는 것입니다. Flutter에서 화면의 뼈대가 되는 `Scaffold`는 [`resizeToAvoidBottomInset`](https://api.flutter.dev/flutter/material/Scaffold/resizeToAvoidBottomInset.html)이 기본으로 `true`입니다. 키보드가 올라온 만큼 body의 크기를 줄인다는 뜻입니다. 따라서 별도의 설정 없이도 웹뷰 크기를 줄이는 구현이 됩니다.
 
 하지만 키보드가 나타나고 사라질 때마다 웹뷰가 줄어들고 늘어나는 것이 바로 문제의 원인이었기 때문에, 이제 이 방법은 쓸 수 없습니다.
 
 ### 리사이즈 책임을 웹으로
 
 웹뷰 크기가 바뀌는 것이 원인이라는 사실을 알게 되었으니, 키보드에 따라 크기가 바뀌지 않도록 하면 어떨까요? 웹뷰를 감싸는 `Scaffold`의 `resizeToAvoidBottomInset`을 `false`로 바꾸면 되겠죠. 이제는 네이티브가 화면을 줄여주지 않기 때문에 그 책임을 웹이 가져가야 합니다.
+
+![resize-to-avoid-bottom-inset | caption="웹뷰 전체가 줄어드는 대신, 웹이 필요한 요소만 조절합니다"](assets/2026-10-24-15-10-02.png)
 
 웹은 키보드 높이를 알아야 합니다. 키보드 높이에 따라 필요하면 내부 DOM 요소를 줄이거나 늘릴 겁니다. 필요한 값은 앞서 언급한 `FlutterView`의 `viewInsets`에서 얻을 수 있습니다. SafeArea와 마찬가지로 논리적 픽셀로 변환해 같은 브릿지 상태에 담아 보내면, 웹은 SafeArea 값으로 여백을 확보했던 것처럼 이 높이를 CSS 변수(`--keyboard-aware-bottom-inset`)로 등록해 콘텐츠의 크기를 조절합니다.
 
@@ -119,13 +130,13 @@ appBridge.state$.subscribe({
 
 ### 또 다른 문제
 
-"이제 잘 되겠지"라고 생각하던 중 또 다른 문제를 발견했습니다. 키보드가 나타나 있을 때 웹뷰 안의 fixed 요소를 잡고 위로 당기면 뷰포트에 위치한 UI가 통째로 화면 밖으로 밀려나는 현상이 있었습니다. 개발자 도구로 HTML 요소의 크기를 확인했을 때 크기 자체에는 문제가 없었습니다.
+"이제 잘 되겠지"라고 생각하던 중 또 다른 문제를 발견했습니다. 키보드가 나타나 있을 때 웹뷰 안의 fixed 요소를 잡고 위로 당기면 뷰포트에 위치한 UI가 통째로 화면 밖으로 밀려나는 현상이 있었습니다. 그런데 개발자 도구로 확인해 보면 HTML 요소의 크기 자체에는 아무 문제가 없었습니다. 크기는 멀쩡한데 DOM 요소가 실제로 화면을 벗어나고 있었던 거죠. 결국 HTML 바깥에서 벌어지는 일이라는 건데, 이미 Flutter에서 할 수 있는 것들을 다 했다고 생각하고 있었기에 막막했습니다.
 
-[image:html size debugging]
+그러던 중 `flutter_inappwebview`에서 스크롤을 막는 `disableVerticalScroll`, `disableHorizontalScroll` 설정을 발견했습니다. HTML과 무관하게 웹뷰라는 껍데기 자체가 스크롤될 수 있다는 뜻이었죠. 앞서 본 현상도 이것으로 설명됩니다.
 
-그런데 실제로 DOM 요소가 화면을 벗어나고 있었어요. 결국 HTML 바깥에서 벌어지는 일이라는 건데, 이미 Flutter에서 할 수 있는 것들을 다 했다고 생각하고 있었기에 막막했습니다.
+![webview-shell-scroll | caption="HTML이 아니라 그 바깥의 스크롤 뷰가 움직인 것이었습니다"](assets/2026-10-24-15-10-03.png)
 
-그러던 중 `flutter_inappwebview`에서 스크롤을 막는 `disableVerticalScroll`, `disableHorizontalScroll` 설정을 발견했습니다. HTML과 무관하게 웹뷰라는 껍데기 자체가 스크롤될 수 있다는 뜻이었죠. 그렇다면 이 설정을 켜면 문제가 해결될까요? 반은 맞고 반은 틀렸습니다. 저는 두 설정과 함께 오버스크롤을 막는 `disallowOverScroll`까지 켰습니다.
+그렇다면 이 설정을 켜면 문제가 해결될까요? 반은 맞고 반은 틀렸습니다. 저는 두 설정과 함께 오버스크롤을 막는 `disallowOverScroll`까지 켰습니다.
 
 ```dart
 InAppWebViewSettings(
@@ -180,7 +191,16 @@ protected void onScrollChanged(int x, int y, int oldX, int oldY) {
 }
 ```
 
-핵심은 **터치 이벤트를 막지 않는다**는 것입니다. 원본은 터치 이벤트를 소비해서 스크롤을 원천 차단했다면, 패치한 코드는 터치 이벤트를 그대로 웹 페이지에 흘려보내고 웹뷰 껍데기의 스크롤 위치가 바뀌었을 때만 원래 위치로 되돌립니다. `onOverScrolled`에서도 같은 처리를 하고, 코드로 호출하는 `scrollTo`와 `scrollBy`도 고정된 위치를 벗어나지 않도록 했습니다. 덕분에 웹 페이지 내부의 스크롤은 살아나고, 껍데기는 사용자의 제스처든 코드에 의한 것이든 움직이지 않습니다.
+핵심은 **터치 이벤트를 막지 않는다**는 것입니다. 원본은 터치 이벤트를 소비해서 스크롤을 원천 차단했다면, 패치한 코드는 터치 이벤트를 그대로 웹 페이지에 흘려보내고 웹뷰 껍데기의 스크롤 위치가 바뀌었을 때만 원래 위치로 되돌립니다. `onOverScrolled`에서도 같은 처리를 하고, 코드로 호출하는 `scrollTo`와 `scrollBy`도 고정된 위치를 벗어나지 않도록 했습니다. 덕분에 웹 페이지 내부의 스크롤은 살아나고, 껍데기는 사용자의 제스처든 코드에 의한 것이든 움직이지 않습니다. 두 방식을 비교하면 다음과 같습니다.
+
+```
+Original
+  touch ──▶ onTouch(): consume ACTION_MOVE ──✕  page         (페이지 스크롤까지 막힘)
+
+Fork
+  touch ──▶ onTouch(): pass through ──────────▶ page         (페이지 스크롤 정상)
+  shell scrolled ──▶ onScrollChanged() ──▶ scrollTo(locked)  (껍데기만 되돌림)
+```
 
 업스트림에 PR을 보내지는 않았고, 포크한 저장소에 반영했습니다. Flutter는 다음과 같이 의존성을 특정 git 저장소의 커밋으로 [덮어쓰는 수단](https://dart.dev/tools/pub/dependencies#dependency-overrides)을 제공합니다. `flutter_inappwebview`는 플랫폼별 패키지로 나뉘어 있어서, 안드로이드 패키지만 교체할 수 있었습니다.
 
@@ -238,13 +258,13 @@ const handlePointerDown = (
 
 이 코드를 반영한 뒤에도 한동안은 간혹 같은 현상이 보였습니다. 방법 자체에 한계가 있는 건가 싶었지만, 원인은 단순했습니다. 일부 입력 요소에 이 핸들러가 적용되어 있지 않았던 것이죠. 핸들러를 공용 유틸로 분리하고 빠짐없이 적용한 뒤로는 더 이상 문제가 재현되지 않았습니다.
 
-### 앱에서 동작 확인하기
+### 앱에서의 결과
 
-이제 앱에서는 제가 원하는 대로 동작합니다. 키보드가 오르내릴 때 웹뷰가 통째로 리사이즈되지 않기 때문에, 화면에 따라 키보드가 콘텐츠를 덮게 할 수도 있고 그만큼 콘텐츠를 줄일 수도 있습니다. 원하는 대로 고르면 됩니다. 물론 내부 DOM 요소의 일부가 줄어드는 것 또한 레이아웃 비용을 초래하는 건 사실입니다. 하지만 이 비용이 발생하는 범위가 예측 가능하고, 상대적으로 저렴합니다.
+이제 앱에서는 제가 원하는 대로 동작합니다. 키보드가 오르내릴 때 웹뷰가 통째로 리사이즈되지 않기 때문에, 화면에 따라 키보드가 콘텐츠를 덮게 할 수도 있고 그만큼 콘텐츠를 줄일 수도 있습니다. 원하는 대로 고르면 됩니다.
 
-[gif:example 1]
+![keyboard-layout-modes | caption="같은 웹뷰 안에서 화면마다 다르게 배치할 수 있습니다"](assets/2026-10-24-15-10-04.png)
 
-[gif:example 2]
+물론 내부 DOM 요소의 일부가 줄어드는 것 또한 레이아웃 비용을 초래하는 건 사실입니다. 하지만 이 비용이 발생하는 범위가 예측 가능하고, 상대적으로 저렴합니다.
 
 ### 근데 모바일 브라우저에서는?
 
@@ -259,14 +279,15 @@ const handlePointerDown = (
 하지만 아쉽게도 이건 반쪽짜리 해결책입니다. **iOS 사파리에서는 지원하지 않는** 기능이기 때문이죠. 그래서 다른 방법을 생각해야 합니다. 모바일 브라우저에서 키보드가 열려도 레이아웃 뷰포트의 높이인 `window.innerHeight`는 대체로 유지되고, 실제로 보이는 영역인 [`visualViewport.height`](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport)가 줄어듭니다. 이 점을 이용합니다.
 
 ```
-Layout viewport
-┌─────────────────┐
-│                 │
-│ Visual viewport │
-│                 │
-├─────────────────┤
-│    Keyboard     │
-└─────────────────┘
+┌─────────────────────┐ ┬              ┬
+│    (out of view)    │ │ offsetTop    │
+├─────────────────────┤ ┼              │
+│                     │ │              │
+│   Visual viewport   │ │ height       │ window.innerHeight
+│                     │ │              │
+├─────────────────────┤ ┼              │
+│       Keyboard      │ │ insetBottom  │
+└─────────────────────┘ ┴              ┴
 ```
 
 하단에서 키보드에 가려진 영역은 다음 공식으로 구합니다.
