@@ -35,6 +35,7 @@ const withMDX = createMDX({
       join(__dirname, "rehype-add-meta.mjs"),
       join(__dirname, "rehype-vimwiki-links.mjs"),
       join(__dirname, "rehype-external-links.mjs"),
+      join(__dirname, "rehype-soft-hyphens.mjs"),
       "rehype-mdx-import-media",
       "rehype-katex",
       "rehype-stringify",
