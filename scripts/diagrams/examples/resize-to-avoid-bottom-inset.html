@@ -1,0 +1,27 @@
+<html><head><link rel="stylesheet" href="../base.css"><style>
+.title{font-size:16px}
+.wv{position:absolute;left:6px;right:6px;border:2px dashed #e0a363;border-radius:26px;z-index:2}
+.wvl{position:absolute;right:20px;font-family:"Fira Code",monospace;font-size:11px;color:#e0a363;z-index:7}
+.hot{background:rgba(224,163,99,.22)}
+</style></head><body>
+<div class="row">
+ <div class="col"><div class="title"><code>resizeToAvoidBottomInset: true</code></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="wv hot" style="top:6px;bottom:176px;border-radius:26px 26px 6px 6px"></div><div class="wvl" style="top:52px">WebView</div>
+   <div style="position:absolute;top:70px;left:0;right:0;z-index:3"><div class="msg hot"></div><div class="msg me hot"></div><div class="msg hot"></div><div class="msg me hot"></div></div>
+   <div class="input" style="bottom:184px;z-index:3">메시지 입력</div>
+   <div class="kb">Keyboard</div><div class="homebar"></div></div>
+  <div class="note">키보드가 오르내릴 때마다 <b>웹뷰 전체 크기</b>가 바뀌고, 문서 전체의 레이아웃을 다시 계산합니다.</div>
+ </div>
+ <div class="col"><div class="title"><code>resizeToAvoidBottomInset: false</code></div>
+  <div class="phone"><div class="notch"></div>
+   <div class="wv" style="top:6px;bottom:6px;z-index:6"></div><div class="wvl" style="top:52px">WebView</div>
+   <div style="position:absolute;top:70px;left:0;right:0;z-index:3"><div class="msg"></div><div class="msg me"></div><div class="msg"></div><div class="msg me"></div></div>
+   <div class="input hot" style="bottom:184px;z-index:3">메시지 입력</div>
+   <div class="kb">Keyboard</div><div class="homebar"></div></div>
+  <div class="note">웹뷰 크기는 그대로이고, 웹이 키보드 높이만큼 <b>일부 요소</b>의 크기나 위치만 조절합니다.</div>
+ </div>
+</div>
+<div class="legend"><span><i class="sw" style="border:2px dashed #e0a363"></i><b>웹뷰 영역</b></span><span><i class="sw" style="background:rgba(224,163,99,.45)"></i><b>레이아웃이 다시 계산되는 범위</b></span></div>
+<div class="credit">Illustrated by Claude</div>
+</body></html>

@@ -1,0 +1,47 @@
+<html><head><link rel="stylesheet" href="../base.css"><style>
+.stage{position:relative;width:400px;height:590px}
+.stage .phone{position:absolute;left:40px;top:130px}
+.doc{position:absolute;width:202px;height:390px;border:2px solid #9bb4bc;border-radius:25px;background:#141415;overflow:hidden}
+.doc .hd{height:26px;border-bottom:1px solid #252530;font-family:"Fira Code",monospace;font-size:11px;color:#9bb4bc;padding:6px 18px}
+.doc .msg{margin:8px 10px}.doc .msg.me{margin-left:60px}
+.doc .input{left:8px;right:8px}
+.faded{opacity:.28}
+.outline{background:transparent;opacity:.35}
+.clip{position:absolute;inset:0;overflow:hidden;border-radius:31px}
+.guide{position:absolute;border-top:2px dashed #d8647e;width:40px}
+.glbl{position:absolute;font-size:13px;color:#d8647e;white-space:nowrap}
+.vbar{position:absolute;border-left:2px solid #d8647e}
+</style></head><body>
+<div class="row" style="gap:20px">
+ <div class="col"><div class="title">정상</div>
+  <div class="stage">
+   <div class="phone"><div class="notch"></div>
+    <div class="clip"><div class="doc" style="left:6px;top:28px"><div class="hd">html</div>
+     <div class="msg"></div><div class="msg me"></div><div class="msg"></div>
+     <div class="input" style="bottom:172px">메시지 입력</div></div></div>
+    <div class="kb">Keyboard</div><div class="clip" style="z-index:5"><div class="doc outline" style="left:6px;top:28px"></div></div><div class="homebar"></div></div>
+  </div>
+  <div class="note">웹뷰 껍데기(스크롤 뷰)의 스크롤 위치가 0이라<br>html이 화면 안에 제자리에 있습니다.</div>
+ </div>
+ <div class="col"><div class="title">껍데기가 밀린 상태</div>
+  <div class="stage">
+   <div class="doc faded" style="left:49px;top:41px"><div class="hd">html</div>
+     <div class="msg"></div><div class="msg me"></div><div class="msg"></div>
+     <div class="input" style="bottom:172px">메시지 입력</div></div>
+   <div class="phone"><div class="notch"></div>
+    <div class="clip"><div class="doc" style="left:6px;top:-92px"><div class="hd">html</div>
+     <div class="msg"></div><div class="msg me"></div><div class="msg"></div>
+     <div class="input" style="bottom:172px">메시지 입력</div></div></div>
+    <div class="kb">Keyboard</div><div class="clip" style="z-index:5"><div class="doc outline" style="left:6px;top:-92px"></div></div><div class="homebar"></div></div>
+   <div class="guide" style="left:272px;top:161px"></div>
+   <div class="glbl" style="left:272px;top:168px">원래 위치</div>
+   <div class="vbar" style="left:300px;top:41px;height:120px"></div>
+   <div class="glbl" style="left:308px;top:86px">↑ 껍데기 스크롤</div>
+   <div class="guide" style="left:272px;top:41px;border-top-style:solid"></div>
+  </div>
+  <div class="note">html의 크기는 그대로인데, 그 바깥의 스크롤 뷰가<br>움직여서 <b>콘텐츠가 통째로 화면 밖으로</b> 밀려납니다.</div>
+ </div>
+</div>
+<div class="legend"><span><i class="sw" style="border:2px solid #9bb4bc"></i><b>html 문서</b></span><span><i class="sw" style="border:2px solid #9bb4bc;opacity:.35"></i><b>화면 밖이나 키보드 뒤에 있는 부분</b></span></div>
+<div class="credit">Illustrated by Claude</div>
+</body></html>

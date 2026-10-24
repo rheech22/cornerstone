@@ -1,0 +1,23 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{position:relative;background:#1c1c24;color:#cdcdcd;font-family:"Apple SD Gothic Neo","Pretendard",sans-serif;width:980px;padding:44px 40px 40px}
+.row{display:flex;justify-content:center;gap:72px;align-items:flex-start}
+.col{display:flex;flex-direction:column;align-items:center;gap:18px}
+.title{font-size:20px;font-weight:700;color:#f0eef4}
+.title code,.note code,.lbl code,code.c{font-family:"Fira Code",Menlo,monospace;font-size:.92em;color:#e0a363}
+.note{font-size:15px;color:#c3c3d5;text-align:center;line-height:1.6;max-width:340px}
+.phone{position:relative;width:220px;height:440px;border:3px solid #606079;border-radius:34px;background:#141415;overflow:hidden}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:72px;height:20px;border-radius:10px;background:#000;z-index:5}
+.status{position:absolute;top:0;left:0;right:0;height:44px;background:rgba(110,148,178,.28);z-index:3}
+.home{position:absolute;bottom:0;left:0;right:0;height:30px;background:rgba(110,148,178,.28);z-index:3}
+.homebar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:80px;height:4px;border-radius:2px;background:#cdcdcd;z-index:6}
+.kb{position:absolute;left:0;right:0;bottom:0;height:170px;background:#5a3f42;border-top:2px solid #c48282;z-index:4;display:flex;align-items:center;justify-content:center;font-size:14px;color:#f0eef4;font-weight:700}
+.msg{height:22px;border-radius:8px;background:#333738;margin:8px 12px}
+.msg.me{background:#405065;margin-left:70px}
+.input{position:absolute;left:10px;right:10px;height:30px;border-radius:15px;border:2px solid #9bb4bc;background:#1c1c24;font-size:12px;color:#9bb4bc;display:flex;align-items:center;padding-left:12px}
+.lbl{position:absolute;font-size:13px;color:#f0eef4;white-space:nowrap}
+.br{position:absolute;border:2px solid;border-left:none;width:10px}
+.legend{display:flex;gap:22px;justify-content:center;margin-top:30px;font-size:14px;color:#c3c3d5}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend b{font-weight:400}
+.sw{width:16px;height:16px;border-radius:4px;display:inline-block}
+.credit{position:absolute;right:20px;bottom:12px;font-size:11px;color:#606079;letter-spacing:.02em}

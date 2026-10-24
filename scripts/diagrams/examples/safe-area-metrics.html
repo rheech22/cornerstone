@@ -1,0 +1,30 @@
+<html><head><link rel="stylesheet" href="../base.css"><style>
+.pw{position:relative;width:400px;height:470px}
+.pw .phone{position:absolute;left:0;top:0}
+.br{left:226px;border-color:#e0a363}
+.lbl{left:244px}
+.br.kb2{border-color:#c48282}
+</style></head><body>
+<div class="row" style="gap:40px">
+ <div class="col"><div class="title">키보드 닫힘</div>
+  <div class="pw"><div class="phone"><div class="notch"></div><div class="status"></div>
+   <div style="position:absolute;top:52px;left:0;right:0"><div class="msg"></div><div class="msg me"></div><div class="msg"></div><div class="msg me"></div></div>
+   <div class="home"></div><div class="homebar"></div></div>
+   <div class="br" style="top:3px;height:44px"></div><div class="lbl" style="top:6px"><code>viewPadding.top</code></div><div class="lbl" style="top:26px;color:#c3c3d5">= <code>padding.top</code></div>
+   <div class="br" style="top:407px;height:30px"></div><div class="lbl" style="top:398px"><code>viewPadding.bottom</code></div><div class="lbl" style="top:418px;color:#c3c3d5">= <code>padding.bottom</code></div>
+  </div>
+  <div class="note">키보드가 없으면 시스템 영역이<br>그대로 <code>padding</code>이 됩니다.</div>
+ </div>
+ <div class="col"><div class="title">키보드 열림</div>
+  <div class="pw"><div class="phone"><div class="notch"></div><div class="status"></div>
+   <div style="position:absolute;top:52px;left:0;right:0"><div class="msg"></div><div class="msg me"></div></div>
+   <div class="home"></div><div class="kb">Keyboard</div><div class="homebar"></div></div>
+   <div class="br" style="top:3px;height:44px"></div><div class="lbl" style="top:6px"><code>padding.top</code></div>
+   <div class="br kb2" style="top:267px;height:168px"></div><div class="lbl" style="top:342px"><code style="color:#c48282">viewInsets.bottom</code></div><div class="lbl" style="top:446px"><code>padding.bottom</code> = 0</div>
+  </div>
+  <div class="note">키보드가 하단 시스템 영역을 덮으면<br><code>max(0, viewPadding - viewInsets)</code> = 0</div>
+ </div>
+</div>
+<div class="legend"><span><i class="sw" style="background:rgba(110,148,178,.5)"></i><b>시스템 영역 (<code class="c">viewPadding</code>)</b></span><span><i class="sw" style="background:rgba(196,130,130,.6)"></i><b>키보드 (<code class="c">viewInsets</code>)</b></span></div>
+<div class="credit">Illustrated by Claude</div>
+</body></html>

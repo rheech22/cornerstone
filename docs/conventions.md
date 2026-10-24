@@ -1,11 +1,13 @@
 ---
 title: 컨벤션
-updated: 2026-06-21
+updated: 2026-10-24
 ---
 
 # 컨벤션
 
 이 저장소에서 코드를 어떻게 구성하고 작성하는지에 대한 규칙입니다. 배경(왜)은 [architecture.md](architecture.md)를 참고하세요.
+
+변경은 작게, 인근 파일의 기존 패턴과 일관되게 유지합니다.
 
 ## 폴더 & 파일 배치
 
@@ -24,7 +26,7 @@ updated: 2026-06-21
 ## 컴포넌트
 
 - 네임드 화살표 함수 export: `export const Banner = () => ...`.
-- 클래스는 `@/shared/lib/cn`의 `cn()`으로 조합합니다.
+- 모든 `className` 값은 `@/shared/lib/cn`의 `cn(...)`으로 감쌉니다. 원시 클래스 문자열을 직접 넘기거나 템플릿 문자열로 조합하지 않습니다.
 - **주석을 달지 않습니다.** 이름으로 의도를 드러내고 간결하게 유지합니다.
 - 재사용 가능한 형태(예: 다형적 link/button)는 그 자리에서 추상화하고, 두 번째 라우트가 필요로 할 때 비로소 `_shared`로 추출합니다.
 
@@ -51,6 +53,14 @@ updated: 2026-06-21
 - MDX 렌더러는 `src/mdx-components.tsx`에 전역 등록되어 있으니, 콘텐츠에서는 `<Callout>`, `<Blockquote>` 등을 **import 없이** 바로 사용하는 것을 권장합니다.
 - `.mdx` 안에 앱 경로를 하드코딩하지 않습니다(콘텐츠는 외부 소스에서 동기화되므로, 박힌 경로는 다음 동기화 때 깨집니다).
 
+## 명령어
+
+- `pnpm dev`: 로컬 개발 서버
+- `pnpm build`: 프로덕션 빌드 (타입드 라우트 + MDX 검증 포함)
+- `pnpm lint` / `pnpm lint:fix`
+- `pnpm test`: vitest
+- `pnpm sync`(로컬 Google Drive 마운트) / `pnpm drive:sync`(Drive API): 콘텐츠 동기화. 절차는 [content-workflow.md](content-workflow.md)
+
 ## 검증
 
-- 변경을 마쳤다고 보기 전에 `pnpm lint`와 `pnpm build`를 실행합니다. 빌드는 타입드 라우트와 MDX 콘텐츠 컴파일까지 검증합니다.
+- 사소하지 않은 변경을 마쳤다고 보기 전에 `pnpm lint`와 `pnpm build`를 실행합니다. 빌드는 타입드 라우트와 MDX 콘텐츠 컴파일까지 검증합니다.

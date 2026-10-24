@@ -1,0 +1,26 @@
+<html><head><link rel="stylesheet" href="../base.css"><style>
+.area{position:absolute;left:6px;right:6px;border:2px solid #9bb4bc;border-radius:8px;z-index:2}
+.al{position:absolute;right:8px;top:6px;font-size:11px;color:#9bb4bc}
+</style></head><body>
+<div class="row">
+ <div class="col"><div class="title">키보드가 콘텐츠를 덮기</div>
+  <div class="phone"><div class="notch"></div>
+   <div class="area" style="top:48px;bottom:12px;border-radius:8px 8px 22px 22px;z-index:6;background:transparent"></div>
+   <div style="position:absolute;top:48px;left:6px;right:6px;bottom:12px;z-index:2"><div class="al">콘텐츠</div>
+    <div style="margin-top:30px"><div class="msg"></div><div class="msg me"></div><div class="msg"></div><div class="msg me"></div><div class="msg"></div><div class="msg me"></div><div class="msg"></div></div></div>
+   <div class="input" style="bottom:184px;z-index:5">메시지 입력</div>
+   <div class="kb">Keyboard</div><div class="homebar"></div></div>
+  <div class="note">콘텐츠 크기는 그대로 두고, 입력창만<br>키보드 위로 올립니다.</div>
+ </div>
+ <div class="col"><div class="title">키보드만큼 콘텐츠 줄이기</div>
+  <div class="phone"><div class="notch"></div>
+   <div class="area" style="top:48px;bottom:216px"><div class="al">콘텐츠</div>
+    <div style="margin-top:30px"><div class="msg"></div><div class="msg me"></div><div class="msg"></div></div></div>
+   <div class="input" style="bottom:178px;z-index:5">메시지 입력</div>
+   <div class="kb">Keyboard</div><div class="homebar"></div></div>
+  <div class="note">콘텐츠 영역을 키보드 높이만큼 줄여<br>가려지는 부분이 없게 합니다.</div>
+ </div>
+</div>
+<div class="legend"><span><b>두 방식 모두 웹뷰 크기는 그대로, <code class="c">--keyboard-aware-bottom-inset</code> 값으로 웹이 직접 배치합니다.</b></span></div>
+<div class="credit">Illustrated by Claude</div>
+</body></html>
