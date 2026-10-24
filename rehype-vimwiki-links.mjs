@@ -1,6 +1,12 @@
 import { visit } from "unist-util-visit";
 
-const parseWikiTarget = (value) => {
+const getSourceType = (file) => {
+  const match = file?.path?.match(/[\\/]content[\\/](blog|note)[\\/][^\\/]+$/);
+
+  return match ? match[1] : "note";
+};
+
+const parseWikiTarget = (value, sourceType) => {
   const trimmed = value.trim().replace(/\.(?:mdx?|html?)$/, "");
   const match = trimmed.match(/^(blog|note):(.*)$/);
 
@@ -18,11 +24,13 @@ const parseWikiTarget = (value) => {
 
   if (routeMatch) return { type: routeMatch[1], slug: routeMatch[2].trim() };
 
-  return { type: "note", slug: normalized };
+  return { type: sourceType, slug: normalized };
 };
 
 export default function rehypeVimwikiLinks() {
-  return (tree) => {
+  return (tree, file) => {
+    const sourceType = getSourceType(file);
+
     visit(tree, "text", (node, index, parent) => {
       if (!parent) return;
 
@@ -52,10 +60,10 @@ export default function rehypeVimwikiLinks() {
         if (innerContent.includes("|")) {
           const parts = innerContent.split("|");
 
-          target = parseWikiTarget(parts[0]);
+          target = parseWikiTarget(parts[0], sourceType);
           text = parts[1].trim();
         } else {
-          target = parseWikiTarget(innerContent);
+          target = parseWikiTarget(innerContent, sourceType);
 
           text = target.slug.split("/").pop().replaceAll("_", " ");
         }

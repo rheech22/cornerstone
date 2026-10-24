@@ -23,7 +23,7 @@
       "excerpt": "제텔카스텐에는 노트를 분류하는 여러 방식이 있지만 저는 나누지 않는 것이 더 좋았습니다. 분류보다는 연결과 통합에 초점을 더 맞추려고 합니다. 앞으로 어떻게 바뀔지는 모르겠지만, [Second Brain](https://www.buildingasecondbrain.com/)이라는 개념, 그리고 같은 이름의 [블로그](ht..."
     }
   ],
-  "note/codecompanion-basic": [
+  "blog/codecompanion-basic": [
     {
       "sourceType": "blog",
       "sourceSlug": "agent-client-protocol",
@@ -35,14 +35,26 @@
       "sourceSlug": "vibe-coding",
       "sourceTitle": "Stretch Remindly (1) - 바이브코딩",
       "excerpt": "제가 최근 주로 사용하는건 NeoVim과 CodeCompanion의 조합입니다. 모델은 Claude Sonnet 3.7을 사용하다가 요즘 아주 저렴하게 나온 Gemini 2.0 Pro를 붙여서 쓰고 있어요."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "new-transition-2025",
+      "sourceTitle": "공백기 회고 (2025)",
+      "excerpt": "Neovim에서 AI 활용하기: Neovim과 LLM 활용 경험의 구체적인 도구 맥락"
     }
   ],
-  "note/claudecode-seoul-meetup-2025": [
+  "blog/claudecode-seoul-meetup-2025": [
     {
       "sourceType": "blog",
       "sourceSlug": "agent-client-protocol",
       "sourceTitle": "ACP를 이용한 Neovim-Gemini CLI 통합",
       "excerpt": "Claude Code 서울 밋업 후기: Claude Code 워크플로우와 IDE 통합에 대한 후속 맥락"
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "claudecode-seoul-meetup-summary",
+      "sourceTitle": "Claude Code 서울 밋업 요약 (2025)",
+      "excerpt": "Claude Code 서울 밋업 후기: 같은 행사에 대한 개인 후기와 현장 맥락"
     }
   ],
   "note/git-worktree": [
@@ -67,7 +79,7 @@
       "excerpt": "Claude Code 서울 밋업 요약: 같은 행사의 핵심 내용을 압축한 literature note"
     }
   ],
-  "note/agent-client-protocol": [
+  "blog/agent-client-protocol": [
     {
       "sourceType": "blog",
       "sourceSlug": "codecompanion-basic",
@@ -75,12 +87,24 @@
       "excerpt": "ACP를 이용한 NeovimGemini CLI 통합: Neovim AI 도구 생태계의 후속 통합 사례"
     }
   ],
-  "note/vibe-coding": [
+  "blog/vibe-coding": [
+    {
+      "sourceType": "note",
+      "sourceSlug": "langchain-meetup-2025",
+      "sourceTitle": "LangChain 밋업 정리 (2025 Q2)",
+      "excerpt": "바이브 코딩과 비즈니스 도입에 관한 실무진 간 경험 교류"
+    },
     {
       "sourceType": "blog",
       "sourceSlug": "stretch-remindly-260103",
       "sourceTitle": "Stretch Remindly (2) - AppStore 출시",
       "excerpt": "한편, 코드는 꽤나 많이 건드려야 했어요. 이전에 바이브코딩한 것을 바꾸고 유지보수하려다 보니 어려운 점이 많았습니다. 불필요한 코드를 걷어내고, 대대적인 리팩토링을 했어요. 바이브코딩의 부채를 실감했습니다. 그럼에도 요즘의 코딩 에이전트에게 작업을 위임할 때, 어느 정도 갖춰진 구조가 있다면 꽤나 잘 작동한다는 사실도..."
+    },
+    {
+      "sourceType": "note",
+      "sourceSlug": "new-transition-2025",
+      "sourceTitle": "공백기 회고 (2025)",
+      "excerpt": "취업 성공에 주요했던 것을 돌이켜본다. 사실 취업을 위한 촘촘한 계획은 없었다. 계획보다는 이 시간을 최대한 활용하고자 했다. 하고 싶은 일, 경험해보지 못한 일을 하는 방향으로 공백기를 채웠다. 만약 취업이라는 목표에 초점을 맞추었다면, 알고리즘과 웹 프론트엔드에 특화된 경험과 지식을 쌓는데 집중했을 가능성이 높다. 공..."
     }
   ],
   "note/image-generation-model": [
@@ -99,7 +123,7 @@
       "excerpt": "앱 출시까지 고려했기 때문에 랜딩 페이지도 제작하고 싶었어요. 이번에는 다시 v0에게 만회할 기회를 주었습니다. 간단하게 vercel로 배포할 계획이었기 때문에 vercel 배포가 편리한 v0을 택했어요."
     }
   ],
-  "note/stretch-remindly-260103": [
+  "blog/stretch-remindly-260103": [
     {
       "sourceType": "blog",
       "sourceSlug": "vibe-coding",
@@ -213,14 +237,6 @@
       "sourceSlug": "brute_force",
       "sourceTitle": "완전 탐색",
       "excerpt": "예를 들어, “1부터 10까지의 숫자 중 5개를 고르는 조합 중 특정 조건을 만족하는 조합의 개수를 찾는 문제”에서는:"
-    }
-  ],
-  "blog/claudecode-seoul-meetup-2025": [
-    {
-      "sourceType": "note",
-      "sourceSlug": "claudecode-seoul-meetup-summary",
-      "sourceTitle": "Claude Code 서울 밋업 요약 (2025)",
-      "excerpt": "Claude Code 서울 밋업 후기: 같은 행사에 대한 개인 후기와 현장 맥락"
     }
   ],
   "note/xss": [
@@ -407,28 +423,6 @@
       "sourceSlug": "javascript-v8-hidden-class",
       "sourceTitle": "V8 Hidden Class와 Inline Cache",
       "excerpt": "JavaScript Hash Table: 객체의 해시 기반 접근과 Map 선택 기준을 비교할 때 참고"
-    }
-  ],
-  "blog/vibe-coding": [
-    {
-      "sourceType": "note",
-      "sourceSlug": "langchain-meetup-2025",
-      "sourceTitle": "LangChain 밋업 정리 (2025 Q2)",
-      "excerpt": "바이브 코딩과 비즈니스 도입에 관한 실무진 간 경험 교류"
-    },
-    {
-      "sourceType": "note",
-      "sourceSlug": "new-transition-2025",
-      "sourceTitle": "공백기 회고 (2025)",
-      "excerpt": "취업 성공에 주요했던 것을 돌이켜본다. 사실 취업을 위한 촘촘한 계획은 없었다. 계획보다는 이 시간을 최대한 활용하고자 했다. 하고 싶은 일, 경험해보지 못한 일을 하는 방향으로 공백기를 채웠다. 만약 취업이라는 목표에 초점을 맞추었다면, 알고리즘과 웹 프론트엔드에 특화된 경험과 지식을 쌓는데 집중했을 가능성이 높다. 공..."
-    }
-  ],
-  "blog/codecompanion-basic": [
-    {
-      "sourceType": "note",
-      "sourceSlug": "new-transition-2025",
-      "sourceTitle": "공백기 회고 (2025)",
-      "excerpt": "Neovim에서 AI 활용하기: Neovim과 LLM 활용 경험의 구체적인 도구 맥락"
     }
   ],
   "note/tagging-guide": [

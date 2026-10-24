@@ -9,7 +9,7 @@ const TYPES = ['blog', 'note'];
 const WIKI_LINK_RE = /\[\[(.*?)\]\]/g;
 const EXCERPT_LIMIT = 180;
 
-const parseWikiTarget = (value) => {
+const parseWikiTarget = (value, sourceType) => {
   const trimmed = value.trim().replace(/\.(?:mdx?|html?)$/, '');
   const typed = /^(blog|note):(.*)$/.exec(trimmed);
 
@@ -27,7 +27,7 @@ const parseWikiTarget = (value) => {
 
   if (routed) return { type: routed[1], slug: routed[2].trim() };
 
-  return { type: 'note', slug: normalized };
+  return { type: sourceType, slug: normalized };
 };
 
 const getTitleAndContent = (fileContent, fallbackTitle) => {
@@ -81,7 +81,7 @@ for (const sourceType of TYPES) {
       const excerpt = toExcerpt(line);
 
       for (const match of line.matchAll(WIKI_LINK_RE)) {
-        const target = parseWikiTarget(match[1].split('|')[0]);
+        const target = parseWikiTarget(match[1].split('|')[0], sourceType);
         const key = `${target.type}/${target.slug}`;
         const sourceKey = `${sourceType}/${sourceSlug}`;
 
