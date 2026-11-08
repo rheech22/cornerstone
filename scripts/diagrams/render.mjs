@@ -14,6 +14,8 @@ const page = await browser.newPage({ viewport: { width: 980, height: 400 }, devi
 for (const file of files) {
   await page.goto(`file://${file}`);
   await page.evaluate(() => document.fonts.ready);
+  const width = await page.evaluate(() => Math.ceil(document.body.getBoundingClientRect().width));
+  await page.setViewportSize({ width, height: 400 });
   await page.screenshot({ path: file.replace(/\.html$/, ".png"), fullPage: true });
   console.log(file.replace(/\.html$/, ".png"));
 }
